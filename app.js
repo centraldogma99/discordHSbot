@@ -1,38 +1,40 @@
 const Discord = require("discord.js")
 const client = new Discord.Client()
-const axios = require("axios")
+const fs = require('fs')
 require("dotenv").config()
 
-const blizzardToken = process.env.BLIZZARD_TOKEN;
+const prefix = '!';
+const discordToken = process.env.DISCORD_TOKEN;
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles){
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.name, command);
+}
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
 })
 
-client.on("message", async msg => {
-  if(msg.author.bot) return
+client.on("message", async message => {
+  if( message.author.bot ) return
+  if( !message.mentions.has(client.user.id) ) return
+  const msgContentSplit = message.content.split(" ");
+  const command = msgContentSplit[1];
+  
   try{
-    const res = await axios({
-      method: "GET",
-      url: "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(msg.content) + "&access_token=" + blizzardToken
-    })
-    let rescard = res.data.cards[0];
-    let resimg = rescard.imageGold ? rescard.imageGold : rescard.image;
-    await msg.channel.send({files: [resimg]});
-    if(rescard.childIds != null){
-      for await(const id of rescard.childIds){
-        const rescard = await axios({
-          method : "GET",
-          url : "https://kr.api.blizzard.com/hearthstone/cards/"+id+"?locale=ko_KR&access_token="+blizzardToken
-        })
-        const resimg = rescard.data.imageGold ? rescard.data.imageGold : rescard.data.image;
-        msg.channel.send({files: [resimg]});
-      }
+    if( !client.commands.has(command) ) {
+      const args = msgContentSplit.slice(1, msgContentSplit.length).join(" ")
+      client.commands.get("defaultAction").execute(message, args);
+    } else {
+      const args = msgContentSplit.slice(2, msgContentSplit.length).join(" ")
+      client.commands.get(command).execute(message, args);
     }
   } catch(err){
     console.log(err);
-    msg.reply("error")
+    msg.channel.send("서버 내부 오류! 개발자에게 알려주세요!")
   }
 })
-const mySecret = "ODY4MTg4NjI4NzA5NDI1MTYy.YPsBqw.PwNDv67-515AbsJzUet4qt6U2OM"
-client.login(mySecret)
+
+client.login(discordToken)
