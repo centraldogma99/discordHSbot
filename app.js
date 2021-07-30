@@ -21,19 +21,30 @@ client.on("message", async message => {
   if( message.author.bot ) return
   if( !message.mentions.has(client.user.id) ) return
   const msgContentSplit = message.content.split(" ");
-  const command = msgContentSplit[1];
+  let command = msgContentSplit[1];
   
   try{
-    if( !client.commands.has(command) ) {
+    if( !command ) {
+      client.commands.get("사용법").execute(message, null);
+      return;
+    }
+    if( command.startsWith(prefix) ) {
+      command = command.substring(1);
+      if( !client.commands.has(command) ) {
+        message.channel.send("없는 명령어입니다!");
+        return;
+      } else {
+        const args = msgContentSplit.slice(2, msgContentSplit.length).join(" ")
+        client.commands.get(command).execute(message, args);
+      }
+    } else {
       const args = msgContentSplit.slice(1, msgContentSplit.length).join(" ")
       client.commands.get("defaultAction").execute(message, args);
-    } else {
-      const args = msgContentSplit.slice(2, msgContentSplit.length).join(" ")
-      client.commands.get(command).execute(message, args);
     }
   } catch(err){
     console.log(err);
-    msg.channel.send("서버 내부 오류! 개발자에게 알려주세요!")
+    message.channel.send("서버 내부 오류! 개발자에게 알려주세요!")
+    
   }
 })
 
