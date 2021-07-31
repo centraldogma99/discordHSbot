@@ -16,15 +16,14 @@ async function defaultAction(message, args){
   let rescard = res.data.cards[0];
   await message.channel.send({files: [rescard.image]});
   if( rescard.childIds != null ){
-    msg = await message.channel.send("**< ! >**  관련 카드가 있습니다. 아래 이모티콘을 눌러 관련 카드를 검색할 수 있습니다.")
-    await msg.react("😃")
+    msg = await message.channel.send("**< ! >**  관련 카드가 있습니다. 아래 ➡️을 눌러 관련 카드를 검색할 수 있습니다.")
+    await msg.react("➡️")
     collected = await msg.awaitReactions(
       (reaction, user) => {
-         return reaction.emoji.name === "😃" && user.id == message.author.id
+         return reaction.emoji.name === "➡️" && user.id == message.author.id;
       },
       { time : 15000, max : 1 }
     )
-    console.log(collected)
     if ( collected.size != 0 ){
       childs.execute(message, args);
     }

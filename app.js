@@ -43,8 +43,7 @@ client.on("message", async message => {
     }
   } catch(err){
     console.log(err);
-    message.channel.send("서버 내부 오류! 개발자에게 알려주세요!")
-    
+    message.channel.send("서버 내부 오류! 개발자에게 알려주세요!");
   }
 })
 
