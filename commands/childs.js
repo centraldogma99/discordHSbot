@@ -2,6 +2,7 @@ const axios = require("axios")
 const paginate = require("../tools/paginate");
 require("dotenv").config()
 const blizzardToken = process.env.BLIZZARD_TOKEN
+const paginateStep = 2;
 
 async function childs(message, args){
   const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
@@ -25,7 +26,7 @@ async function childs(message, args){
       })
       images = images.concat(rescard.data.image);
     }
-    paginate(message, images)
+    paginate(message, images, paginateStep);
   } else {
     message.channel.send("해당 카드의 관련 카드가 없습니다!");
     return;

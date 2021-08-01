@@ -2,6 +2,7 @@ const axios = require("axios")
 require("dotenv").config()
 const paginate = require("../tools/paginate");
 const blizzardToken = process.env.BLIZZARD_TOKEN
+const paginateStep = 2;
 
 async function all(message, args){
   const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
@@ -15,7 +16,7 @@ async function all(message, args){
     return;
   }
   let images = res.data.cards.map(item => item.image);
-  paginate(message, images)
+  paginate(message, images, paginateStep);
 }
 
 module.exports = {
