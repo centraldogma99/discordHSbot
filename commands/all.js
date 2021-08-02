@@ -1,6 +1,6 @@
 const axios = require("axios")
 require("dotenv").config()
-const paginate = require("../tools/paginate");
+const paginator = require("../tools/paginator");
 const blizzardToken = process.env.BLIZZARD_TOKEN
 const paginateStep = 2;
 
@@ -16,7 +16,8 @@ async function all(message, args){
     return;
   }
   let images = res.data.cards.map(item => item.image);
-  paginate(message, images, paginateStep);
+  pagi = new paginator(message, images, paginateStep);
+  pagi.next();
 }
 
 module.exports = {

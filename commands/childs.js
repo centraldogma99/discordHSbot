@@ -1,5 +1,5 @@
 const axios = require("axios")
-const paginate = require("../tools/paginate");
+let paginator = require("../tools/paginator");
 require("dotenv").config()
 const blizzardToken = process.env.BLIZZARD_TOKEN
 const paginateStep = 2;
@@ -26,7 +26,8 @@ async function childs(message, args){
       })
       images = images.concat(rescard.data.image);
     }
-    paginate(message, images, paginateStep);
+    pagi = new paginator(message, images, paginateStep);
+    pagi.next();
   } else {
     message.channel.send("해당 카드의 관련 카드가 없습니다!");
     return;
