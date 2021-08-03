@@ -10,12 +10,23 @@ async function all(message, args){
     method: "GET",
     url: url
   })
+  let cards = res.data.cards;
   
-  if( res.data.cards.length == 0 ) {
+  if( cards.length == 0 ) {
     message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
     return;
   }
-  let images = res.data.cards.map(item => item.image);
+  let idxToRemove = [];
+  for(let i=0;i<cards.length;i++){
+    for(let j=i+1;j<cards.length;j++){
+      if(cards[i].name == cards[j].name)
+        idxToRemove = idxToRemove.concat(j);
+    }
+  }
+  for(const idx of idxToRemove){
+    cards.splice(idx, 1);
+  }
+  let images = cards.map(item => item.image);
   pagi = new paginator(message, images, paginateStep);
   pagi.next();
 }

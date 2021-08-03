@@ -15,6 +15,10 @@ for (const file of commandFiles){
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
+  console.log(`I am in ${client.guilds.cache.size} servers.`)
+  client.user.setActivity("Hearthstone", {
+    type: "PLAYING",
+  });
 })
 
 client.on("message", async message => {
@@ -22,6 +26,7 @@ client.on("message", async message => {
   if( !message.mentions.has(client.user.id) ) return
   const msgContentSplit = message.content.split(" ");
   let command = msgContentSplit[1];
+  console.log(`${message.author.username}#${message.author.discriminator} : ${message.createdTimestamp} : ${message.content}`)
   
   try{
     if( !command ) {

@@ -10,55 +10,62 @@ class paginator {
   prev(){
     let targetObjects = this.objects.slice(this.cursor - this.step, this.cursor);
     this.cursor = this.cursor - this.step;
-    this.#showMessages(targetObjects);
+    this.showMessages(targetObjects);
   }
 
   next(){
     let targetObjects = this.objects.slice(this.cursor + this.step, this.cursor + 2*this.step);
     this.cursor = this.cursor + this.step;
-    this.#showMessages(targetObjects);
+    this.showMessages(targetObjects);
   }
 
-  async #showMessages(targetObjects){
-    let infoMessage = await this.message.channel.send(`총 ${ this.objects.length }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.objects.length/this.step) }`)
+  async showMessages(targetObjects){
+    let infoMessage;
+    let isLongResult = this.objects.length > this.step
+    if(isLongResult){
+      infoMessage = await this.message.channel.send(`총 ${ this.objects.length }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.objects.length/this.step) }`)
+    }
     let promises = targetObjects.map(obj => this.message.channel.send({files:[obj]}));
     let targetMessages = await Promise.all(promises);
-    let lastMessage = targetMessages[0];
-    for (const msg of (await targetMessages.slice(1, targetMessages.length))){
-      if (msg.createdTimestamp > lastMessage.createdTimestamp){
-        lastMessage = msg;
-      }
-    }
-    if( this.cursor - this.step >= 0 ){
-      await lastMessage.react("⬅️");
-    }else{
-      await lastMessage.react("❌");
-    }
-    if( this.cursor + this.step < this.objects.length ){
-      await lastMessage.react("➡️");
-    }else{
-      await lastMessage.react("❌");
-    }
     
-    let collectedReactions = await lastMessage.awaitReactions(
-      (reaction, user) => {
-        return (reaction.emoji.name === "➡️" ||
-        reaction.emoji.name === "⬅️") &&
-        user.id == this.message.author.id;
-      },
-      { time : 15000, max : 1 }
-    )
-    if (collectedReactions.size == 0){
-      return;
-    } else {
-      let reaction = collectedReactions.keys().next().value;
-      targetMessages.map(msg => msg.delete())
-      infoMessage.delete()
+    if(isLongResult){
+      let lastMessage = targetMessages[0];
+      for (const msg of (await targetMessages.slice(1, targetMessages.length))){
+        if (msg.createdTimestamp > lastMessage.createdTimestamp){
+          lastMessage = msg;
+        }
+      }
+      if( this.cursor - this.step >= 0 ){
+        await lastMessage.react("⬅️");
+      }else{
+        await lastMessage.react("❌");
+      }
+      if( this.cursor + this.step < this.objects.length ){
+        await lastMessage.react("➡️");
+      }else{
+        await lastMessage.react("❌");
+      }
       
-      if( reaction === "➡️" ){
-        this.next();
-      } else if( reaction === "⬅️" ){
-        this.prev();
+      let collectedReactions = await lastMessage.awaitReactions(
+        (reaction, user) => {
+          return (reaction.emoji.name === "➡️" ||
+          reaction.emoji.name === "⬅️") &&
+          user.id == this.message.author.id;
+        },
+        { time : 15000, max : 1 }
+      )
+      if (collectedReactions.size == 0){
+        return;
+      } else {
+        let reaction = collectedReactions.keys().next().value;
+        targetMessages.map(msg => msg.delete())
+        infoMessage.delete()
+        
+        if( reaction === "➡️" ){
+          this.next();
+        } else if( reaction === "⬅️" ){
+          this.prev();
+        }
       }
     }
   }
