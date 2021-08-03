@@ -2,7 +2,7 @@ const axios = require("axios")
 let paginator = require("../tools/paginator");
 require("dotenv").config()
 const blizzardToken = process.env.BLIZZARD_TOKEN
-const paginateStep = 2;
+const paginateStep = 3;
 
 async function childs(message, args){
   const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
@@ -35,7 +35,7 @@ async function childs(message, args){
 }
 
 module.exports = {
-  name : '아이',
+  name : '관련',
   description : 'childs',
   execute : childs
 }
