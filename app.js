@@ -1,3 +1,4 @@
+const axios = require("axios");
 const Discord = require("discord.js")
 const client = new Discord.Client()
 const fs = require('fs')
@@ -5,8 +6,25 @@ require("dotenv").config()
 
 const prefix = '!';
 const discordToken = process.env.DISCORD_TOKEN;
+const blizzardID = process.env.BLIZZARD_ID;
+const blizzardSecret = process.env.BLIZZARD_SECRET;
+
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+let blizzardToken;
+axios({
+  url : "https://kr.battle.net/oauth/token",
+  method : "post",
+  auth: {
+    username : blizzardID,
+    password : blizzardSecret
+  },
+  data: new URLSearchParams({
+    grant_type: 'client_credentials'
+  })
+})
+.then(res => {blizzardToken = res.data.access_token})
 
 for (const file of commandFiles){
   const command = require(`./commands/${file}`);
@@ -40,11 +58,11 @@ client.on("message", async message => {
         return;
       } else {
         const args = msgContentSplit.slice(2, msgContentSplit.length).join(" ")
-        client.commands.get(command).execute(message, args);
+        client.commands.get(command).execute(message, args, blizzardToken);
       }
     } else {
       const args = msgContentSplit.slice(1, msgContentSplit.length).join(" ")
-      client.commands.get("defaultAction").execute(message, args);
+      client.commands.get("defaultAction").execute(message, args, blizzardToken);
     }
   } catch(err){
     console.log(err);
@@ -52,4 +70,8 @@ client.on("message", async message => {
   }
 })
 
-client.login(discordToken)
+try {
+  client.login(discordToken)
+} catch(e){
+  console.log("로그인 실패")
+}

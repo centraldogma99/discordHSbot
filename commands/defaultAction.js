@@ -1,9 +1,8 @@
 const axios = require("axios")
 require("dotenv").config()
 const childs = require("./childs")
-const blizzardToken = process.env.BLIZZARD_TOKEN
 
-async function defaultAction(message, args){
+async function defaultAction(message, args, blizzardToken){
   const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
   const res = await axios({
     method: "GET",
@@ -17,6 +16,7 @@ async function defaultAction(message, args){
   for(card of res.data.cards) {
     if(card.name == args) rescard = card;
   }
+  
   await message.channel.send({files: [rescard.image]});
   if( rescard.childIds != null ){
     msg = await message.channel.send("**< ! >**  관련 카드가 있습니다. 아래 ➡️을 눌러 관련 카드를 검색할 수 있습니다.")
@@ -28,7 +28,7 @@ async function defaultAction(message, args){
       { time : 15000, max : 1 }
     )
     if ( collected.size != 0 ){
-      childs.execute(message, args);
+      childs.execute(message, args, blizzardToken);
     }
   }
 }

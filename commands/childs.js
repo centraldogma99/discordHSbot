@@ -1,10 +1,9 @@
 const axios = require("axios")
 let paginator = require("../tools/paginator");
 require("dotenv").config()
-const blizzardToken = process.env.BLIZZARD_TOKEN
 const paginateStep = 3;
 
-async function childs(message, args){
+async function childs(message, args, blizzardToken){
   const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
   const res = await axios({
     method: "GET",
