@@ -1,20 +1,25 @@
 const axios = require("axios")
-let paginator = require("../tools/paginator");
-require("dotenv").config()
-const paginateStep = 3;
+const paginator = require("../tools/paginator");
+const mongo = require("../db");
 
 async function childs(message, args, blizzardToken){
-  const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
-  const res = await axios({
-    method: "GET",
-    url: url
-  })
-  if( res.data.cards.length == 0 ) {
+  let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
+  const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+  { params: {
+    locale: "ko_KR",
+    textFilter: encodeURI(args),
+    set: userConfig.gamemode,
+    access_token: blizzardToken
+  }});
+  if( res.data.cardCount == 0 ) {
     message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
     return;
   }
   
   let rescard = res.data.cards[0];
+  for(card of res.data.cards) {
+    if(card.name == args) rescard = card;
+  }
   let images = [];
 
   if(rescard.childIds != null){
@@ -25,7 +30,13 @@ async function childs(message, args, blizzardToken){
       })
       images = images.concat(rescard.data.image);
     }
-    pagi = new paginator(message, images, paginateStep);
+
+    let paginateStep;
+    userConfig = await userConfig
+
+    if( !userConfig.paginateStep ) paginateStep = 3;
+    else paginateStep = userConfig.paginateStep
+    pagi = new paginator(message, images, paginateStep, rescard.childIds.length);
     pagi.next();
   } else {
     message.channel.send("해당 카드의 관련 카드가 없습니다!");

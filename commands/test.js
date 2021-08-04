@@ -1,8 +1,10 @@
 const { default: axios } = require('axios');
 const { MessageEmbed } = require('discord.js');
+const mongo = require("../db");
 
-async function test(message, args, b){
-  message.channel.send("hello, world!")
+async function test(message, args){
+  let res = await mongo.userModel.findOne({name:"Osol2#7777"}).exec()
+  console.log(res);
 }
 
 module.exports = {

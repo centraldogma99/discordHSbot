@@ -1,17 +1,19 @@
 const axios = require("axios")
-require("dotenv").config()
 const paginator = require("../tools/paginator");
-const paginateStep = 3;
+const mongo = require("../db");
 
 async function all(message, args, blizzardToken){
-  const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
-  const res = await axios({
-    method: "GET",
-    url: url
-  })
+  let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
+  const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+  { params: {
+    locale: "ko_KR",
+    textFilter: encodeURI(args),
+    set: userConfig.gamemode,
+    access_token: blizzardToken
+  }});
   let cards = res.data.cards;
   
-  if( cards.length == 0 ) {
+  if( res.data.cardCount == 0 ) {
     message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
     return;
   }
@@ -26,7 +28,7 @@ async function all(message, args, blizzardToken){
     cards.splice(idx, 1);
   }
   let images = cards.map(item => item.image);
-  pagi = new paginator(message, images, paginateStep);
+  pagi = new paginator(message, images, userConfig.paginateStep, res.data.cardCount);
   pagi.next();
 }
 

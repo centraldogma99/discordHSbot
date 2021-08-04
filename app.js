@@ -2,6 +2,7 @@ const axios = require("axios");
 const Discord = require("discord.js")
 const client = new Discord.Client()
 const fs = require('fs')
+
 require("dotenv").config()
 
 const prefix = '!';
@@ -14,7 +15,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 let blizzardToken;
 axios({
-  url : "https://kr.battle.net/oauth/token",
+  url : "https://us.battle.net/oauth/token",
   method : "post",
   auth: {
     username : blizzardID,
@@ -25,6 +26,7 @@ axios({
   })
 })
 .then(res => {blizzardToken = res.data.access_token})
+.catch(e => console.log("블리자드 API오류"))
 
 for (const file of commandFiles){
   const command = require(`./commands/${file}`);

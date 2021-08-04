@@ -1,13 +1,24 @@
 const axios = require("axios")
 require("dotenv").config()
 const childs = require("./childs")
+const mongo = require("../db");
 
 async function defaultAction(message, args, blizzardToken){
-  const url = "https://kr.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
-  const res = await axios({
-    method: "GET",
-    url: url
-  })
+  let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
+  // ifuserConfig.gamemode
+  // const url = "https://us.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
+  // const res = await axios({
+  //   method: "GET",
+  //   url: url
+  // })
+  const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+  { params: {
+    locale: "ko_KR",
+    textFilter: encodeURI(args),
+    set: userConfig.gamemode,
+    access_token: blizzardToken
+  }});
+
   if( res.data.cards.length == 0 ) {
     message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
     return;

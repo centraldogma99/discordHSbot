@@ -1,10 +1,11 @@
 class paginator {
-  constructor(message, objects, step){
+  constructor(message, objects, step, length){
     if(step < 1) throw new Error('a step must be a integer bigger than 0');
     this.message = message;
     this.objects = objects;
     this.step = step;
     this.cursor = -step;
+    this.numberOfObjects = length;
   }
 
   prev(){
@@ -23,7 +24,7 @@ class paginator {
     let infoMessage;
     let isLongResult = this.objects.length > this.step
     if(isLongResult){
-      infoMessage = await this.message.channel.send(`총 ${ this.objects.length }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.objects.length/this.step) }`)
+      infoMessage = await this.message.channel.send(`총 ${ this.numberOfObjects }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.numberOfObjects/this.step) }`)
     }
     let promises = targetObjects.map(obj => this.message.channel.send({files:[obj]}));
     let targetMessages = await Promise.all(promises);
