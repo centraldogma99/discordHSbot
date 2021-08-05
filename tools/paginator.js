@@ -53,7 +53,7 @@ class paginator {
           reaction.emoji.name === "⬅️") &&
           user.id == this.message.author.id;
         },
-        { time : 15000, max : 1 }
+        { time : 20000, max : 1 }
       )
       if (collectedReactions.size == 0){
         return;

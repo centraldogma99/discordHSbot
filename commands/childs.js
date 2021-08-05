@@ -3,6 +3,7 @@ const paginator = require("../tools/paginator");
 const mongo = require("../db");
 
 async function childs(message, args, blizzardToken){
+  if ( !args ){ await message.channel.send("찾을 카드명을 입력해 주세요."); return; }
   let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
   let gamemode = userConfig ? userConfig.gamemode : "wild";
   let paginateStep = userConfig ? userConfig.paginateStep : 3;

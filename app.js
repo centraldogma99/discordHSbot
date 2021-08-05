@@ -2,35 +2,15 @@ const axios = require("axios");
 const Discord = require("discord.js")
 const client = new Discord.Client()
 const fs = require('fs')
+const translateClass = require("./tools/translateClass")
 
 require("dotenv").config()
 
 const prefix = '!';
+const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
 const blizzardID = process.env.BLIZZARD_ID;
 const blizzardSecret = process.env.BLIZZARD_SECRET;
-
-const translateClass = {
-  "사제" : "priest",
-  "좆제" : "priest",
-  "전사" : "warrior",
-  "도적" : "rogue",
-  "돚거" : "rogue",
-  "흑마법사" : "warlock",
-  "흑마" : "warlock",
-  "악마사냥꾼" : "demonhunter",
-  "악사" : "demonhunter",
-  "드루이드" : "druid",
-  "드루" : "druid",
-  "마법사" : "mage",
-  "법사" : "mage",
-  "성기사" : "paladin",
-  "기사" : "paladin",
-  "주술사" : "shaman",
-  "술사" : "shaman",
-  "사냥꾼" : "hunter",
-  "냥꾼" : "hunter"
-}
 
 
 client.commands = new Discord.Collection();
@@ -48,7 +28,7 @@ axios({
     grant_type: 'client_credentials'
   })
 })
-.then(res => {blizzardToken = res.data.access_token})
+.then(res => {blizzardToken = res.data.access_token;})
 .catch(e => console.log("블리자드 API오류"))
 
 for (const file of commandFiles){
@@ -68,49 +48,38 @@ client.on("message", async message => {
   if( message.author.bot ) return
   if( !message.mentions.has(client.user.id) ) return
 
-  let msgContentSplit = message.content.split(" ")
-  msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
-  let class_;
-  let command;
-  let args;
-  if ( msgContentSplit != undefined ){
-    try {
-      if( msgContentSplit[0].startsWith('"') ) {
-        class_ = translateClass[msgContentSplit[0].substring(1, msgContentSplit[0].length - 1)];
-        msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
-      }
-      if( msgContentSplit[0].startsWith(prefix) ) {
-        command = msgContentSplit[0].substring(1);
-        msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
-      }
-      args = msgContentSplit.join(" ")
-    } catch {e => {
-      if(msgContentSplit != undefined) {
-        message.channel.send("명령 처리 중 오류가 발생했습니다.");
-        console.log(e);
-      }
-    }}
-  }
-  
-
-  // logging
   console.log(`${message.author.username}#${message.author.discriminator} : ${message.createdTimestamp} : ${message.content}`)
+
+  let token;
+  try{
+    token = tokenizer(message.content, translateClass);
+  } catch(e){
+    if (e.message === "MentionShouldGoFirst"){
+      message.channel.send("‼️ 멘션이 가장 앞에 있어야 합니다.\n\n**ex)** `@여관주인 !모든 SI:7`");
+      return;
+    } else if (e.message === "WrongClass"){
+      message.channel.send("‼️ 존재하지 않는 직업입니다.\n\n**ex)** 술사, 주술사, 도적, 돚거, 흑마, 흑마법사 등");
+      return;
+    } else {
+      console.log(e);
+    }
+  }  
 
   try{
     // @여관주인
-    if( !command ) {
-      if( !args ){
+    if( !token.command ) {
+      if( !token.args ){
         client.commands.get("사용법").execute(message, null);
         return;
       } else {
-        client.commands.get("defaultAction").execute(message, args, blizzardToken, class_);
+        client.commands.get("defaultAction").execute(message, token.args, blizzardToken, token.class_);
       }
     } else {
-      if( !client.commands.has(command) ) {
+      if( !client.commands.has(token.command) ) {
         message.channel.send("없는 명령어입니다!");
         return;
       } else {
-        client.commands.get(command).execute(message, args, blizzardToken, class_);
+        client.commands.get(token.command).execute(message, token.args, blizzardToken, token.class_);
       }
     }
   } catch(err){
@@ -125,3 +94,34 @@ try {
   console.log("로그인 실패")
 }
 
+function tokenizer(msgContent, translateClass){
+  let msgContentSplit = msgContent.trim().split(/\s+/);
+  if (msgContentSplit[0] != `<@!${ client.user.id }>`) {
+    throw Error("MentionShouldGoFirst");
+  }
+
+  msgContentSplit = msgContentSplit.slice(1);
+  let class_;
+  let command;
+  let args;
+  if ( msgContentSplit.length != 0 ){
+    if( msgContentSplit[0].startsWith('"') && msgContentSplit[0].endsWith('"') ) {
+      let korClass = msgContentSplit[0].substring(1, msgContentSplit[0].length - 1);
+      if ( !(korClass in translateClass) ) {
+        throw Error("WrongClass");
+      }
+      class_ = translateClass[korClass];
+      msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
+    }
+    if( msgContentSplit[0].startsWith(prefix) ) {
+      command = msgContentSplit[0].substring(1);
+      msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
+    }
+    args = msgContentSplit.join(" ")
+  }
+  return {
+    "class_" : class_,
+    "command" : command,
+    "args" : args
+  }
+}

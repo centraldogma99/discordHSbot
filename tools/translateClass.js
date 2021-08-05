@@ -1,0 +1,21 @@
+module.exports = {
+    "사제" : "priest",
+    "좆제" : "priest",
+    "전사" : "warrior",
+    "도적" : "rogue",
+    "돚거" : "rogue",
+    "흑마법사" : "warlock",
+    "흑마" : "warlock",
+    "악마사냥꾼" : "demonhunter",
+    "악사" : "demonhunter",
+    "드루이드" : "druid",
+    "드루" : "druid",
+    "마법사" : "mage",
+    "법사" : "mage",
+    "성기사" : "paladin",
+    "기사" : "paladin",
+    "주술사" : "shaman",
+    "술사" : "shaman",
+    "사냥꾼" : "hunter",
+    "냥꾼" : "hunter"
+}
