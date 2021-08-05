@@ -95,7 +95,7 @@ client.on("message", async message => {
 
   // logging
   console.log(`${message.author.username}#${message.author.discriminator} : ${message.createdTimestamp} : ${message.content}`)
-  
+
   try{
     // @여관주인
     if( !command ) {
@@ -103,14 +103,14 @@ client.on("message", async message => {
         client.commands.get("사용법").execute(message, null);
         return;
       } else {
-        client.commands.get("defaultAction").execute(message, args, class_, blizzardToken);
+        client.commands.get("defaultAction").execute(message, args, blizzardToken, class_);
       }
     } else {
       if( !client.commands.has(command) ) {
         message.channel.send("없는 명령어입니다!");
         return;
       } else {
-        client.commands.get(command).execute(message, args, class_, blizzardToken);
+        client.commands.get(command).execute(message, args, blizzardToken, class_);
       }
     }
   } catch(err){
