@@ -3,7 +3,7 @@ require("dotenv").config()
 const childs = require("./childs")
 const mongo = require("../db");
 
-async function defaultAction(message, args, blizzardToken){
+async function defaultAction(message, args, class_, blizzardToken){
   let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
   // ifuserConfig.gamemode
   // const url = "https://us.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
@@ -15,6 +15,7 @@ async function defaultAction(message, args, blizzardToken){
   { params: {
     locale: "ko_KR",
     textFilter: encodeURI(args),
+    class: class_,
     set: userConfig.gamemode,
     access_token: blizzardToken
   }});
@@ -39,7 +40,7 @@ async function defaultAction(message, args, blizzardToken){
       { time : 15000, max : 1 }
     )
     if ( collected.size != 0 ){
-      childs.execute(message, args, blizzardToken);
+      childs.execute(message, args, null, blizzardToken);
     }
   }
 }

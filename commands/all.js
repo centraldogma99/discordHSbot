@@ -2,12 +2,13 @@ const axios = require("axios")
 const paginator = require("../tools/paginator");
 const mongo = require("../db");
 
-async function all(message, args, blizzardToken){
+async function all(message, args, class_, blizzardToken){
   let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
   const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
   { params: {
     locale: "ko_KR",
     textFilter: encodeURI(args),
+    class: class_,
     set: userConfig.gamemode,
     access_token: blizzardToken
   }});
