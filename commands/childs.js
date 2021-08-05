@@ -4,11 +4,13 @@ const mongo = require("../db");
 
 async function childs(message, args, blizzardToken){
   let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
+  let gamemode = userConfig ? userConfig.gamemode : "wild";
+  let paginateStep = userConfig ? userConfig.paginateStep : 3;
   const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
   { params: {
     locale: "ko_KR",
     textFilter: encodeURI(args),
-    set: userConfig.gamemode,
+    set: gamemode,
     access_token: blizzardToken
   }});
   if( res.data.cardCount == 0 ) {
@@ -31,11 +33,6 @@ async function childs(message, args, blizzardToken){
       images = images.concat(rescard.data.image);
     }
 
-    let paginateStep;
-    userConfig = await userConfig
-
-    if( !userConfig.paginateStep ) paginateStep = 3;
-    else paginateStep = userConfig.paginateStep
     pagi = new paginator(message, images, paginateStep, rescard.childIds.length);
     pagi.next();
   } else {

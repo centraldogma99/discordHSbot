@@ -5,18 +5,13 @@ const mongo = require("../db");
 
 async function defaultAction(message, args, blizzardToken, class_){
   let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
-  // ifuserConfig.gamemode
-  // const url = "https://us.api.blizzard.com/hearthstone/cards?locale=ko_KR&textFilter=" + encodeURI(args) + "&access_token=" + blizzardToken
-  // const res = await axios({
-  //   method: "GET",
-  //   url: url
-  // })
+  let gamemode = userConfig ? userConfig.gamemode : "wild";
   const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
   { params: {
     locale: "ko_KR",
     textFilter: encodeURI(args),
     class: class_,
-    set: userConfig.gamemode,
+    set: gamemode,
     access_token: blizzardToken
   }});
 
