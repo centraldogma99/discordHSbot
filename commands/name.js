@@ -3,7 +3,7 @@ const paginator = require("../tools/paginator");
 const mongo = require("../db");
 const uniqueArrayByName = require('../tools/uniqueArrayByName')
 
-async function all(message, args, blizzardToken, class_){
+async function name(message, args, blizzardToken, class_){
   let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
   let gamemode = userConfig ? userConfig.gamemode : "wild";
   let paginateStep = userConfig ? userConfig.paginateStep : 3;
@@ -22,16 +22,20 @@ async function all(message, args, blizzardToken, class_){
     message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
     return;
   }
-  
+
   cards = uniqueArrayByName(cards);
 
-  let images = cards.map(item => item.image);
+  cards = cards.filter(card => 
+    card.name.includes(args));
+
+  images = cards.map(card => { return card.image; })
+
   pagi = new paginator(message, images, paginateStep, res.data.cardCount);
   pagi.next();
 }
 
 module.exports = {
-  name : '모든',
-  description : 'all',
-  execute : all
+  name : '이름',
+  description : 'name',
+  execute : name
 }

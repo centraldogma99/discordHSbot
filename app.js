@@ -4,6 +4,7 @@ const client = new Discord.Client()
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs')
 const translateClass = require("./tools/translateClass")
+let logChannel;
 
 require("dotenv").config()
 
@@ -43,6 +44,7 @@ client.on("ready", () => {
   client.user.setActivity("Hearthstone", {
     type: "PLAYING",
   });
+  logChannel = client.guilds.cache.get('871985263310671923').channels.cache.get('872703972438319114');
 })
 
 client.on("message", async message => {
@@ -52,8 +54,8 @@ client.on("message", async message => {
   const d = new Date( message.createdTimestamp );
   date = d.toDateString() + ", " + d.getHours() + ":" + d.getMinutes()
   
-  client.guilds.cache.get('871985263310671923').channels.cache.get('872703972438319114').send(
-    `${message.author.username}#${message.author.discriminator} : ${date} : ${message.content}`
+  logChannel.send(
+    `**${message.author.username}#${message.author.discriminator}** : ${date} : \`${message.content}\``
   )
 
   let token;
