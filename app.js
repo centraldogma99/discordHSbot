@@ -45,6 +45,7 @@ client.on("ready", () => {
 })
 
 client.on("message", async message => {
+  console.log(message.content);
   if( message.author.bot ) return
   if( !message.mentions.has(client.user.id) ) return
 
@@ -95,8 +96,14 @@ try {
 }
 
 function tokenizer(msgContent, translateClass){
+  if( !msgContent ) throw Error("NoContent");
   let msgContentSplit = msgContent.trim().split(/\s+/);
-  if (msgContentSplit[0] != `<@!${ client.user.id }>`) {
+  let mention;
+  if (msgContentSplit[0].startsWith('<@') && msgContentSplit[0].endsWith('>')){
+    mention = msgContentSplit[0].slice(2, -1)
+    if (mention.startsWith('!')) {mention = mention.slice(1);}
+  }
+  if (mention != client.user.id) {
     throw Error("MentionShouldGoFirst");
   }
 
@@ -104,24 +111,32 @@ function tokenizer(msgContent, translateClass){
   let class_;
   let command;
   let args;
-  if ( msgContentSplit.length != 0 ){
-    if( msgContentSplit[0].startsWith('"') && msgContentSplit[0].endsWith('"') ) {
-      let korClass = msgContentSplit[0].substring(1, msgContentSplit[0].length - 1);
-      if ( !(korClass in translateClass) ) {
-        throw Error("WrongClass");
-      }
-      class_ = translateClass[korClass];
-      msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
-    }
-    if( msgContentSplit[0].startsWith(prefix) ) {
-      command = msgContentSplit[0].substring(1);
-      msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
-    }
-    args = msgContentSplit.join(" ")
+  let ret = {}
+  if ( msgContentSplit.length == 0 ){
+    return ret;
   }
-  return {
-    "class_" : class_,
-    "command" : command,
-    "args" : args
+  if( msgContentSplit[0].startsWith('"') && msgContentSplit[0].endsWith('"') ) {
+    let korClass = msgContentSplit[0].substring(1, msgContentSplit[0].length-1);
+    
+    if ( !(korClass in translateClass) ) {
+      throw Error("WrongClass");
+    }
+    class_ = translateClass[korClass];
+    ret['class_'] = class_
+    msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
   }
+  if ( msgContentSplit.length == 0 ){
+    return ret;
+  }
+  if( msgContentSplit[0].startsWith(prefix) ) {
+    command = msgContentSplit[0].substring(1);
+    msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
+  }
+  ret['command'] = command;
+  if ( msgContentSplit.length == 0 ){
+    return ret;
+  }
+  args = msgContentSplit.join(" ")
+  ret['args'] = args
+  return ret;
 }
