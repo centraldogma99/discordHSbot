@@ -13,6 +13,8 @@ const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
 const blizzardID = process.env.BLIZZARD_ID;
 const blizzardSecret = process.env.BLIZZARD_SECRET;
+const logServerId = process.env.LOG_SERVER;
+const logChannelId = process.env.LOG_CHANNEL;
 
 
 client.commands = new Discord.Collection();
@@ -44,7 +46,7 @@ client.on("ready", () => {
   client.user.setActivity("Hearthstone", {
     type: "PLAYING",
   });
-  logChannel = client.guilds.cache.get('871985263310671923').channels.cache.get('872703972438319114');
+  logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
 })
 
 client.on("message", async message => {

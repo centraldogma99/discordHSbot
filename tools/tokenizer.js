@@ -21,7 +21,8 @@ function tokenizer(msgContent, translateClass){
     if ( msgContentSplit.length == 0 ){
       return ret;
     }
-    if( msgContentSplit[0].startsWith('"') && msgContentSplit[0].endsWith('"') ) {
+    if( (msgContentSplit[0].startsWith('"') || msgContentSplit[0].startsWith('“') || msgContentSplit[0].startsWith('”') || msgContentSplit[0].startsWith("'"))
+    && (msgContentSplit[0].endsWith('"') || msgContent[0].endsWith('“')) || msgContentSplit[0].endsWith('”') || msgContentSplit[0].endsWith("'")) {
       let korClass = msgContentSplit[0].substring(1, msgContentSplit[0].length-1);
       
       if ( !(korClass in translateClass) ) {

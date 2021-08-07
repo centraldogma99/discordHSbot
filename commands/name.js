@@ -28,6 +28,11 @@ async function name(message, args, blizzardToken, class_){
   cards = cards.filter(card => 
     card.name.includes(args));
 
+  if ( cards.length == 0){
+    message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
+    return;
+  }
+
   images = cards.map(card => { return card.image; })
 
   pagi = new paginator(message, images, paginateStep, res.data.cardCount);
