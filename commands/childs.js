@@ -1,43 +1,55 @@
+/*
+  TODO : preProcess 함수 구현 및 paginator 생성자 인자로 넘기기
+*/
+
 const axios = require("axios")
 const paginator = require("../tools/paginator");
 const mongo = require("../db");
+const getMostMatchingCard = require("../tools/getMostMatchingCard");
+
+function preProcess(cards){
+  return cards;
+}
 
 async function childs(message, args, blizzardToken){
   if ( !args ){ await message.channel.send("찾을 카드명을 입력해 주세요."); return; }
-  let userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
-  let gamemode = userConfig ? userConfig.gamemode : "wild";
-  let paginateStep = userConfig ? userConfig.paginateStep : 3;
-  const res = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
-  { params: {
-    locale: "ko_KR",
-    textFilter: encodeURI(args),
-    set: gamemode,
-    access_token: blizzardToken
-  }});
-  if( res.data.cardCount == 0 ) {
-    message.channel.send("검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
-    return;
-  }
-  
-  let rescard = res.data.cards[0];
-  for(card of res.data.cards) {
-    if(card.name == args) rescard = card;
-  }
-  let images = [];
+  let infoMessage = await message.channel.send("🔍 검색 중입니다...")
 
-  if(rescard.childIds != null){
-    for await(const id of rescard.childIds){
-      const rescard = await axios({
-        method : "GET",
-        url : "https://kr.api.blizzard.com/hearthstone/cards/"+id+"?locale=ko_KR&access_token="+blizzardToken
-      })
-      images = images.concat(rescard.data.image);
+  const userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
+  const gamemode = userConfig ? userConfig.gamemode : "wild";
+  const paginateStep = userConfig ? userConfig.paginateStep : 3;
+
+  const resCard = await getMostMatchingCard(message, args, gamemode, blizzardToken);
+
+  let promises = [];
+
+  if(resCard.childIds != null){
+    for (const id of resCard.childIds){
+      const promise = axios.get(`https://us.api.blizzard.com/hearthstone/cards/${ id }`,
+      { params : {
+        locale: "ko_KR",
+        access_token: blizzardToken
+      }})
+      .then(res => res.data);
+      promises = promises.concat(promise);
     }
 
-    pagi = new paginator(message, images, paginateStep, rescard.childIds.length);
-    pagi.next();
+    pagi = new paginator(message, [Promise.all(promises)], paginateStep, resCard.childIds.length, preProcess);
+    let msgs = await pagi.next();
+    infoMessage.delete()
+
+    while(msgs && msgs["reaction"]){
+      msgs["targetMessages"].map(msg => msg.delete());
+      msgs["infoMessage"].delete();
+      if( msgs["reaction"] === "➡️" ){
+        msgs = await pagi.next();
+      } else if( msgs["reaction"] === "⬅️" ){
+        msgs = await pagi.prev();
+      }
+    }
+    return;
   } else {
-    message.channel.send("해당 카드의 관련 카드가 없습니다!");
+    message.channel.send("‼️ 해당 카드의 관련 카드가 없습니다!");
     return;
   }
 }

@@ -90,7 +90,7 @@ client.on("message", async message => {
       }
     } else {
       if( !client.commands.has(token.command) ) {
-        message.channel.send("없는 명령어입니다!");
+        message.channel.send("‼️ 없는 명령어입니다!");
         return;
       } else {
         client.commands.get(token.command).execute(message, token.args, blizzardToken, token.class_);
@@ -98,7 +98,7 @@ client.on("message", async message => {
     }
   } catch(err){
     console.log(err);
-    message.channel.send("서버 내부 오류! 개발자에게 알려주세요!");
+    message.channel.send("‼️ 서버 내부 오류! 개발자에게 알려주세요!");
   }
 })
 

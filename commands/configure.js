@@ -32,7 +32,7 @@ async function configure(message, args){
         { gamemode : reactionNumValue },
         { new: true, upsert: true }
       ).exec();
-      message.channel.send(`${message.author.username}#${message.author.discriminator}님의 게임모드가 "${reactionNumValueKor}"로 설정되었습니다.`)
+      message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 게임모드가 "${reactionNumValueKor}"로 설정되었습니다.`)
     }
   } else if(args === '페이지') {
     let msg = await message.channel.send(
@@ -67,8 +67,13 @@ async function configure(message, args){
         { new: true, upsert: true }
       ).exec();
 
-      message.channel.send(`${message.author.username}#${message.author.discriminator}님의 페이지당 이미지 수가 "${reactionNumValue}"로 설정되었습니다.`)
+      message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 페이지당 이미지 수가 "${reactionNumValue}"로 설정되었습니다.`)
     }
+  } else if(!args) {
+    let userConfig = await mongo.userModel.findOne(
+      {name:`${message.author.username}#${message.author.discriminator}`}
+      ).exec();
+    message.channel.send(`☑️ 현재 설정값은 **게임모드 : "${ userConfig ? (userConfig.gamemode == 'standard' ? '정규' : '야생') : '야생' }", 페이지 : ${ userConfig ? userConfig.paginateStep : 3 }** 입니다.`)
   }
 }
 module.exports = {
