@@ -53,7 +53,7 @@ async function name(message, args, blizzardToken, class_){
     .then(res => res.data.cards);
   });
   
-  let pagi = new paginator(message, promises, paginateStep, cardCount, preProcess(args));
+  let pagi = new paginator(message, promises, paginateStep, cardCount, preProcess(args), false);
   let msgs = await pagi.next();
   infoMessage.delete();
 

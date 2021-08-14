@@ -38,7 +38,7 @@ async function all(message, args, blizzardToken, class_){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   } else if ( cardCount > cardCountLimit ){
-    message.channel.send("‼️ 검색 결과가 너무 많습니다. 좀더 구체적인 검색어를 입력해 주세요.");
+    message.channel.send("‼️ 검색 결과가 너무 많습니다! 좀더 구체적인 검색어를 입력해 주세요.");
     return;
   }
 
@@ -58,8 +58,9 @@ async function all(message, args, blizzardToken, class_){
     .then(res => res.data.cards);
   });
 
-  let pagi = new paginator(message, promises, paginateStep, cardCount, preProcess);
+  let pagi = new paginator(message, promises, paginateStep, cardCount, preProcess, true);
   let msgs = await pagi.next();
+  
   infoMessage.delete();
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.

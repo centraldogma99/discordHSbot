@@ -20,6 +20,7 @@ async function childs(message, args, blizzardToken){
   const paginateStep = userConfig ? userConfig.paginateStep : 3;
 
   const resCard = await getMostMatchingCard(message, args, gamemode, blizzardToken);
+  if (!resCard) return;
 
   let promises = [];
 
@@ -34,7 +35,7 @@ async function childs(message, args, blizzardToken){
       promises = promises.concat(promise);
     }
 
-    pagi = new paginator(message, [Promise.all(promises)], paginateStep, resCard.childIds.length, preProcess);
+    pagi = new paginator(message, [Promise.all(promises)], paginateStep, resCard.childIds.length, preProcess, true);
     let msgs = await pagi.next();
     infoMessage.delete()
 

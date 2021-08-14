@@ -2,8 +2,9 @@ const axios = require("axios");
 const Discord = require("discord.js")
 const client = new Discord.Client()
 const tokenizer = require("./tools/tokenizer");
-const fs = require('fs')
-const translateClass = require("./tools/translateClass")
+const fs = require('fs');
+const translateClass = require("./tools/translateClass");
+const BlizzardToken = require("./tools/blizzardToken");
 let logChannel;
 
 require("dotenv").config()
@@ -11,29 +12,12 @@ require("dotenv").config()
 const prefix = '!';
 const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
-const blizzardID = process.env.BLIZZARD_ID;
-const blizzardSecret = process.env.BLIZZARD_SECRET;
 const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
 
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-let blizzardToken;
-axios({
-  url : "https://us.battle.net/oauth/token",
-  method : "post",
-  auth: {
-    username : blizzardID,
-    password : blizzardSecret
-  },
-  data: new URLSearchParams({
-    grant_type: 'client_credentials'
-  })
-})
-.then(res => {blizzardToken = res.data.access_token;})
-.catch(e => console.log("블리자드 API오류"))
 
 for (const file of commandFiles){
   const command = require(`./commands/${file}`);
@@ -78,7 +62,7 @@ client.on("message", async message => {
       console.log(e);
     }
   }  
-
+  let blizzardToken = await BlizzardToken.getToken();
   try{
     // @여관주인
     if( !token.command ) {
