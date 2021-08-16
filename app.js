@@ -38,7 +38,7 @@ client.on("message", async message => {
   if( !message.mentions.has(client.user.id) ) return
 
   const d = new Date(new Date( message.createdTimestamp ).getTime()+3600000*9);  // 9시간 추가
-  let date = `${ d.getFullYear() }-${ d.getMonth().toString().padStart(2, "0") }-${ d.getDay().toString().padStart(2, "0") }, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`
+  let date = `${ d.getFullYear() }-${ (d.getMonth()+1).toString().padStart(2, "0") }-${ d.getDate().toString().padStart(2, "0") }, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`
   
   logChannel.send(
     `**${message.author.username}#${message.author.discriminator}** : ${date} : \`${message.content}\``
