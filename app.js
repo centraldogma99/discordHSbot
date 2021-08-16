@@ -37,18 +37,18 @@ client.on("message", async message => {
   if( message.author.bot ) return
   if( !message.mentions.has(client.user.id) ) return
 
-  const d = new Date( message.createdTimestamp );
-  date = d.toDateString() + ", " + d.getHours() + ":" + d.getMinutes()
+  const d = new Date(new Date( message.createdTimestamp ).getTime()+3600000*9);  // 9시간 추가
+  let date = `${ d.getFullYear() }-${ d.getMonth().toString().padStart(2, "0") }-${ d.getDay().toString().padStart(2, "0") }, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`
   
   logChannel.send(
     `**${message.author.username}#${message.author.discriminator}** : ${date} : \`${message.content}\``
   )
 
-  let token;
+  let tokens;
   try{
-    token = tokenizer(message.content, translateClass);
+    tokens = tokenizer(message.content, translateClass);
 
-    if (token.mention != client.user.id) {
+    if (tokens.mention != client.user.id) {
       throw Error("MentionShouldGoFirst");
     }
   } catch(e){
@@ -65,19 +65,19 @@ client.on("message", async message => {
   let blizzardToken = await BlizzardToken.getToken();
   try{
     // @여관주인
-    if( !token.command ) {
-      if( !token.args ){
+    if( !tokens.command ) {
+      if( !tokens.args ){
         client.commands.get("사용법").execute(message, null);
         return;
       } else {
-        client.commands.get("defaultAction").execute(message, token.args, blizzardToken, token.class_);
+        client.commands.get("defaultAction").execute(message, tokens.args, blizzardToken, tokens.class_);
       }
     } else {
-      if( !client.commands.has(token.command) ) {
+      if( !client.commands.has(tokens.command) ) {
         message.channel.send("‼️ 없는 명령어입니다!");
         return;
       } else {
-        client.commands.get(token.command).execute(message, token.args, blizzardToken, token.class_);
+        client.commands.get(tokens.command).execute(message, tokens.args, blizzardToken, tokens.class_);
       }
     }
   } catch(err){
