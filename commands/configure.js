@@ -100,7 +100,7 @@ async function configure(message, args){
         { goldenCardMode : reactionNumValue },
         { new: true, upsert: true }
       ).exec();
-      message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 황금 카드 모드가 "${reactionNumValueKor ? "Yes" : "No"}"로 설정되었습니다.`)
+      message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 황금 카드 모드가 "${reactionNumValue ? "Yes" : "No"}"로 설정되었습니다.`)
     }
   } 
   // else if(args === '언어'){
