@@ -1,11 +1,10 @@
 /*
   ! 모든 cards 는 로드된 후에 preProcess() 를 거쳐야함
 */
-const uniqueArrayByName = require('../tools/uniqueArrayByName')
-
+const uniqueArrayByName = require('./uniqueArrayByName')
 
 class paginator {
-  constructor(message, promises, step, length, preProcess, lengthEnabled){
+  constructor(message, promises, step, length, preProcess, lengthEnabled = true, goldenCardMode = false){
     /*
       @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
       @promises 카드를 검색하는 promise들. 이들의 resolve값은 Array[card] 이어야 한다.
@@ -22,6 +21,7 @@ class paginator {
     this.preProcess = preProcess
     this.cards = [];
     this.lengthEnabled = lengthEnabled;
+    this.goldenCardMode = goldenCardMode;
 
     this.numberOfCards = length;
   }
@@ -59,7 +59,14 @@ class paginator {
     let infoMessage;
     let isLongResult = this.cards.length > this.step
     
-    let promises = targetCards.map(card => this.message.channel.send({ files : [card.image] }));
+    
+    let promises;
+    if ( !this.goldenCardMode ){
+      promises = targetCards.map(card => this.message.channel.send({ files : [card.image] }));
+    } else {
+      promises = targetCards.map(card => this.message.channel.send({ files : [card.imageGold ? card.imageGold : card.image] }));
+    }
+    
     // ? await 필요한가
     let targetMessages = await Promise.all(promises);
     if(isLongResult){

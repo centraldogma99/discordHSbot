@@ -1,10 +1,9 @@
-const axios = require("axios");
 const Discord = require("discord.js")
 const client = new Discord.Client()
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const translateClass = require("./tools/translateClass");
-const BlizzardToken = require("./tools/blizzardToken");
+const BlizzardToken = require("./tools/BlizzardToken");
 let logChannel;
 
 require("dotenv").config()

@@ -3,8 +3,10 @@ const schema = mongoose.Schema;
 
 const userSchema = schema({
   name: { type: String, required: true },
-  gamemode: { type: String },
-  paginateStep: { type: Number }
+  gameMode: { type: String },
+  paginateStep: { type: Number },
+  languageMode: { type: String },
+  goldenCardMode: { type: Boolean }
 })
 
 class Mongo{

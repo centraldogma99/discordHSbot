@@ -3,7 +3,7 @@ const stringSimilarity = require("string-similarity")
 const uniqueArrayByName = require('../tools/uniqueArrayByName')
 const range = require('../tools/range');
 
-async function getMostMatchingCard(message, args, gamemode, blizzardToken){
+async function getMostMatchingCard(message, args, gameMode, blizzardToken){
   const cardCountLimit = 1500;
   const pageSize = 50;
 
@@ -11,7 +11,7 @@ async function getMostMatchingCard(message, args, gamemode, blizzardToken){
     { params: {
       locale: "ko_KR",
       textFilter: encodeURI(args),
-      set: gamemode,
+      set: gameMode,
       pageSize: 1,
       access_token: blizzardToken
     }}
@@ -31,7 +31,7 @@ async function getMostMatchingCard(message, args, gamemode, blizzardToken){
       { params: {
         locale: "ko_KR",
         textFilter: encodeURI(args),
-        set: gamemode,
+        set: gameMode,
         pageSize: pageSize,
         page: i,
         access_token: blizzardToken

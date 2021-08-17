@@ -4,10 +4,11 @@
 */
 
 const axios = require("axios")
-const paginator = require("../tools/paginator");
-const mongo = require("../db");
+const paginator = require("../tools/Paginator");
+const loadUserConfig = require("../tools/loadUserConfig")
 const uniqueArrayByName = require('../tools/uniqueArrayByName')
 const range = require('../tools/range')
+const CONSTANTS = require('../constants')
 
 function preProcess(cards){
   return uniqueArrayByName(cards);
@@ -15,19 +16,15 @@ function preProcess(cards){
 
 async function all(message, args, blizzardToken, class_){
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
-  const userConfig = await mongo.userModel.findOne({name:`${message.author.username}#${message.author.discriminator}`}).exec();
-  const gamemode = userConfig ? userConfig.gamemode : "wild";
-  const paginateStep = userConfig ? userConfig.paginateStep : 3;
-  const pageSize = 50;
-  const cardCountLimit = 1500;
+  const userConfig = await loadUserConfig(message.author);
 
   // TODO 카드 개수알아내기 위한 요청, 추후 개선 필요
-  let temp = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+  let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
-    locale: "ko_KR",
+    locale: userConfig.languageMode,
     textFilter: encodeURI(args),
     class: class_,
-    set: gamemode,
+    set: userConfig.gameMode,
     pageSize: 1,
     page: 1,
     access_token: blizzardToken
@@ -37,40 +34,65 @@ async function all(message, args, blizzardToken, class_){
   if( cardCount == 0 ) {
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
-  } else if ( cardCount > cardCountLimit ){
+  } else if ( cardCount > CONSTANTS.cardCountLimit ){
     message.channel.send("‼️ 검색 결과가 너무 많습니다! 좀더 구체적인 검색어를 입력해 주세요.");
     return;
   }
 
   // ! pageSize가 너무 작으면 429:too many request 발생
-  // TODO pageSize가 paginateStep보다 작으면 오류 발생. 현재는 40으로 유지할 것.
-  let promises = range( Math.ceil(cardCount / pageSize), 1).map(i => {
-    return axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+  // TODO pageSize가 paginateStep보다 작으면 오류 발생. 현재는 50으로 유지할 것.
+  let promises;
+  // if ( userConfig.languageMode == "ko_KR" ){
+  promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 1).map(i => 
+    axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
-      locale: "ko_KR",
+      locale: userConfig.languageMode,
       textFilter: encodeURI(args),
       class: class_,
-      set: gamemode,
-      pageSize: pageSize,
+      set: userConfig.gameMode,
+      pageSize: CONSTANTS.pageSize,
       page : i,
       access_token: blizzardToken
     }})
-    .then(res => res.data.cards);
-  });
+    .then(res => res.data.cards)
+  );
+  // }
+  //  else if ( userConfig.languageMode == "en_US" ){
+  //   promises = Promise.all(range( Math.ceil(cardCount / CONSTANTS.pageSize), 1).map(i => 
+  //     axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+  //     { params: {
+  //       locale: "ko_KR",
+  //       textFilter: encodeURI(args),
+  //       class: class_,
+  //       set: userConfig.gameMode,
+  //       pageSize: CONSTANTS.pageSize,
+  //       page : i,
+  //       access_token: blizzardToken
+  //     }})) // [Array[Card], Array[Card], ...]
+  //     .then(res => res.map(cards => cards.map(card => card.id))) // [Array[Id], Array[Id], ... ]
+  //     .then(ids => ids.map(id => 
+  //       axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
+  //       { params : {
+  //         locale: userConfig.languageMode,
+  //         access_token: blizzardToken
+  //       }})))
+  //     .then(res => res.map( card => card.data ))
+  //   );
+  // }
 
-  let pagi = new paginator(message, promises, paginateStep, cardCount, preProcess, true);
+  let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
   let msgs = await pagi.next();
   
   infoMessage.delete();
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.
   // FIXME? 삭제가 더 늦게 되는 문제. 안 고쳐도 될지도. 그림 합치는것 구현 이후에 다시 고려
-  while(msgs && msgs["reaction"]){
-    msgs["targetMessages"].map(msg => msg.delete());
-    msgs["infoMessage"].delete();
-    if( msgs["reaction"] === "➡️" ){
+  while(msgs && msgs.reaction){
+    msgs.targetMessages.map(msg => msg.delete());
+    msgs.infoMessage.delete();
+    if( msgs.reaction === "➡️" ){
       msgs = await pagi.next();
-    } else if( msgs["reaction"] === "⬅️" ){
+    } else if( msgs.reaction === "⬅️" ){
       msgs = await pagi.prev();
     }
   }
