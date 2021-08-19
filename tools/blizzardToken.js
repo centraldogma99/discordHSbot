@@ -1,5 +1,6 @@
 require("dotenv").config()
 const axios = require("axios");
+const CONSTANTS = require('../constants')
 
 class BlizzardToken{
   static token;
@@ -10,7 +11,7 @@ class BlizzardToken{
       const blizzardSecret = process.env.BLIZZARD_SECRET;
       try{
         let res = await axios({
-          url : "https://us.battle.net/oauth/token",
+          url : `https://${ CONSTANTS.apiRequestRegion }.battle.net/oauth/token`,
           method : "post",
           auth: {
             username : blizzardID,

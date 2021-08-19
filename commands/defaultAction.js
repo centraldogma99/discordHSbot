@@ -24,10 +24,11 @@ async function defaultAction(message, args, blizzardToken, class_){
     msg = await message.channel.send("**< ! >**  관련 카드가 있습니다. 아래 ➡️을 눌러 관련 카드를 검색할 수 있습니다.")
     await msg.react("➡️")
     collected = await msg.awaitReactions(
-      (reaction, user) => {
-         return reaction.emoji.name === "➡️" && user.id == message.author.id;
-      },
-      { time : 20000, max : 1 }
+      { filter: (reaction, user) => {
+          return reaction.emoji.name === "➡️" && user.id == message.author.id;
+        },
+        time : 20000, max : 1
+      }
     )
     if ( collected.size != 0 ){
       childs.execute(message, args, blizzardToken);

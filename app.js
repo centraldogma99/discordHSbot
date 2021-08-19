@@ -1,5 +1,6 @@
-const Discord = require("discord.js")
-const client = new Discord.Client()
+const { Client, Intents, Collection } = require("discord.js");
+
+const client = new Client({ intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const translateClass = require("./tools/translateClass");
@@ -15,7 +16,7 @@ const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
 
 
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles){
@@ -32,12 +33,12 @@ client.on("ready", () => {
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
 })
 
-client.on("message", async message => {
+client.on("messageCreate", async message => {
   if( message.author.bot ) return
   if( !message.mentions.has(client.user.id) ) return
 
   const d = new Date(new Date( message.createdTimestamp ).getTime()+3600000*9);  // 9시간 추가
-  let date = `${ d.getFullYear() }-${ (d.getMonth()+1).toString().padStart(2, "0") }-${ d.getDate().toString().padStart(2, "0") }, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`
+  const date = `${ d.getFullYear() }-${ (d.getMonth()+1).toString().padStart(2, "0") }-${ d.getDate().toString().padStart(2, "0") }, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`
   
   logChannel.send(
     `**${message.author.username}#${message.author.discriminator}** : ${date} : \`${message.content}\``

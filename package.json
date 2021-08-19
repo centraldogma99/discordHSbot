@@ -10,9 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
-    "mongoose": "^5.13.5",
+    "mongoose": "^5.13.7",
     "string-similarity": "^4.0.4"
   }
 }

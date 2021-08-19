@@ -2,12 +2,13 @@ const axios = require("axios")
 const stringSimilarity = require("string-similarity")
 const uniqueArrayByName = require('../tools/uniqueArrayByName')
 const range = require('../tools/range');
+const CONSTANTS = require('../constants')
 
 async function getMostMatchingCard(message, args, gameMode, blizzardToken){
   const cardCountLimit = 1500;
   const pageSize = 50;
 
-  let temp = await axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+  let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: "ko_KR",
       textFilter: encodeURI(args),
@@ -27,7 +28,7 @@ async function getMostMatchingCard(message, args, gameMode, blizzardToken){
 
   const pageCount = Math.ceil(cardCount / pageSize);
   let promises = range(pageCount, 1).map(i => {
-    return axios.get("https://us.api.blizzard.com/hearthstone/cards", 
+    return axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
       { params: {
         locale: "ko_KR",
         textFilter: encodeURI(args),

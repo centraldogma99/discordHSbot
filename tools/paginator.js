@@ -97,12 +97,15 @@ class paginator {
         );
       }
       let collectedReactions = await lastMessage.awaitReactions(
-        (reaction, user) => {
-          return (reaction.emoji.name === "➡️" ||
-          reaction.emoji.name === "⬅️") &&
-          user.id == this.message.author.id;
-        },
-        { time : 20000, max : 1 }
+        {
+          filter: (reaction, user) => {
+            return (reaction.emoji.name === "➡️" ||
+            reaction.emoji.name === "⬅️") &&
+            user.id === this.message.author.id;
+          },
+          time : 20000,
+          max : 1
+        }
       )
 
       let reaction;

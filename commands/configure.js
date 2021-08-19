@@ -12,12 +12,15 @@ async function configure(message, args){
     await msg.react("1️⃣");
     await msg.react("2️⃣");
     let collectedReactions = await msg.awaitReactions(
-      (reaction, user) => {
-        return ((reaction.emoji.name === "1️⃣" ||
-        reaction.emoji.name === "2️⃣")) &&
-        user.id == message.author.id;
-      },
-      { time : 15000, max : 1 }
+      {
+        filter: (reaction, user) => {
+          return ((reaction.emoji.name === "1️⃣" ||
+          reaction.emoji.name === "2️⃣")) &&
+          user.id == message.author.id;
+        },
+        time: 15000,
+        max: 1
+      }
     )
     if (collectedReactions.size == 0){
       return;
@@ -45,14 +48,17 @@ async function configure(message, args){
       await msg.react(emoji);
     }
     let collectedReactions = await msg.awaitReactions(
-      (reaction, user) => {
-        let emojiCompare = false;
-        for(const emoji of numberEmojis){
-          emojiCompare = emojiCompare || reaction.emoji.name === emoji
-        }
-        return emojiCompare && user.id == message.author.id;
-      },
-      { time : 15000, max : 1 }
+      {
+        filter: (reaction, user) => {
+          let emojiCompare = false;
+          for(const emoji of numberEmojis){
+            emojiCompare = emojiCompare || reaction.emoji.name === emoji
+          }
+          return emojiCompare && user.id == message.author.id;
+        },
+        time : 15000,
+        max : 1
+      }
     )
     if (collectedReactions.size == 0){
       return;
@@ -70,7 +76,7 @@ async function configure(message, args){
 
       message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 페이지당 이미지 수가 "${reactionNumValue}"로 설정되었습니다.`)
     }
-  } else if(args === '황금'){
+  } else if(args === '황금' || args === '황금카드'){
     let msg = await message.channel.send(
       '황금카드로 검색할지 여부를 설정합니다(기본값 : 일반 카드).\n**자신에게만 적용됩니다. 황금 카드 이미지가 없는 경우 일반 카드로 검색됩니다.**\n\n\일반 카드는 1번, 황금 카드는 2번을 선택해 주세요!\n\n이모티콘이 모두 표시되는데**(2번까지 있음)** 시간이 약간 걸립니다.\n모두 표시된 후에 선택해주셔야 작동합니다! 양해 부탁드립니다.\n'
     );
@@ -79,12 +85,14 @@ async function configure(message, args){
     await msg.react("1️⃣");
     await msg.react("2️⃣");
     let collectedReactions = await msg.awaitReactions(
-      (reaction, user) => {
-        return ((reaction.emoji.name === "1️⃣" ||
-        reaction.emoji.name === "2️⃣")) &&
-        user.id == message.author.id;
-      },
-      { time : 15000, max : 1 }
+      {
+        filter: (reaction, user) => {
+          return ((reaction.emoji.name === "1️⃣" ||
+          reaction.emoji.name === "2️⃣")) &&
+          user.id == message.author.id;
+        },
+        time : 15000, max : 1
+      }
     )
     if (collectedReactions.size == 0){
       return;
@@ -112,12 +120,13 @@ async function configure(message, args){
   //   await msg.react("1️⃣");
   //   await msg.react("2️⃣");
   //   let collectedReactions = await msg.awaitReactions(
-  //     (reaction, user) => {
-  //       return ((reaction.emoji.name === "1️⃣" ||
-  //       reaction.emoji.name === "2️⃣")) &&
-  //       user.id == message.author.id;
-  //     },
-  //     { time : 15000, max : 1 }
+  //     {filter: (reaction, user) => {
+    //       return ((reaction.emoji.name === "1️⃣" ||
+    //       reaction.emoji.name === "2️⃣")) &&
+    //       user.id == message.author.id;
+    //     },
+    //     time : 15000, max : 1
+      // }
   //   )
   //   if (collectedReactions.size == 0){
   //     return;
