@@ -2,8 +2,10 @@
   ! 모든 cards 는 로드된 후에 preProcess() 를 거쳐야함
 */
 const uniqueArrayByName = require('./uniqueArrayByName')
+const cropImage = require('./cropImage');
+const mergeImages = require('./mergeImages');
 
-class paginator {
+class Paginator {
   constructor(message, promises, step, length, preProcess, lengthEnabled = true, goldenCardMode = false){
     /*
       @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
@@ -39,14 +41,12 @@ class paginator {
     // ? 끝일 때, 또는 처음 next가 실행되었을 때, 다음 promise 로드.
     while ( this.cursor + this.step >= this.cards.length ){
       if( this.promises.length > 0 ){
-        let loadingMessage = await this.message.channel.send("🃏 카드 가져오는 중...")
         let cards = await this.promises[0];
         cards = this.preProcess(cards);
         // TODO 더 나은 알고리즘 찾기
         // if (this.cards.length > 0)
         this.cards = uniqueArrayByName(this.cards.concat(cards));
         this.promises = this.promises.slice(1);
-        loadingMessage.delete();
       } else {
         break;
       }
@@ -60,22 +60,25 @@ class paginator {
     let isLongResult = this.cards.length > this.step
     
     
-    let promises;
+    let images;
     if ( !this.goldenCardMode ){
-      promises = targetCards.map(card => this.message.channel.send({ files : [card.image] }));
+      images = targetCards.map(card => card.image);
     } else {
-      promises = targetCards.map(card => this.message.channel.send({ files : [card.imageGold ? card.imageGold : card.image] }));
+      images = targetCards.map(card => card.imageGold ? card.imageGold : card.image );
     }
+    const mergeImage = await mergeImages(images, this.step % 3 == 0 ? 3 : 2);
+    const promise = this.message.channel.send({ files : [mergeImage] });
     
     // ? await 필요한가
-    let targetMessages = await Promise.all(promises);
+    // targetMessage는 1개인것으로.
+    let targetMessage = await promise;
     if(isLongResult){
-      let lastMessage = targetMessages[0];
-      for (const msg of targetMessages.slice(1, targetMessages.length)){
-        if (msg.createdTimestamp > lastMessage.createdTimestamp){
-          lastMessage = msg;
-        }
-      }
+      let lastMessage = targetMessage;
+      // for (const msg of targetMessages.slice(1, targetMessages.length)){
+      //   if (msg.createdTimestamp > lastMessage.createdTimestamp){
+      //     lastMessage = msg;
+      //   }
+      // }
       // 왼쪽 감정표현
       if ( this.cursor - this.step >= 0 ){
         await lastMessage.react("⬅️");
@@ -117,7 +120,7 @@ class paginator {
       return {
         'reaction': reaction,
         'infoMessage': await infoMessage,
-        'targetMessages': targetMessages
+        'targetMessage': targetMessage
       }
     } else {
       return;
@@ -133,4 +136,4 @@ class paginator {
   }
 }
 
-module.exports = paginator;
+module.exports = Paginator;

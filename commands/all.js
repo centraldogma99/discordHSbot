@@ -16,6 +16,7 @@ function preProcess(cards){
 
 async function all(message, args, blizzardToken, class_){
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
+  await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
 
   // TODO 카드 개수알아내기 위한 요청, 추후 개선 필요
@@ -81,6 +82,7 @@ async function all(message, args, blizzardToken, class_){
   // }
 
   let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
+
   let msgs = await pagi.next();
   
   infoMessage.delete();
@@ -88,11 +90,13 @@ async function all(message, args, blizzardToken, class_){
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.
   // FIXME? 삭제가 더 늦게 되는 문제. 안 고쳐도 될지도. 그림 합치는것 구현 이후에 다시 고려
   while(msgs && msgs.reaction){
-    msgs.targetMessages.map(msg => msg.delete());
+    msgs.targetMessage.delete();
     msgs.infoMessage.delete();
     if( msgs.reaction === "➡️" ){
+      await message.channel.sendTyping();
       msgs = await pagi.next();
     } else if( msgs.reaction === "⬅️" ){
+      await message.channel.sendTyping();
       msgs = await pagi.prev();
     }
   }

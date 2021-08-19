@@ -11,6 +11,7 @@ function base64_decode(base64Image, file) {
 
 async function defaultAction(message, args, blizzardToken, class_){
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
+  await message.channel.sendTyping();
   let userConfig = await loadUserConfig(message.author);
   const resCard = await getMostMatchingCard(message, args, userConfig.gameMode, blizzardToken);
   if (!resCard) return;

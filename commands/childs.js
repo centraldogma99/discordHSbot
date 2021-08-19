@@ -11,10 +11,12 @@ function preProcess(cards){
 async function childs(message, args, blizzardToken){
   if ( !args ){ await message.channel.send("찾을 카드명을 입력해 주세요."); return; }
   const infoMessage = await message.channel.send("🔍 검색 중입니다...");
+  await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
 
   const resCard = await getMostMatchingCard(message, args, userConfig.gameMode, blizzardToken);
   if (!resCard) return;
+  await message.channel.send({files: [resCard.image]})
 
   let promises = [];
 
@@ -33,11 +35,13 @@ async function childs(message, args, blizzardToken){
     infoMessage.delete()
 
     while(msgs && msgs.reaction){
-      msgs.targetMessages.map(msg => msg.delete());
+      msgs.targetMessage.delete();
       msgs.infoMessage.delete();
       if( msgs.reaction === "➡️" ){
+        await message.channel.sendTyping();
         msgs = await pagi.next();
       } else if( msgs.reaction === "⬅️" ){
+        await message.channel.sendTyping();
         msgs = await pagi.prev();
       }
     }

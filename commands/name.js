@@ -14,6 +14,7 @@ function preProcess(args){
 
 async function name(message, args, blizzardToken, class_){
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
+  await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
 
   let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
@@ -55,11 +56,13 @@ async function name(message, args, blizzardToken, class_){
   infoMessage.delete();
 
   while(msgs && msgs.reaction){
-    msgs.targetMessages.map(msg => msg.delete());
+    msgs.targetMessage.delete();
     msgs.infoMessage.delete();
     if( msgs.reaction === "➡️" ){
+      await message.channel.sendTyping();
       msgs = await pagi.next();
     } else if( msgs.reaction === "⬅️" ){
+      await message.channel.sendTyping();
       msgs = await pagi.prev();
     }
   }
