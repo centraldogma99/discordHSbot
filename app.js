@@ -1,10 +1,11 @@
-const { Client, Intents, Collection } = require("discord.js");
+const { Client, Intents, Collection, Permissions } = require("discord.js");
 
 const client = new Client({ intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const translateClass = require("./tools/translateClass");
 const BlizzardToken = require("./tools/BlizzardToken");
+const Logger = require("./tools/logger");
 let logChannel;
 
 require("dotenv").config()
@@ -14,7 +15,7 @@ const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
 const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
-
+let logger;
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -31,18 +32,37 @@ client.on("ready", () => {
     type: "PLAYING",
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
+  logger = new Logger(logChannel);
 })
 
 client.on("messageCreate", async message => {
-  if( message.author.bot ) return
-  if( !message.mentions.has(client.user.id) ) return
+  if( message.author.bot ) return;
+  if( !message.mentions.has(client.user.id) ) return;
 
-  const d = new Date(new Date( message.createdTimestamp ).getTime()+3600000*9);  // 9시간 추가
-  const date = `${ d.getFullYear() }-${ (d.getMonth()+1).toString().padStart(2, "0") }-${ d.getDate().toString().padStart(2, "0") }, ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}:${d.getSeconds().toString().padStart(2, "0")}`
-  
-  logChannel.send(
-    `**${message.author.username}#${message.author.discriminator}** : ${date} : \`${message.content}\``
-  )
+  // 현재 채널에 permission가지고 있는지 확인
+  const roleChecker = [
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.ATTACH_FILES,
+    Permissions.FLAGS.ADD_REACTIONS
+  ];
+  let hasPermission = false;
+  for( const role of message.guild.me.roles.cache.values() ){
+    let myRolePermission = role.permissionsIn(message.channel);
+    if( myRolePermission.has(roleChecker) ){
+      if (role.name != '@everyone'){
+        hasPermission = true;
+        break;
+      } 
+    }
+  }
+  if( !hasPermission ) {
+    logger.serverLog(`No permission : ${ message.channel.id }`);
+    return;
+  }
+
+  // 메시지 받은것 로깅
+  logger.messageLog(message);
+
 
   let tokens;
   try{
