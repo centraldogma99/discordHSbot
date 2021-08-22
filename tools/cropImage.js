@@ -1,17 +1,18 @@
 const sharp = require('sharp');
-const axios = require('axios')
+const getImage = require('./getImage')
 
-async function cropImage(imageURL){
-  let image = (await axios({ 
-    url: imageURL,
-    responseType: "arraybuffer"
-  })).data;
-  return sharp(image).extract({
-    width: 100,
-    height: 100,
-    left: 60,
-    top: 40
+async function cropImage(imageURL, width, height, left, top){
+  let image = await getImage(imageURL);
+  const croppedImage = await sharp(image).extract({
+    width: width,
+    height: height,
+    left: left,
+    top: top
   }).toBuffer()
+  return {
+    croppedImage: croppedImage,
+    originalImage: image
+  }
 }
 
 module.exports = cropImage;

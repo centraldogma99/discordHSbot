@@ -1,26 +1,35 @@
 const axios = require("axios")
 const paginator = require("../tools/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig")
-const uniqueArrayByName = require('../tools/uniqueArrayByName')
+const uniqueArray = require('../tools/uniqueArray')
 const range = require('../tools/range')
 const CONSTANTS = require('../constants')
+const cardNameUntrim = require('../tools/cardNameUntrim')
 
 function preProcess(args){
   return (cards) => {
-    let tempCards = uniqueArrayByName(cards);
+    let tempCards = uniqueArray(cards, "name");
     return tempCards.filter(card => card.name.includes(args));
   }
 }
 
 async function name(message, args, blizzardToken, class_){
+  console.time('as')
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
 
+  let cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
+  if( !cardNameProcessed ) {
+    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+    return;
+  }
+  cardNameProcessed = cardNameProcessed.name;
+
   let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
     locale: userConfig.languageMode,
-    textFilter: encodeURI(args),
+    textFilter: encodeURI(cardNameProcessed),
     class: class_,
     set: userConfig.gameMode,
     pageSize: 1,
@@ -29,6 +38,7 @@ async function name(message, args, blizzardToken, class_){
   }});
 
   let cardCount = temp.data.cardCount;
+  // ? 이거 필요 없을수도
   if( cardCount == 0 ) {
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.")
     return;
@@ -41,7 +51,7 @@ async function name(message, args, blizzardToken, class_){
     return axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: userConfig.languageMode,
-      textFilter: encodeURI(args),
+      textFilter: encodeURI(cardNameProcessed),
       class: class_,
       set: userConfig.gameMode,
       pageSize: CONSTANTS.pageSize,
@@ -50,8 +60,8 @@ async function name(message, args, blizzardToken, class_){
     }})
     .then(res => res.data.cards);
   });
-  
-  let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess(args), false, userConfig.goldenCardMode);
+  console.timeEnd('as')
+  let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess(cardNameProcessed), false, userConfig.goldenCardMode);
   let msgs = await pagi.next();
   infoMessage.delete();
 

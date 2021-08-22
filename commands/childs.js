@@ -3,21 +3,26 @@ const paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig")
 const CONSTANTS = require('../constants')
+const cardNameUntrim = require('../tools/cardNameUntrim')
 
 function preProcess(cards){
   return cards;
 }
 
-async function childs(message, args, blizzardToken){
+async function childs(message, args, blizzardToken, fromDefault){
   if ( !args ){ await message.channel.send("찾을 카드명을 입력해 주세요."); return; }
   const infoMessage = await message.channel.send("🔍 검색 중입니다...");
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
-
-  const resCard = await getMostMatchingCard(message, args, userConfig.gameMode, blizzardToken);
+  let cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
+  if( !cardNameProcessed ) {
+    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+    return;
+  }
+  const resCard = await getMostMatchingCard(message, cardNameProcessed.name, userConfig.gameMode, blizzardToken);
   if (!resCard) return;
-  await message.channel.send({files: [resCard.image]})
-
+  if( !fromDefault ){ await message.channel.send({files: [resCard.image]}) }
+  
   let promises = [];
 
   if(resCard.childIds != null){

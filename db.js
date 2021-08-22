@@ -9,6 +9,13 @@ const userSchema = schema({
   goldenCardMode: { type: Boolean }
 })
 
+const cardAliasSchema = schema({
+  alias: { type: String, required: true, unique: true, dropDups: true },
+  name: { type: String, required: true },
+  cardImage: { type: String, required: true },
+  cardImageGold: { type: String }
+})
+
 class Mongo{
   constructor(){
     this.connectDB();
@@ -22,6 +29,8 @@ class Mongo{
     db.once('open', () => {
       console.log('데이터베이스 연결 성공')
       this.userModel = mongoose.model("users", userSchema);
+      this.cardAliasModel = mongoose.model('cardAliases', cardAliasSchema);
+      this.cardAliasStandardModel = mongoose.model('cardAliasStandards', cardAliasSchema)
     })
     db.on('disconnected', () => {
       console.log('데이터베이스와 연결 끊어짐, 5초 후 연결 재시도')

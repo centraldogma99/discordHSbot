@@ -1,19 +1,19 @@
-require("dotenv").config()
 const childs = require("./childs")
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
-
-function base64_decode(base64Image, file) {
-  fs.writeFileSync(file,base64Image);
-   console.log('******** File created from base64 encoded string ********');
-}
-
+const cardNameUntrim = require('../tools/cardNameUntrim')
 
 async function defaultAction(message, args, blizzardToken, class_){
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   let userConfig = await loadUserConfig(message.author);
-  const resCard = await getMostMatchingCard(message, args, userConfig.gameMode, blizzardToken);
+  let cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
+  if( !cardNameProcessed ) {
+    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+    return;
+  }
+  cardNameProcessed = cardNameProcessed.name
+  const resCard = await getMostMatchingCard(message, cardNameProcessed, userConfig.gameMode, blizzardToken);
   if (!resCard) return;
 
   const targetImage = userConfig.goldenCardMode ?
@@ -32,7 +32,7 @@ async function defaultAction(message, args, blizzardToken, class_){
       }
     )
     if ( collected.size != 0 ){
-      childs.execute(message, args, blizzardToken);
+      childs.execute(message, args, blizzardToken, fromDefault = true);
     }
   }
 }

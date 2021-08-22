@@ -1,7 +1,7 @@
 /*
   ! 모든 cards 는 로드된 후에 preProcess() 를 거쳐야함
 */
-const uniqueArrayByName = require('./uniqueArrayByName')
+const uniqueArray = require('./uniqueArray')
 const cropImage = require('./cropImage');
 const mergeImages = require('./mergeImages');
 
@@ -45,7 +45,7 @@ class Paginator {
         cards = this.preProcess(cards);
         // TODO 더 나은 알고리즘 찾기
         // if (this.cards.length > 0)
-        this.cards = uniqueArrayByName(this.cards.concat(cards));
+        this.cards = uniqueArray(this.cards.concat(cards), "name");
         this.promises = this.promises.slice(1);
       } else {
         break;

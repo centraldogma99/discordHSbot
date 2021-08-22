@@ -5,7 +5,8 @@ const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const translateClass = require("./tools/translateClass");
 const BlizzardToken = require("./tools/BlizzardToken");
-const Logger = require("./tools/logger");
+const Logger = require("./tools/Logger");
+const downloadDB = require("./tools/downloadDB");
 let logChannel;
 
 require("dotenv").config()
@@ -33,6 +34,9 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
+  // 개발시 주석처리할것
+  BlizzardToken.getToken()
+  .then(token => downloadDB(token));
 })
 
 client.on("messageCreate", async message => {

@@ -1,13 +1,15 @@
 const axios = require("axios")
 const stringSimilarity = require("string-similarity")
-const uniqueArrayByName = require('../tools/uniqueArrayByName')
+const uniqueArray = require('./uniqueArray')
 const range = require('../tools/range');
 const CONSTANTS = require('../constants')
+const mongo = require('../db');
 
 async function getMostMatchingCard(message, args, gameMode, blizzardToken){
   const cardCountLimit = 1500;
   const pageSize = 50;
-
+  // const regex = new RegExp(`/${ args }/i`);
+  // const res = await mongo.cardAliasModel.find({alias: $regex}).exec();
   let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: "ko_KR",
@@ -40,7 +42,7 @@ async function getMostMatchingCard(message, args, gameMode, blizzardToken){
     )
     .then(res => {
       let cards = res.data.cards;
-      cards = uniqueArrayByName(cards);
+      cards = uniqueArray(cards, "name");
       let names = cards.map(card => card.name)
       let ratings = stringSimilarity.findBestMatch(args, names);
       return cards[ratings.bestMatchIndex];
