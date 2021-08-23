@@ -12,8 +12,12 @@ const userSchema = schema({
 const cardAliasSchema = schema({
   alias: { type: String, required: true, unique: true, dropDups: true },
   name: { type: String, required: true },
-  cardImage: { type: String, required: true },
-  cardImageGold: { type: String }
+  image: { type: String, required: true },
+  imageGold: { type: String },
+  childIds: { type: [Number] },
+  rarityId: { type: Number },
+  manaCost: { type: Number },
+  cardSetId: { type: Number }
 })
 
 class Mongo{

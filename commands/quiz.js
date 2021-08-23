@@ -14,10 +14,10 @@ async function quiz(message){
     targetCard = (await mongo.cardAliasModel.aggregate([{ $sample : { size : 1 } }]))[0];
   }
 
-  const quiz = await generateQuiz(targetCard.cardImage, difficulty);
+  const quiz = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quiz.croppedImage]});
   await message.channel.send("ℹ️  `포기` 를 입력하면 퀴즈를 취소할 수 있습니다.")
-  await message.channel.send("채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**")
+  await message.channel.send("채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초, 기회 5번**")
   
   const answerChecker = (ans) => {
     return targetCard.name == ans.content || targetCard.name.replace(/\s/g, '') == ans.content
@@ -57,7 +57,7 @@ async function quiz(message){
       temp = message.channel.send("❌ 퀴즈를 취소했습니다.")
     }
     temp.then(() => message.channel.send(`정답은 \`${targetCard.name}\` 입니다!`))
-    .then(() => message.channel.send({files: [targetCard.cardImage]}))
+    .then(() => message.channel.send({files: [targetCard.image]}))
   })
 }
 

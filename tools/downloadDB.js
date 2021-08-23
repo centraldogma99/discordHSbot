@@ -14,17 +14,28 @@ async function downloadDB(blizzardToken){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
-    // .then(cards => cards.map(card => card.name))
-    // .then(names => names.map(name => name.trim()))
   }
-  let cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
-  let names = cards.map(card => card.name);
-  let namesNoSpace = names.map(name => name.replace(/\s/g, ''));
-  let cardImages = cards.map(card => card.image);
-  let cardImageGolds = cards.map(card => card.imageGold)
-  let doc = [];
+  cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
+  names = cards.map(card => card.name);
+  namesNoSpace = names.map(name => name.replace(/\s/g, ''));
+  images = cards.map(card => card.image);
+  imageGolds = cards.map(card => card.imageGold)
+  childIds = cards.map(card => card.childIds)
+  rarityIds = cards.map(card => card.rarityId)
+  manaCosts = cards.map(card => card.manaCost)
+  cardSetIds = cards.map(card => card.cardSetId)
+  doc = [];
   for(let i = 0;i<names.length;i++){
-    doc = doc.concat({ alias: namesNoSpace[i], name: names[i], cardImage: cardImages[i], cardImageGold: cardImageGolds[i] });
+    doc = doc.concat({ 
+      alias: namesNoSpace[i],
+      name: names[i],
+      image: images[i],
+      imageGold: imageGolds[i],
+      childIds: childIds[i],
+      rarityId: rarityIds[i],
+      manaCost: manaCosts[i],
+      cardSetId: cardSetIds[i]
+    });
   }
   doc = uniqueArray(doc, "alias");
   try{
@@ -48,11 +59,24 @@ async function downloadDB(blizzardToken){
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
   names = cards.map(card => card.name);
   namesNoSpace = names.map(name => name.replace(/\s/g, ''));
-  cardImages = cards.map(card => card.image);
-  cardImageGolds = cards.map(card => card.imageGold)
+  images = cards.map(card => card.image);
+  imageGolds = cards.map(card => card.imageGold)
+  childIds = cards.map(card => card.childIds)
+  rarityIds = cards.map(card => card.rarityId)
+  manaCosts = cards.map(card => card.manaCost)
+  cardSetIds = cards.map(card => card.cardSetId)
   doc = [];
   for(let i = 0;i<names.length;i++){
-    doc = doc.concat({ alias: namesNoSpace[i], name: names[i], cardImage: cardImages[i], cardImageGold: cardImageGolds[i] });
+    doc = doc.concat({ 
+      alias: namesNoSpace[i],
+      name: names[i],
+      image: images[i],
+      imageGold: imageGolds[i],
+      childIds: childIds[i],
+      rarityId: rarityIds[i],
+      manaCost: manaCosts[i],
+      cardSetId: cardSetIds[i]
+    });
   }
   doc = uniqueArray(doc, "alias");
   try{
@@ -61,8 +85,8 @@ async function downloadDB(blizzardToken){
     console.log(e);
   }
 
-  mongo.cardAliasModel.find().then(console.log)
-  mongo.cardAliasStandardModel.find().then(console.log)
+  // mongo.cardAliasModel.find().then(console.log)
+  // mongo.cardAliasStandardModel.find().then(console.log)
 }
 
 

@@ -5,60 +5,28 @@ const range = require('../tools/range');
 const CONSTANTS = require('../constants')
 const mongo = require('../db');
 
-async function getMostMatchingCard(message, args, gameMode, blizzardToken){
-  const cardCountLimit = 1500;
-  const pageSize = 50;
-  // const regex = new RegExp(`/${ args }/i`);
-  // const res = await mongo.cardAliasModel.find({alias: $regex}).exec();
-  let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-    { params: {
-      locale: "ko_KR",
-      textFilter: encodeURI(args),
-      set: gameMode,
-      pageSize: 1,
-      access_token: blizzardToken
-    }}
-  );
-  let cardCount = temp.data.cardCount;
-  if( cardCount == 0 ) {
-    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
-    return;
-  } else if ( cardCount > cardCountLimit ){
-    message.channel.send("‼️ 검색 결과가 너무 많습니다. 좀더 구체적인 검색어를 입력해 주세요.");
-    return;
-  }
+async function getMostMatchingCard(message, args, gameMode){
 
-  const pageCount = Math.ceil(cardCount / pageSize);
-  let promises = range(pageCount, 1).map(i => {
-    return axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-      { params: {
-        locale: "ko_KR",
-        textFilter: encodeURI(args),
-        set: gameMode,
-        pageSize: pageSize,
-        page: i,
-        access_token: blizzardToken
-      }}
-    )
-    .then(res => {
-      let cards = res.data.cards;
-      cards = uniqueArray(cards, "name");
-      let names = cards.map(card => card.name)
-      let ratings = stringSimilarity.findBestMatch(args, names);
-      return cards[ratings.bestMatchIndex];
-    })
-  });
-
-  let resCard;
-  let chosenCards = await Promise.all(promises);
+  let db;
+  if ( gameMode == 'standard' ) db = mongo.cardAliasStandardModel;
+  else if ( gameMode == 'wild' ) db = mongo.cardAliasModel;
+  else return;
+  
+  let chosenCards = await db.find({"name": {$regex : args}});
+  let chosenCardNames;
   if ( chosenCards.length > 0 ){
-    let chosenCardNames = chosenCards.map(card => card.name);
-    let ratings = stringSimilarity.findBestMatch(args, chosenCardNames);
-    resCard = chosenCards[ratings.bestMatchIndex];
+    chosenCardNames = chosenCards.map(card => card.name);
   } else {
-    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
-    return;
+    chosenCards = await db.find({"alias": {$regex : args}});
+    if(chosenCards.length > 0){
+      chosenCardNames = chosenCards.map(card => card.name);
+    } else {
+      message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+      return;
+    }
   }
+  let ratings = stringSimilarity.findBestMatch(args, chosenCardNames);
+  let resCard = chosenCards[ratings.bestMatchIndex];
 
   return resCard;
 }

@@ -13,7 +13,7 @@ async function defaultAction(message, args, blizzardToken, class_){
     return;
   }
   cardNameProcessed = cardNameProcessed.name
-  const resCard = await getMostMatchingCard(message, cardNameProcessed, userConfig.gameMode, blizzardToken);
+  const resCard = await getMostMatchingCard(message, cardNameProcessed, userConfig.gameMode);
   if (!resCard) return;
 
   const targetImage = userConfig.goldenCardMode ?

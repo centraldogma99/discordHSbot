@@ -19,13 +19,13 @@ async function childs(message, args, blizzardToken, fromDefault){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
-  const resCard = await getMostMatchingCard(message, cardNameProcessed.name, userConfig.gameMode, blizzardToken);
+  const resCard = await getMostMatchingCard(message, cardNameProcessed.name, userConfig.gameMode);
   if (!resCard) return;
   if( !fromDefault ){ await message.channel.send({files: [resCard.image]}) }
   
   let promises = [];
 
-  if(resCard.childIds != null){
+  if( resCard.childIds.length > 0 ){
     promises = resCard.childIds.map( id => 
       axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
       { params : {

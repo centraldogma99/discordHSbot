@@ -10,10 +10,10 @@ async function cardNameUntrim(cardName, gameMode='wild'){
   else return;
 
   let res = await db.findOne({ alias: { $eq : cardName } })
-  if ( res ) return {name: res.name, cardImage: res.cardImage, cardImageGold: res.cardImageGold};
+  if ( res ) return {name: res.name, image: res.image, imageGold: res.imageGold, childIds: res.childIds};
   else {
     res = await db.findOne({ name: { $eq : cardName } });
-    if (res) return {name: res.name, cardImage: res.cardImage, cardImageGold: res.cardImageGold}
+    if (res) return {name: res.name, image: res.image, imageGold: res.imageGold, childIds: res.childIds}
     else return {name : cardName, msg : "noCardData"};
   } 
 
