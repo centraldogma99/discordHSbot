@@ -27,7 +27,6 @@ async function all(message, args, blizzardToken, class_){
     return;
   }
   cardNameProcessed = cardNameProcessed.name;
-  console.time('lengthGet')
   let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
     locale: userConfig.languageMode,
@@ -38,7 +37,6 @@ async function all(message, args, blizzardToken, class_){
     page: 1,
     access_token: blizzardToken
   }});
-  console.timeEnd('lengthGet')
   cardCount = temp.data.cardCount;
 
   if ( cardCount > CONSTANTS.cardCountLimit ){
@@ -86,11 +84,9 @@ async function all(message, args, blizzardToken, class_){
   //     .then(res => res.map( card => card.data ))
   //   );
   // }
-  console.time("paginator")
   let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
 
   let msgs = await pagi.next();
-  console.timeEnd('paginator')
   infoMessage.delete();
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.

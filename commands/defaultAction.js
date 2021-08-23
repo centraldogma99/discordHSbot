@@ -21,7 +21,7 @@ async function defaultAction(message, args, blizzardToken, class_){
   
   await message.channel.send({files: [targetImage]});
   infoMessage.delete();
-  if( resCard.childIds != null ){
+  if( resCard.childIds.length > 0 ){
     msg = await message.channel.send("**< ! >**  관련 카드가 있습니다. 아래 ➡️을 눌러 관련 카드를 검색할 수 있습니다.")
     await msg.react("➡️")
     collected = await msg.awaitReactions(

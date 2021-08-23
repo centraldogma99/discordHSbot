@@ -14,7 +14,6 @@ function preProcess(args){
 }
 
 async function name(message, args, blizzardToken, class_){
-  console.time('as')
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
@@ -60,7 +59,6 @@ async function name(message, args, blizzardToken, class_){
     }})
     .then(res => res.data.cards);
   });
-  console.timeEnd('as')
   let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess(cardNameProcessed), false, userConfig.goldenCardMode);
   let msgs = await pagi.next();
   infoMessage.delete();

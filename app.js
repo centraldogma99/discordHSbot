@@ -68,7 +68,6 @@ client.on("messageCreate", async message => {
   // 메시지 받은것 로깅
   logger.messageLog(message);
 
-
   let tokens;
   try{
     tokens = tokenizer(message.content, translateClass);
