@@ -19,7 +19,7 @@ async function name(message, args, blizzardToken, class_){
   const userConfig = await loadUserConfig(message.author);
 
   let cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
-  if( !cardNameProcessed ) {
+  if( cardNameProcessed.msg == "noCardData" ) {
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
