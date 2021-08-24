@@ -1,44 +1,43 @@
 /*
-  TODO : preProcess 함수 구현 및 paginator 생성자 인자로 넘기기
-  TODO : 모든 카드를 한번에 요청하지 말고 개수에 따라 유동적으로 쪼개어 요청
+  로컬 DB화 미루기 - 서치 성능 이슈(확인 안됨)
 */
 
 const axios = require("axios")
-const paginator = require("../tools/Paginator");
+const Paginator = require("../tools/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig")
 const uniqueArray = require('../tools/uniqueArray')
 const range = require('../tools/range')
 const CONSTANTS = require('../constants')
-const cardNameUntrim = require("../tools/cardNameUntrim");
+const BlizzardToken = require("../tools/BlizzardToken");
 
 function preProcess(cards){
   return uniqueArray(cards, "name");
 }
 
-async function all(message, args, blizzardToken, class_){
+async function all(message, args, info){
+  let blizzardToken = await BlizzardToken.getToken();
+  let class_ = info.class_;
+  // inference 를 하면 안된다.
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
-
-  let cardNameProcessed, cardCount;
-  cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
-  if( cardNameProcessed.msg == "noCardData" ) {
-    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
-    return;
-  }
-  cardNameProcessed = cardNameProcessed.name;
+  let className = class_ ? class_.name : undefined;
+  let cardCount;
   let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
     locale: userConfig.languageMode,
-    textFilter: encodeURI(cardNameProcessed),
-    class: class_,
+    textFilter: encodeURI(args),
+    class: className,
     set: userConfig.gameMode,
     pageSize: 1,
     page: 1,
     access_token: blizzardToken
   }});
   cardCount = temp.data.cardCount;
-
+  if ( cardCount == 0 ){
+    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+    return;
+  }
   if ( cardCount > CONSTANTS.cardCountLimit ){
     message.channel.send("‼️ 검색 결과가 너무 많습니다! 좀더 구체적인 검색어를 입력해 주세요.");
     return;
@@ -52,8 +51,8 @@ async function all(message, args, blizzardToken, class_){
     axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: userConfig.languageMode,
-      textFilter: encodeURI(cardNameProcessed),
-      class: class_,
+      textFilter: encodeURI(args),
+      class: className,
       set: userConfig.gameMode,
       pageSize: CONSTANTS.pageSize,
       page : i,
@@ -84,15 +83,14 @@ async function all(message, args, blizzardToken, class_){
   //     .then(res => res.map( card => card.data ))
   //   );
   // }
-  let pagi = new paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
-
+  let pagi = new Paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
+  
   let msgs = await pagi.next();
   infoMessage.delete();
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.
   // FIXME? 삭제가 더 늦게 되는 문제. 안 고쳐도 될지도. 그림 합치는것 구현 이후에 다시 고려
   while(msgs && msgs.reaction){
-    msgs.targetMessage.delete();
     msgs.infoMessage.delete();
     if( msgs.reaction === "➡️" ){
       await message.channel.sendTyping();

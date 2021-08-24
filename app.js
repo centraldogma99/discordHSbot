@@ -3,10 +3,9 @@ const { Client, Intents, Collection, Permissions } = require("discord.js");
 const client = new Client({ intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
-const translateClass = require("./tools/translateClass");
-const BlizzardToken = require("./tools/BlizzardToken");
 const Logger = require("./tools/Logger");
 const downloadDB = require("./tools/downloadDB");
+const BlizzardToken = require("./tools/BlizzardToken")
 let logChannel;
 
 require("dotenv").config()
@@ -20,7 +19,7 @@ let logger;
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
+ 
 for (const file of commandFiles){
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
@@ -37,12 +36,13 @@ client.on("ready", () => {
   // 개발시 주석처리할것
   BlizzardToken.getToken()
   .then(token => downloadDB(token))
-  .then(logger.serverLog("Server ON"))
+  .then(() => logger.serverLog("Server ON"))
 })
 
 client.on("messageCreate", async message => {
   if( message.author.bot ) return;
   if( !message.mentions.has(client.user.id) ) return;
+  if( message.mentions.everyone ) return;
 
   // 현재 채널에 permission가지고 있는지 확인
   const roleChecker = [
@@ -70,7 +70,7 @@ client.on("messageCreate", async message => {
 
   let tokens;
   try{
-    tokens = tokenizer(message.content, translateClass);
+    tokens = tokenizer(message.content);
 
     if (tokens.mention != client.user.id) {
       throw Error("MentionShouldGoFirst");
@@ -86,7 +86,7 @@ client.on("messageCreate", async message => {
       console.log(e);
     }
   }  
-  let blizzardToken = await BlizzardToken.getToken();
+  
   try{
     // @여관주인
     if( !tokens.command ) {
@@ -94,14 +94,14 @@ client.on("messageCreate", async message => {
         client.commands.get("사용법").execute(message, null);
         return;
       } else {
-        client.commands.get("defaultAction").execute(message, tokens.args, blizzardToken, tokens.class_);
+        client.commands.get("defaultAction").execute(message, tokens.args);
       }
     } else {
       if( !client.commands.has(tokens.command) ) {
         message.channel.send("‼️ 없는 명령어입니다!");
         return;
       } else {
-        client.commands.get(tokens.command).execute(message, tokens.args, blizzardToken, tokens.class_);
+        client.commands.get(tokens.command).execute(message, tokens.args, {class_ :tokens.class_});
       }
     }
   } catch(err){

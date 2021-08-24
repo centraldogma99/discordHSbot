@@ -1,4 +1,6 @@
-function tokenizer(msgContent, translateClass){
+const translateClass = require('./translateClass.json');
+
+function tokenizer(msgContent){
     const prefix = '!';
     
     if( !msgContent ) throw Error("NoContent");
@@ -14,7 +16,7 @@ function tokenizer(msgContent, translateClass){
     ret["mention"] = mention;
   
     msgContentSplit = msgContentSplit.slice(1);
-    let class_;
+    let resClass;
     let command;
     let args;
     
@@ -25,11 +27,11 @@ function tokenizer(msgContent, translateClass){
     && (msgContentSplit[0].endsWith('"') || msgContent[0].endsWith('“')) || msgContentSplit[0].endsWith('”') || msgContentSplit[0].endsWith("'")) {
       let korClass = msgContentSplit[0].substring(1, msgContentSplit[0].length-1);
       
-      if ( !(korClass in translateClass) ) {
-        throw Error("WrongClass");
+      for (const cls of translateClass){
+        if (cls.aliases.includes(korClass)) resClass = cls;
       }
-      class_ = translateClass[korClass];
-      ret['class_'] = class_
+      if( !resClass ) throw Error("WrongClass");
+      ret['class_'] = resClass;
       msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
     }
     if ( msgContentSplit.length == 0 ){

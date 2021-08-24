@@ -1,0 +1,52 @@
+[
+    {
+        "name" : "priest",
+        "aliases" : ["사제", "좆제"],
+        "classId" : 6
+    },
+    {
+        "name" : "warrior",
+        "aliases" : ["전사"],
+        "classId" : 10
+    },
+    {
+        "name" : "rogue",
+        "aliases" : ["도적", "돚거"],
+        "classId" : 7
+    },
+    {
+        "name" : "warlock",
+        "aliases" : ["흑마법사", "흑마"],
+        "classId" : 9
+    },
+    {
+        "name" : "demonhunter",
+        "aliases" : ["악마사냥꾼", "악사"],
+        "classId" : 14
+    },
+    {
+        "name" : "druid",
+        "aliases" : ["드루이드", "드루"],
+        "classId" : 2
+    },
+    {
+        "name" : "mage",
+        "aliases" : ["마법사", "법사"],
+        "classId" : 4
+    },
+    {
+        "name" : "paladin",
+        "aliases" : ["성기사", "기사"],
+        "classId" : 5
+    },
+    {
+        "name" : "shaman",
+        "aliases" : ["주술사", "술사"],
+        "classId" : 8
+    },
+    {
+        "name" : "hunter",
+        "aliases" : ["사냥꾼", "냥꾼"],
+        "classId" : 3
+    }
+]

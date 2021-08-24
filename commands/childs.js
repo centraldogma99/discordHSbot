@@ -1,28 +1,30 @@
 const axios = require("axios")
-const paginator = require("../tools/Paginator");
+const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig")
 const CONSTANTS = require('../constants')
-const cardNameUntrim = require('../tools/cardNameUntrim')
+const BlizzardToken = require('../tools/BlizzardToken')
 
 function preProcess(cards){
   return cards;
 }
 
-async function childs(message, args, blizzardToken, fromDefault){
+async function childs(message, args, info){
+  let fromDefault = info ? info.fromDefault : undefined;
+  let blizzardToken = await BlizzardToken.getToken();
   if ( !args ){ await message.channel.send("찾을 카드명을 입력해 주세요."); return; }
   const infoMessage = await message.channel.send("🔍 검색 중입니다...");
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
-  let cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
-  if( cardNameProcessed.msg == "noCardData" ) {
+
+  const resCard = await getMostMatchingCard(args, userConfig.gameMode);
+  if (!resCard) {
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
-  const resCard = await getMostMatchingCard(message, cardNameProcessed.name, userConfig.gameMode);
-  if (!resCard) return;
+  // @여관주인 [카드명] 했을때 원본카드 이미지 출력 안하기
   if( !fromDefault ){ await message.channel.send({files: [resCard.image]}) }
-  
+  await message.channel.sendTyping();
   let promises = [];
 
   if( resCard.childIds.length > 0 ){
@@ -35,12 +37,11 @@ async function childs(message, args, blizzardToken, fromDefault){
       .then(res => res.data)
     )
 
-    let pagi = new paginator(message, [Promise.all(promises)], userConfig.paginateStep, resCard.childIds.length, preProcess, true, userConfig.goldenCardMode);
+    let pagi = new Paginator(message, [Promise.all(promises)], userConfig.paginateStep, resCard.childIds.length, preProcess, true, userConfig.goldenCardMode);
     let msgs = await pagi.next();
     infoMessage.delete()
 
     while(msgs && msgs.reaction){
-      msgs.targetMessage.delete();
       msgs.infoMessage.delete();
       if( msgs.reaction === "➡️" ){
         await message.channel.sendTyping();

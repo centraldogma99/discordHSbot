@@ -17,7 +17,8 @@ const cardAliasSchema = schema({
   childIds: { type: [Number] },
   rarityId: { type: Number },
   manaCost: { type: Number },
-  cardSetId: { type: Number }
+  cardSetId: { type: Number },
+  classId: { type: Number }
 })
 
 class Mongo{

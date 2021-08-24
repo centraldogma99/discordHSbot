@@ -71,20 +71,19 @@ class Paginator {
     
     // ? await 필요한가
     // targetMessage는 1개인것으로.
+    if( this.prevMessage ) this.prevMessage.delete();
     let targetMessage = await promise;
+    this.prevMessage = targetMessage;
     if(isLongResult){
       let lastMessage = targetMessage;
-      // for (const msg of targetMessages.slice(1, targetMessages.length)){
-      //   if (msg.createdTimestamp > lastMessage.createdTimestamp){
-      //     lastMessage = msg;
-      //   }
-      // }
+
       // 왼쪽 감정표현
       if ( this.cursor - this.step >= 0 ){
         await lastMessage.react("⬅️");
       }else{
         await lastMessage.react("❌");
       }
+
       // 오른쪽 감정표현
       if ( this.cursor + this.step < this.cards.length || this.promises.length > 0){
         lastMessage.react("➡️");

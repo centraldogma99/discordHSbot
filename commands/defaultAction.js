@@ -1,20 +1,17 @@
 const childs = require("./childs")
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
-const cardNameUntrim = require('../tools/cardNameUntrim')
 
-async function defaultAction(message, args, blizzardToken, class_){
+async function defaultAction(message, args){
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   let userConfig = await loadUserConfig(message.author);
-  let cardNameProcessed = await cardNameUntrim(args, userConfig.gameMode);
-  if( cardNameProcessed.msg == "noCardData" ) {
+
+  const resCard = await getMostMatchingCard( args, userConfig.gameMode );
+  if (!resCard) {
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
-  cardNameProcessed = cardNameProcessed.name
-  const resCard = await getMostMatchingCard(message, cardNameProcessed, userConfig.gameMode);
-  if (!resCard) return;
 
   const targetImage = userConfig.goldenCardMode ?
     (resCard.imageGold ? resCard.imageGold : resCard.image) : resCard.image;
@@ -28,11 +25,11 @@ async function defaultAction(message, args, blizzardToken, class_){
       { filter: (reaction, user) => {
           return reaction.emoji.name === "➡️" && user.id == message.author.id;
         },
-        time : 20000, max : 1
+        time : 30000, max : 1
       }
     )
     if ( collected.size != 0 ){
-      childs.execute(message, args, blizzardToken, fromDefault = true);
+      childs.execute(message, args, { fromDefault: true });
     }
   }
 }
