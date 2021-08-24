@@ -10,9 +10,12 @@ function preProcess(cards){
 }
 
 async function childs(message, args, info){
+  if(!args){
+    await message.channel.send("❌ 검색어를 입력해 주세요.")
+    return;
+  }
   let fromDefault = info ? info.fromDefault : undefined;
   let blizzardToken = await BlizzardToken.getToken();
-  if ( !args ){ await message.channel.send("찾을 카드명을 입력해 주세요."); return; }
   const infoMessage = await message.channel.send("🔍 검색 중입니다...");
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);

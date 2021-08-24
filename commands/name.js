@@ -7,6 +7,10 @@ function preProcess(args){
 }
 
 async function name(message, args, info){
+  if(!args){
+    await message.channel.send("❌ 검색어를 입력해 주세요.")
+    return;
+  }
   let class_ = info.class_;
   let infoMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();

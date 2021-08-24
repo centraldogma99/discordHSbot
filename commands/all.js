@@ -15,6 +15,10 @@ function preProcess(cards){
 }
 
 async function all(message, args, info){
+  if(!args){
+    await message.channel.send("❌ 검색어를 입력해 주세요.")
+    return;
+  }
   let blizzardToken = await BlizzardToken.getToken();
   let class_ = info.class_;
   // inference 를 하면 안된다.
