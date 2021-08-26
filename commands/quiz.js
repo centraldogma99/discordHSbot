@@ -69,7 +69,7 @@ async function quiz(message){
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quizImages.croppedImage]});
-  await message.channel.send("ℹ️  `포기` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  `힌트` 를 입력하면 결정적인 힌트를 볼 수 있습니다(한 번만 가능).\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초, 기회 5번**")
+  await message.channel.send("ℹ️  `포기` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  `힌트` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초, 기회 5번**")
   
   const answerChecker = (ans) => {
     return targetCard.alias == ans.content.replace(/\s/g, '')

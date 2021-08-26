@@ -125,7 +125,7 @@ class Paginator {
       
       return {
         'reaction': infoPromise,
-        'infoMessage': await infoMessage,
+        'infoMessage': infoMessage,
         'targetMessage': targetMessage
       }
     } else {

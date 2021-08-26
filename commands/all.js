@@ -96,11 +96,11 @@ async function all(message, args, info){
   while(msgs){
     if( await msgs.reaction === "next" ){
       await message.channel.sendTyping();
-      msgs.infoMessage.delete();
+      await msgs.infoMessage.delete();
       msgs = await pagi.next();
     } else if( await msgs.reaction === "prev" ){
       await message.channel.sendTyping();
-      msgs.infoMessage.delete();
+      await msgs.infoMessage.delete();
       msgs = await pagi.prev();
     }
   }
