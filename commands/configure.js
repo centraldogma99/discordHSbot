@@ -45,6 +45,9 @@ async function configure(message, args){
       }
       i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 게임모드가 "${i.component.label}"로 설정되었습니다.`, components: [] })
     })
+    gameModeMsgCollector.on('end', async (i, r) => {
+      if(r == 'time') await gameModeMsg.delete();
+    })
   } else if(args === '페이지') {
     let msg = await message.channel.send(
       '1페이지당 나오는 이미지 개수를 설정합니다(기본값 : 3개).\n**자신에게만 적용됩니다.**\n\n\원하는 숫자의 이모티콘을 선택해 주세요!\n\n이모티콘이 모두 표시되는데**(9번까지 있음)** 시간이 약간 걸립니다.\n모두 표시된 후에 선택해주셔야 작동합니다! 양해 부탁드립니다.\n'
@@ -128,6 +131,9 @@ async function configure(message, args){
         }])
       }
       i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 황금카드모드가 "${i.component.label}"로 설정되었습니다.`, components: [] })
+    })
+    goldenCardModeMsgCollector.on('end', async (i, r) => {
+      if(r == 'time') await goldenCardModeMsg.delete();
     })
   } 
   // else if(args === '언어'){

@@ -86,6 +86,9 @@ async function quizConfig(message){
     // await i.update({ components: [new MessageActionRow().addComponents([stdBtn, wildBtn])]})
     await i.update({ content : `☑️ 퀴즈 게임 모드가 \`${val}\`(으)로 설정되었습니다.`, components: [] })
   })
+  gameModeMsgCollector.on('end', async (i, r) => {
+    if(r == 'time') await gameModeMsg.delete();
+  })
 
   const row2 = new MessageActionRow()
     .addComponents(rarityButtons)
@@ -126,7 +129,9 @@ async function quizConfig(message){
       i.update({ content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`, components: [] });
     }
   })
-
+  rarityMsgCollector.on('end', async (i, r) => {
+    if(r == 'time') await rarityMsg.delete();
+  })
   return;
 }
 
