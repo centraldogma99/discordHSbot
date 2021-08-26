@@ -28,17 +28,17 @@ async function name(message, args, info){
   let msgs = await pagi.next();
   infoMessage.delete();
 
-  while(msgs && msgs.reaction){
-    msgs.infoMessage.delete();
-    if( msgs.reaction === "➡️" ){
+  while(msgs){
+    if( await msgs.reaction === "next" ){
       await message.channel.sendTyping();
+      msgs.infoMessage.delete();
       msgs = await pagi.next();
-    } else if( msgs.reaction === "⬅️" ){
+    } else if( await msgs.reaction === "prev" ){
       await message.channel.sendTyping();
+      msgs.infoMessage.delete();
       msgs = await pagi.prev();
     }
   }
-
   return;
 }
 

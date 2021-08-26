@@ -40,17 +40,18 @@ async function childs(message, args, info){
       .then(res => res.data)
     )
 
-    let pagi = new Paginator(message, [Promise.all(promises)], userConfig.paginateStep, resCard.childIds.length, preProcess, true, userConfig.goldenCardMode);
+    let pagi = new Paginator(message, [Promise.all(promises)], userConfig.paginateStep, resCard.childIds.length, preProcess, false, userConfig.goldenCardMode);
     let msgs = await pagi.next();
     infoMessage.delete()
 
-    while(msgs && msgs.reaction){
-      msgs.infoMessage.delete();
-      if( msgs.reaction === "➡️" ){
+    while(msgs){
+      if( await msgs.reaction === "next" ){
         await message.channel.sendTyping();
+        msgs.infoMessage.delete();
         msgs = await pagi.next();
-      } else if( msgs.reaction === "⬅️" ){
+      } else if( await msgs.reaction === "prev" ){
         await message.channel.sendTyping();
+        msgs.infoMessage.delete();
         msgs = await pagi.prev();
       }
     }

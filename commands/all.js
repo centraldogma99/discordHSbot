@@ -93,14 +93,14 @@ async function all(message, args, info){
   infoMessage.delete();
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.
-  // FIXME? 삭제가 더 늦게 되는 문제. 안 고쳐도 될지도. 그림 합치는것 구현 이후에 다시 고려
-  while(msgs && msgs.reaction){
-    msgs.infoMessage.delete();
-    if( msgs.reaction === "➡️" ){
+  while(msgs){
+    if( await msgs.reaction === "next" ){
       await message.channel.sendTyping();
+      msgs.infoMessage.delete();
       msgs = await pagi.next();
-    } else if( msgs.reaction === "⬅️" ){
+    } else if( await msgs.reaction === "prev" ){
       await message.channel.sendTyping();
+      msgs.infoMessage.delete();
       msgs = await pagi.prev();
     }
   }

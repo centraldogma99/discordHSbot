@@ -107,7 +107,7 @@ async function quiz(message){
   messageCollector.on('end', async (m, reason) => {
     await message.channel.sendTyping();
     if ( reason == "answered" ){
-      await message.channel.send(`⭕️  ${m.last().author.username}이(가) 정답을 맞췄습니다!`);
+      await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
     } else if ( reason == "time" ){
       await message.channel.send(`⏰  시간 종료!`)
     } else if ( reason == "noChancesLeft" ){

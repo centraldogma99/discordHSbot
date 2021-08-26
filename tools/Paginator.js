@@ -2,8 +2,8 @@
   ! 모든 cards 는 로드된 후에 preProcess() 를 거쳐야함
 */
 const uniqueArray = require('./uniqueArray')
-const cropImage = require('./cropImage');
 const mergeImages = require('./mergeImages');
+const { MessageButton, MessageActionRow } = require('discord.js');
 
 class Paginator {
   constructor(message, promises, step, length, preProcess, lengthEnabled = true, goldenCardMode = false){
@@ -67,57 +67,64 @@ class Paginator {
       images = targetCards.map(card => card.imageGold ? card.imageGold : card.image );
     }
     const mergeImage = await mergeImages(images, this.step % 3 == 0 ? 3 : 2);
-    const promise = this.message.channel.send({ files : [mergeImage] });
     
     // ? await 필요한가
     // targetMessage는 1개인것으로.
     if( this.prevMessage ) this.prevMessage.delete();
-    let targetMessage = await promise;
+    let targetMessage = await this.message.channel.send({ files : [mergeImage] });
     this.prevMessage = targetMessage;
     if(isLongResult){
-      let lastMessage = targetMessage;
-
+      let moveButtons = [
+        new MessageButton()
+          .setCustomId('prev')
+          .setLabel('이전')
+          .setStyle('SUCCESS'),
+        new MessageButton()
+          .setCustomId('next')
+          .setLabel('다음')
+          .setStyle('DANGER')
+      ]
+      
       // 왼쪽 감정표현
-      if ( this.cursor - this.step >= 0 ){
-        await lastMessage.react("⬅️");
-      }else{
-        await lastMessage.react("❌");
+      if( this.cursor - this.step < 0){
+        moveButtons[0].setDisabled(true);
       }
 
       // 오른쪽 감정표현
-      if ( this.cursor + this.step < this.cards.length || this.promises.length > 0){
-        lastMessage.react("➡️");
-      } else {
-        lastMessage.react("❌");
+      if( this.cursor + this.step >= this.cards.length && this.promises.length <= 0){
+        moveButtons[1].setDisabled(true);
       }
       
+      let infoStr;
+      const row = new MessageActionRow().addComponents(moveButtons);
       if ( !this.lengthEnabled ){
-        infoMessage = this.message.channel.send(`🔍 ${ this.cursor/this.step + 1 } 페이지`);
+        infoStr = `🔍 ${ this.cursor/this.step + 1 } 페이지`;
       } else {
-        infoMessage = this.message.channel.send(
-          `🔍 총 ${ this.numberOfCards }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.numberOfCards/this.step) }`
-        );
+        infoStr = `🔍 총 ${ this.numberOfCards }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.numberOfCards/this.step)}`
       }
-      let collectedReactions = await lastMessage.awaitReactions(
-        {
-          filter: (reaction, user) => {
-            return (reaction.emoji.name === "➡️" ||
-            reaction.emoji.name === "⬅️") &&
-            user.id === this.message.author.id;
-          },
-          time : 20000,
-          max : 1
-        }
-      )
+      infoMessage = await this.message.channel.send({ 
+        content: infoStr,
+        components: [row]
+      })
 
-      let reaction;
-      if (collectedReactions.size == 0){
-        return;
-      } else {
-        reaction = collectedReactions.keys().next().value;
-      }
+      let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON' })
+        .then(i => {
+          i.update({ content: "☑️ 가져오는 중...", components: [] });
+          return i.component.customId;
+        })
+        .catch(err => console.log(err));
+
+      // const pageButtonCollector = infoMessage.createMessageComponentCollector({
+      //   componentType: 'BUTTON',
+      //   time: 30000
+      // })
+      // pageButtonCollector.on('collect', async i => {
+      //   await i.update({ content: "☑️ 가져오는 중...", components: [] })
+      //   return i.component.customId;
+      // })
+      
       return {
-        'reaction': reaction,
+        'reaction': infoPromise,
         'infoMessage': await infoMessage,
         'targetMessage': targetMessage
       }
