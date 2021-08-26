@@ -25,6 +25,7 @@ async function downloadDB(blizzardToken){
   manaCosts = cards.map(card => card.manaCost)
   cardSetIds = cards.map(card => card.cardSetId)
   classIds = cards.map(card => card.classId)
+  texts = cards.map(card => card.text)
   doc = [];
   for(let i = 0;i<names.length;i++){
     doc = doc.concat({ 
@@ -36,7 +37,8 @@ async function downloadDB(blizzardToken){
       rarityId: rarityIds[i],
       manaCost: manaCosts[i],
       cardSetId: cardSetIds[i],
-      classId: classIds[i]
+      classId: classIds[i],
+      text: texts[i]
     });
   }
   doc = uniqueArray(doc, "alias");
@@ -68,6 +70,7 @@ async function downloadDB(blizzardToken){
   manaCosts = cards.map(card => card.manaCost)
   cardSetIds = cards.map(card => card.cardSetId)
   classIds = cards.map(card => card.classId)
+  texts = cards.map(card => card.text)
   doc = [];
   for(let i = 0;i<names.length;i++){
     doc = doc.concat({ 
@@ -79,7 +82,8 @@ async function downloadDB(blizzardToken){
       rarityId: rarityIds[i],
       manaCost: manaCosts[i],
       cardSetId: cardSetIds[i],
-      classId: classIds[i]
+      classId: classIds[i],
+      text: texts[i]
     });
   }
   doc = uniqueArray(doc, "alias");

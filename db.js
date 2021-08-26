@@ -2,12 +2,16 @@ const mongoose = require('mongoose')
 const schema = mongoose.Schema;
 
 const userSchema = schema({
-  name: { type: String, required: true },
+  id: { type: Number, required: true },
   gameMode: { type: String },
   paginateStep: { type: Number },
   languageMode: { type: String },
-  goldenCardMode: { type: Boolean }
-})
+  goldenCardMode: { type: Boolean },
+  quizConfig: {
+    gameMode: String,
+    rarity: Number
+  }
+});
 
 const cardAliasSchema = schema({
   alias: { type: String, required: true, unique: true, dropDups: true },
@@ -18,8 +22,9 @@ const cardAliasSchema = schema({
   rarityId: { type: Number },
   manaCost: { type: Number },
   cardSetId: { type: Number },
-  classId: { type: Number }
-})
+  classId: { type: Number },
+  text: { type: String }
+});
 
 class Mongo{
   constructor(){
