@@ -24,7 +24,7 @@ function getRandomHint(message, card){
     if(!card.text || card.text.length == 0) return message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
     else {
       let len = Math.floor(card.text.length / 2);
-      return message.channel.send(`💡 _${card.text.replace(/<\/?[^>]+(>|$)/g, "").slice(0, len)}..._ (후략)`);
+      return message.channel.send(`💡 **카드 텍스트 힌트**  _${card.text.replace(/<\/?[^>]+(>|$)/g, "").slice(0, len)}..._ (후략)`);
     }
   }
 }

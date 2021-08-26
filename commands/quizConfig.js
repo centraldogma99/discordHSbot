@@ -89,7 +89,7 @@ async function quizConfig(message){
 
   const row2 = new MessageActionRow()
     .addComponents(rarityButtons)
-  let rarityMsg = await message.channel.send({ content: "**⚙️ 퀴즈 카드 등급**", components: [row2] });
+  let rarityMsg = await message.channel.send({ content: "**⚙️ 퀴즈 카드 등급**  파란 버튼을 누르면 카드등급 필터링을 해제할 수 있습니다.", components: [row2] });
   const rarityMsgCollector = rarityMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   rarityMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
