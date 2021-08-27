@@ -109,8 +109,9 @@ class Paginator {
 
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON' })
         .then(i => {
+          let id = i.component.customId;
           i.update({ content: "☑️ 가져오는 중...", components: [] });
-          return i.component.customId;
+          return id;
         })
         .catch(err => console.log(err));
 

@@ -10,7 +10,9 @@ async function loadUserConfig(messageAuthor){
       languageMode : "ko-KR",
       quizConfig : {
         gameMode : "standard",
-        rarity : 0
+        rarity : 0,
+        chances: 5,
+        difficulty: 1
       }
     }
   }
@@ -22,11 +24,15 @@ async function loadUserConfig(messageAuthor){
     userConfig.quizConfig ? 
       {
         gameMode: (userConfig.quizConfig.gameMode ? userConfig.quizConfig.gameMode : "standard"),
-        rarity: (userConfig.quizConfig.rarity ? userConfig.quizConfig.rarity : "")
+        rarity: (userConfig.quizConfig.rarity ? userConfig.quizConfig.rarity : ""),
+        chances: (userConfig.quizConfig.chances) ? userConfig.quizConfig.chances : 5,
+        difficulty: (userConfig.quizConfig.difficulty) ? userConfig.quizConfig.difficulty : 1
       } :
       {
         gameMode: "standard",
-        rarity: ""
+        rarity: "",
+        chances: 5,
+        difficulty: 1
       }
  
   return {

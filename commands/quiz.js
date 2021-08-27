@@ -2,6 +2,7 @@ const loadUserConfig = require("../tools/loadUserConfig");
 const mongo = require("../db");
 const generateQuiz = require("../tools/generateQuiz");
 const { MessageActionRow, MessageButton } = require('discord.js');
+const cho_hangul = require("../tools/cho_Hangul");
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -13,17 +14,17 @@ function getRandomHint(message, card, hintUsed){
   let a = getRandomInt(4);
   let promise;
   while(hintUsed[a]){
-    a = getRandomInt(4);
+    a = getRandomInt(5);
   }
   if( a == 0 ){
     promise = message.channel.send(`💡 이 카드의 이름은 ${card.alias.length}글자 입니다.`);
   } else if(a == 1){
     let len = card.alias.length;
-    let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2);
+    let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2.5);
     promise = message.channel.send(`💡 이 카드의 처음 ${reslen}글자는 \`${card.alias.slice(0,reslen)}\`입니다.(띄어쓰기 무시)`);
   } else if(a == 2){
     let len = card.alias.length;
-    let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2);
+    let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2.5);
     promise =  message.channel.send(`💡 이 카드의 마지막 ${reslen}글자는 \`${card.alias.slice(card.alias.length-reslen)}\`입니다.(띄어쓰기 무시)`);
   } else if(a == 3){
     if(!card.text || card.text.length == 0) return message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
@@ -31,6 +32,8 @@ function getRandomHint(message, card, hintUsed){
       let len = Math.floor(card.text.length / 2);
       promise = message.channel.send(`💡 **카드 텍스트 힌트**  _${card.text.replace(/<\/?[^>]+(>|$)/g, "").slice(0, len)}..._ (후략)`);
     }
+  } else if(a == 4){
+    promise = message.channel.send(`💡 이 카드의 초성은 ${cho_hangul(card.alias)} 입니다.`)
   }
   return {
     promise: promise,
@@ -38,12 +41,12 @@ function getRandomHint(message, card, hintUsed){
   }
 }
 
-async function quiz(message){
-  let difficulty = 1
-  let chances = 5
-  let hintUsed = [false, false, false, false];
+async function quiz(message, args){
+  let hintUsed = new Array(5).fill(false,0);
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
+  const difficulty = userConfig.quizConfig.difficulty;
+  let chances = userConfig.quizConfig.chances;
   let db;
 
   if( userConfig.quizConfig.gameMode == 'standard'){

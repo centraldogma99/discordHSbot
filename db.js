@@ -9,7 +9,9 @@ const userSchema = schema({
   goldenCardMode: { type: Boolean },
   quizConfig: {
     gameMode: String,
-    rarity: Number
+    rarity: Number,
+    chances: Number,
+    difficulty: Number
   }
 });
 

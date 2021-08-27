@@ -21,38 +21,6 @@ async function quizConfig(message){
     wildBtn.setStyle('PRIMARY');
   }
 
-  let rarityButtons = [
-    new MessageButton()
-      .setCustomId('5')
-      .setLabel('전설')
-      .setStyle('SECONDARY'),
-    new MessageButton()
-      .setCustomId('4')
-      .setLabel('특급')
-      .setStyle('SECONDARY'),
-    new MessageButton()
-      .setCustomId('3')
-      .setLabel('희귀')
-      .setStyle('SECONDARY'),
-    new MessageButton()
-      .setCustomId('1')
-      .setLabel('일반')
-      .setStyle('SECONDARY'),
-    new MessageButton()
-      .setCustomId('2')
-      .setLabel('기본')
-      .setStyle('SECONDARY')
-  ]
-  let userRarity = userConfig.quizConfig.rarity;
-  if (userRarity){
-    for (const button of rarityButtons){
-      if (button.customId == userRarity){
-        button.setStyle("PRIMARY");
-        break;
-      }
-    }
-  }
-
   const row1 = new MessageActionRow()
     .addComponents([stdBtn, wildBtn]);
   
@@ -89,6 +57,39 @@ async function quizConfig(message){
   gameModeMsgCollector.on('end', async (i, r) => {
     if(r == 'time') await gameModeMsg.delete();
   })
+
+
+  let rarityButtons = [
+    new MessageButton()
+      .setCustomId('5')
+      .setLabel('전설')
+      .setStyle('SECONDARY'),
+    new MessageButton()
+      .setCustomId('4')
+      .setLabel('특급')
+      .setStyle('SECONDARY'),
+    new MessageButton()
+      .setCustomId('3')
+      .setLabel('희귀')
+      .setStyle('SECONDARY'),
+    new MessageButton()
+      .setCustomId('1')
+      .setLabel('일반')
+      .setStyle('SECONDARY'),
+    new MessageButton()
+      .setCustomId('2')
+      .setLabel('기본')
+      .setStyle('SECONDARY')
+  ]
+  let userRarity = userConfig.quizConfig.rarity;
+  if (userRarity){
+    for (const button of rarityButtons){
+      if (button.customId == userRarity){
+        button.setStyle("PRIMARY");
+        break;
+      }
+    }
+  }
 
   const row2 = new MessageActionRow()
     .addComponents(rarityButtons)
@@ -132,6 +133,40 @@ async function quizConfig(message){
   rarityMsgCollector.on('end', async (i, r) => {
     if(r == 'time') await rarityMsg.delete();
   })
+
+  // let difficultyButtons = [
+  //   new MessageButton()
+  //     .setCustomId('1')
+  //     .setLabel('1단계')
+  //     .setStyle('SECONDARY'),
+  //   new MessageButton()
+  //     .setCustomId('2')
+  //     .setLabel('2단계')
+  //     .setStyle('SECONDARY'),
+  //   new MessageButton()
+  //     .setCustomId('3')
+  //     .setLabel('3단계')
+  //     .setStyle('SECONDARY'),
+  //   new MessageButton()
+  //     .setCustomId('4')
+  //     .setLabel('4단계')
+  //     .setStyle('SECONDARY'),
+  //   new MessageButton()
+  //     .setCustomId('5')
+  //     .setLabel('5단계')
+  //     .setStyle('SECONDARY')
+  // ]
+  // let userRarity = userConfig.quizConfig.rarity;
+  // if (userRarity){
+  //   for (const button of rarityButtons){
+  //     if (button.customId == userRarity){
+  //       button.setStyle("PRIMARY");
+  //       break;
+  //     }
+  //   }
+  // }
+
+
   return;
 }
 
