@@ -12,13 +12,19 @@ async function mergeImages(imageURLs, cardsPerLine=3){
         responseType: "arraybuffer"
       })
       .then(res => res.data)
+      .catch((e) =>{
+        console.log(e);
+      })
     ))
   
     const base = axios({
       url: imageURLs[0],
       responseType: "arraybuffer"
     })
-    .then(res => res.data);
+    .then(res => res.data)
+    .catch((e) =>{
+      console.log(e);
+    });
   
     let composite = files.reduce( (input, overlay) => 
       input.then(

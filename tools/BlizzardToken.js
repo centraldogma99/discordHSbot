@@ -21,6 +21,9 @@ class BlizzardToken{
             grant_type: 'client_credentials'
           })
         })
+        .catch((e) =>{
+          console.log(e);
+        })
         this.token = res.data.access_token;
         this.refreshTime = Math.floor(Date.now()/1000);
         console.log("battle.net token refreshed")

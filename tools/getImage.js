@@ -5,7 +5,10 @@ function getImage(imageURL){
     url: imageURL,
     responseType: "arraybuffer"
   })
-  .then(res => res.data);
+  .then(res => res.data)
+  .catch((e) =>{
+    console.log(e);
+  });
 
   return image;
 }

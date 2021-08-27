@@ -14,6 +14,9 @@ async function downloadDB(blizzardToken){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
+    .catch((e) =>{
+      console.log(e);
+    })
   }
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
   names = cards.map(card => card.name);
@@ -59,6 +62,9 @@ async function downloadDB(blizzardToken){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
+    .catch((e) =>{
+      console.log(e);
+    })
   }
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
   names = cards.map(card => card.name);

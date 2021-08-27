@@ -38,6 +38,10 @@ async function childs(message, args, info){
         access_token: blizzardToken
       }})
       .then(res => res.data)
+      .catch((e) =>{
+        console.log(e);
+        return message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!")
+      })
     )
 
     let pagi = new Paginator(message, [Promise.all(promises)], userConfig.paginateStep, resCard.childIds.length, preProcess, false, userConfig.goldenCardMode);

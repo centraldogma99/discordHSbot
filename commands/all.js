@@ -36,7 +36,12 @@ async function all(message, args, info){
     pageSize: 1,
     page: 1,
     access_token: blizzardToken
-  }});
+  }})
+  .catch((e) =>{
+    console.log(e);
+    return message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!")
+  });
+
   cardCount = temp.data.cardCount;
   if ( cardCount == 0 ){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
@@ -63,6 +68,10 @@ async function all(message, args, info){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
+    .catch((e) =>{
+      console.log(e);
+      return message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!")
+    })
   );
   // }
   //  else if ( userConfig.languageMode == "en_US" ){
