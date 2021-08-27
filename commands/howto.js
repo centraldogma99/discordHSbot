@@ -27,7 +27,7 @@ function howto(message, args){
 }
 
 module.exports = {
-    name : '사용법',
+    name : ['사용법', '도움말', '도움', '?', '명령어'],
     description : 'howto',
     execute : howto
 }

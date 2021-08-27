@@ -56,7 +56,6 @@ class Paginator {
   }
 
   async showMessages(targetCards){
-    let infoMessage;
     let isLongResult = this.cards.length > this.step
     
     
@@ -70,6 +69,7 @@ class Paginator {
     
     // ? await 필요한가
     // targetMessage는 1개인것으로.
+    
     if( this.prevMessage ) this.prevMessage.delete();
     let targetMessage = await this.message.channel.send({ files : [mergeImage] });
     this.prevMessage = targetMessage;
@@ -102,15 +102,17 @@ class Paginator {
       } else {
         infoStr = `🔍 총 ${ this.numberOfCards }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.numberOfCards/this.step)}`
       }
-      infoMessage = await this.message.channel.send({ 
+
+      if( this.prevInfoMessage ) this.prevInfoMessage.delete();
+      let infoMessage = await this.message.channel.send({ 
         content: infoStr,
         components: [row]
       })
-
+      this.prevInfoMessage = infoMessage;
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON' })
         .then(i => {
           let id = i.component.customId;
-          i.update({ content: "☑️ 가져오는 중...", components: [] });
+          i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] });
           return id;
         })
         .catch(err => console.log(err));

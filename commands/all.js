@@ -22,7 +22,7 @@ async function all(message, args, info){
   let blizzardToken = await BlizzardToken.getToken();
   let class_ = info.class_;
   // inference 를 하면 안된다.
-  let infoMessage = await message.channel.send("🔍 검색 중입니다...")
+  let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
   let className = class_ ? class_.name : undefined;
@@ -90,17 +90,16 @@ async function all(message, args, info){
   let pagi = new Paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
   
   let msgs = await pagi.next();
-  infoMessage.delete();
+  await msgs.infoMessage;
+  searchingMessage.delete();
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.
   while(msgs){
     if( await msgs.reaction === "next" ){
       await message.channel.sendTyping();
-      await msgs.infoMessage.delete();
       msgs = await pagi.next();
     } else if( await msgs.reaction === "prev" ){
       await message.channel.sendTyping();
-      await msgs.infoMessage.delete();
       msgs = await pagi.prev();
     }
   }
@@ -109,7 +108,7 @@ async function all(message, args, info){
 }
 
 module.exports = {
-  name : '모든',
+  name : ['모든'],
   description : 'all',
   execute : all
 }

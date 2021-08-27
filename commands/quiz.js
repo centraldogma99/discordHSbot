@@ -138,7 +138,7 @@ async function quiz(message, args){
 }
 
 module.exports = {
-  name : '퀴즈',
+  name : ['퀴즈', '문제'],
   description : 'quiz',
   execute : quiz
 }

@@ -12,7 +12,7 @@ async function name(message, args, info){
     return;
   }
   let class_ = info.class_;
-  let infoMessage = await message.channel.send("🔍 검색 중입니다...")
+  let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
 
@@ -26,16 +26,15 @@ async function name(message, args, info){
 
   let pagi = new Paginator(message, resCards, userConfig.paginateStep, resCards.length, preProcess, true, userConfig.goldenCardMode);
   let msgs = await pagi.next();
-  infoMessage.delete();
+  await msgs.infoMessage;
+  searchingMessage.delete();
 
   while(msgs){
     if( await msgs.reaction === "next" ){
       await message.channel.sendTyping();
-      await msgs.infoMessage.delete();
       msgs = await pagi.next();
     } else if( await msgs.reaction === "prev" ){
       await message.channel.sendTyping();
-      await msgs.infoMessage.delete();
       msgs = await pagi.prev();
     }
   }
@@ -43,7 +42,7 @@ async function name(message, args, info){
 }
 
 module.exports = {
-  name : '이름',
+  name : ['이름', '카드명'],
   description : 'name',
   execute : name
 }
