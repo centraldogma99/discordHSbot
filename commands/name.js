@@ -26,7 +26,7 @@ async function name(message, args, info){
 
   let pagi = new Paginator(message, resCards, userConfig.paginateStep, resCards.length, preProcess, true, userConfig.goldenCardMode);
   let msgs = await pagi.next();
-  await msgs.infoMessage;
+  if(msgs) await msgs.infoMessage;
   searchingMessage.delete();
 
   while(msgs){
