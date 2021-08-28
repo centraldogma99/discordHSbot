@@ -34,7 +34,7 @@ async function chanceConfig(message){
   })
   messageCollector.on('end', (m, r) => {
     if(r == 'answered') {
-      message.channel.send(`☑️ \`기회 횟수\`가 **${m.first().content}** (으)로 설정되었습니다.`)
+      message.channel.send(`☑️ \`기회 횟수\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
       m.first().delete();
     } else if(r == 'time'){
       message.channel.send(`？ 입력 시간이 초과되었습니다.`)
@@ -191,7 +191,7 @@ async function quizConfig(message){
     if (i.user.id != message.author.id) return;
     addQuizConfig(message.author.id, "difficulty", i.component.customId)
     
-    i.update({ content: `☑️ 난이도가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
+    i.update({ content: `☑️ \`난이도\`가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
     difficultyMsgCollector.stop("done");
   })
   difficultyMsgCollector.on('end', async (i, r) => {

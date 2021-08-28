@@ -80,11 +80,11 @@ class Paginator {
         new MessageButton()
           .setCustomId('prev')
           .setLabel('이전')
-          .setStyle('SUCCESS'),
+          .setStyle('SECONDARY'),
         new MessageButton()
           .setCustomId('next')
           .setLabel('다음')
-          .setStyle('DANGER')
+          .setStyle('PRIMARY')
       ]
       
       // 왼쪽 감정표현
@@ -105,12 +105,10 @@ class Paginator {
         infoStr = `🔍 총 ${ this.numberOfCards }개의 결과 : ${ this.cursor/this.step + 1 }/${ Math.ceil(this.numberOfCards/this.step)}`
       }
 
-      if( this.prevInfoMessage ) this.prevInfoMessage.delete();
       let infoMessage = await this.message.channel.send({ 
         content: infoStr,
         components: [row]
       })
-      this.prevInfoMessage = infoMessage;
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON', time: waitingTime })
         .then(i => {
           let id = i.component.customId;
@@ -118,15 +116,6 @@ class Paginator {
           return id;
         })
         .catch(() => "timeout");
-
-      // const pageButtonCollector = infoMessage.createMessageComponentCollector({
-      //   componentType: 'BUTTON',
-      //   time: 30000
-      // })
-      // pageButtonCollector.on('collect', async i => {
-      //   await i.update({ content: "☑️ 가져오는 중...", components: [] })
-      //   return i.component.customId;
-      // })
       
       return {
         'reaction': infoPromise,

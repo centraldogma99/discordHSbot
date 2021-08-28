@@ -33,7 +33,7 @@ function getRandomHint(message, card, hintUsed){
       promise = message.channel.send(`💡 **카드 텍스트 힌트**  _${card.text.replace(/<\/?[^>]+(>|$)/g, "").slice(0, len)}..._ (후략)`);
     }
   } else if(a == 4){
-    promise = message.channel.send(`💡 이 카드의 초성은 ${cho_hangul(card.alias)} 입니다.`)
+    promise = message.channel.send(`💡 이 카드의 초성은 \`${cho_hangul(card.alias)}\` 입니다.`)
   }
   return {
     promise: promise,
