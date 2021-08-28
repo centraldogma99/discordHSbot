@@ -74,6 +74,8 @@ class Paginator {
     let targetMessage = await this.message.channel.send({ files : [mergeImage] });
     this.prevMessage = targetMessage;
     if(isLongResult){
+      const waitingTime = 30000;
+
       let moveButtons = [
         new MessageButton()
           .setCustomId('prev')
@@ -109,13 +111,13 @@ class Paginator {
         components: [row]
       })
       this.prevInfoMessage = infoMessage;
-      let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON' })
+      let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON', time: waitingTime })
         .then(i => {
           let id = i.component.customId;
           i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] });
           return id;
         })
-        .catch(err => console.log(err));
+        .catch(() => "timeout");
 
       // const pageButtonCollector = infoMessage.createMessageComponentCollector({
       //   componentType: 'BUTTON',

@@ -1,7 +1,6 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 const mongo = require("../db");
 const loadUserConfig = require('../tools/loadUserConfig');
-const rarity = require('../tools/rarity.json');
 
 function addQuizConfig(messageAuthorId, fieldName, value){
   let query = mongo.userModel.findOne({ id : messageAuthorId });
@@ -22,7 +21,7 @@ function addQuizConfig(messageAuthorId, fieldName, value){
 }
 
 async function chanceConfig(message){
-  const messageCollector = message.channel.createMessageCollector({ time: 30000 });
+  const messageCollector = message.channel.createMessageCollector({ time: 30000, max: 1 });
   messageCollector.on('collect', m => {
     if(isNaN(m.content) || parseInt(m.content) < 3 || parseInt(m.content) > 9) {
       messageCollector.stop("wrongValue");
@@ -43,10 +42,11 @@ async function chanceConfig(message){
       message.channel.send("‼️ 잘못된 값이 입력되었습니다.");
     }
   })
+  
 }
 
 async function quizConfig(message){
-  const userConfig = await loadUserConfig(message.author);
+  let userConfig = await loadUserConfig(message.author);
   let stdBtn = new MessageButton()
     .setCustomId('standard')
     .setLabel('정규')
@@ -69,19 +69,19 @@ async function quizConfig(message){
   let gameModeMsg = await message.channel.send({ content: "**⚙️ 퀴즈 게임 모드**", components: [row1] });
   const gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   gameModeMsgCollector.on('collect', async i => {
+    userConfig = await loadUserConfig(message.author);
     if (i.user.id != message.author.id) return;
+    if(i.component.customId == 'standard')
+      if (userConfig.quizConfig.rarity == 2) {
+        i.update({ content: "❌  `정규` 게임모드와 `기본` 등급을 함께 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
+        gameModeMsgCollector.stop("error")
+        return;
+      }
     addQuizConfig(message.author.id, "gameMode", i.component.customId);
     
     let val = i.component.label;
-    // if(val == '정규'){
-    //   stdBtn.setStyle('PRIMARY').setDisabled(true);
-    //   wildBtn.setStyle('SECONDARY').setDisabled(false);
-    // } else {
-    //   stdBtn.setStyle('SECONDARY').setDisabled(false);
-    //   wildBtn.setStyle('PRIMARY').setDisabled(true);
-    // }
-    // await i.update({ components: [new MessageActionRow().addComponents([stdBtn, wildBtn])]})
     await i.update({ content : `☑️ 퀴즈 게임 모드가 \`${val}\`(으)로 설정되었습니다.`, components: [] })
+    gameModeMsgCollector.stop("done")
   })
   gameModeMsgCollector.on('end', async (i, r) => {
     if(r == 'time') await gameModeMsg.delete();
@@ -125,27 +125,23 @@ async function quizConfig(message){
   let rarityMsg = await message.channel.send({ content: "**⚙️ 퀴즈 카드 등급**   *파란 버튼을 누르면 카드등급 필터링을 해제할 수 있습니다.*", components: [row2] });
   const rarityMsgCollector = rarityMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   rarityMsgCollector.on('collect', async (i) => {
-    userConfig = loadUserConfig(message.author);
+    // 방금 위에서 바뀌었을 경우를 위해 refresh
+    userConfig = await loadUserConfig(message.author);
     if (i.user.id != message.author.id) return;
-    let val;
     if ( i.component.style != "PRIMARY" ) {
-      val = true;
       if(userConfig.quizConfig.gameMode == 'standard')
         if (i.component.customId == 2) {
-          i.update({ content: "❌  정규 게임모드에서는 `기본` 등급을 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
+          i.update({ content: "❌  `정규` 게임모드에서는 `기본` 등급을 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
           rarityMsgCollector.stop("error")
           return;
         }
       await addQuizConfig(message.author.id, "rarity", i.component.customId);
-    } else {
-      val = 0;
-      query.updateOne({ $set: {"quizConfig.rarity": 0} }).exec()
-    }
-    if( val ) {
       i.update({ content: `☑️ 퀴즈 카드등급 필터링이 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
     } else {
+      // 이미 데이터가 있기문에 addQuizConfig()를 할 필요가 없음
+      query.updateOne({ $set: {"quizConfig.rarity": 0} }).exec()
       i.update({ content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
@@ -195,6 +191,7 @@ async function quizConfig(message){
     addQuizConfig(message.author.id, "difficulty", i.component.customId)
     
     i.update({ content: `☑️ 난이도가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
+    difficultyMsgCollector.stop("done");
   })
   difficultyMsgCollector.on('end', async (i, r) => {
     if(r == 'time') await difficultyMsg.delete();
@@ -209,10 +206,10 @@ async function quizConfig(message){
   const chancesMsgCollector = chancesMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   chancesMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
-    await i.update({content: "⚙️ 설정할 `기회 횟수`를 입력해 주세요.", components: []})
+    await i.update({content: "⚙️ 설정할 `기회 횟수`를 채팅으로 입력해 주세요(3번 ~ 9번).", components: []})
     chanceConfig(message);
   })
-  difficultyMsgCollector.on('end', async (i, r) => {
+  chancesMsgCollector.on('end', async (i, r) => {
     if(r == 'time') await chancesMsg.delete();
   })
 

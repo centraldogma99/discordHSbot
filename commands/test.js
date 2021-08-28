@@ -11,7 +11,7 @@ async function test(message, args){
 }
 
 module.exports = {
-  name: "테스트",
+  name: ["테스트"],
   description: "test",
   execute: test
 }

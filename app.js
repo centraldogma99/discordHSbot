@@ -100,7 +100,7 @@ client.on("messageCreate", async message => {
       }
     } else {
       if( !client.commands.has(tokens.command) ) {
-        message.channel.send("‼️ 없는 명령어입니다!");
+        message.channel.send("‼️ 없는 명령어입니다! `!명령어`로 도움말을 확인할 수 있습니다.");
         return;
       } else {
         client.commands.get(tokens.command).execute(message, tokens.args, {class_ :tokens.class_});

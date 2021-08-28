@@ -35,7 +35,7 @@ async function defaultAction(message, args){
 }
 
 module.exports = {
-  name : 'defaultAction',
+  name : ['defaultAction'],
   description : 'defaultAction',
   execute : defaultAction
 }

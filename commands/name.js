@@ -27,17 +27,20 @@ async function name(message, args, info){
   let pagi = new Paginator(message, resCards, userConfig.paginateStep, resCards.length, preProcess, true, userConfig.goldenCardMode);
   let msgs = await pagi.next();
   searchingMessage.delete();
-  if(msgs){
-    await msgs.infoMessage;
-  }  
+  let infoMessage;
+  if(msgs) infoMessage = await msgs.infoMessage;
 
   while(msgs){
-    if( await msgs.reaction === "next" ){
+    let reaction = await msgs.reaction;
+    if( reaction === "next" ){
       await message.channel.sendTyping();
       msgs = await pagi.next();
-    } else if( await msgs.reaction === "prev" ){
+    } else if( reaction === "prev" ){
       await message.channel.sendTyping();
       msgs = await pagi.prev();
+    } else if( reaction === "timeout" ){
+      infoMessage.delete();
+      break;
     }
   }
   return;
