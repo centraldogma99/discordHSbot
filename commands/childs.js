@@ -44,7 +44,7 @@ async function childs(message, args, info){
       })
     )
 
-    let pagi = new Paginator(message, [Promise.all(promises)], userConfig.paginateStep, resCard.childIds.length, preProcess, false, userConfig.goldenCardMode);
+    let pagi = new Paginator(message, promises, userConfig.paginateStep, resCard.childIds.length, preProcess, false, userConfig.goldenCardMode);
     let msgs = await pagi.next();
     searchingMessage.delete()
 

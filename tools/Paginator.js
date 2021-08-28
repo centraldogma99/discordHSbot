@@ -91,7 +91,6 @@ class Paginator {
       if( this.cursor - this.step < 0){
         moveButtons[0].setDisabled(true);
       }
-
       // 오른쪽 감정표현
       if( this.cursor + this.step >= this.cards.length && this.promises.length <= 0){
         moveButtons[1].setDisabled(true);
