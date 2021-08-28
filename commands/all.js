@@ -99,8 +99,8 @@ async function all(message, args, info){
   let pagi = new Paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
   
   let msgs = await pagi.next();
-  await msgs.infoMessage;
   searchingMessage.delete();
+  if(msgs) await msgs.infoMessage;
 
   // ? Short meesage일 경우? - next()의 반환값이 없으므로 아무런 처리도 하지 않아도 된다.
   while(msgs){
