@@ -141,6 +141,7 @@ async function quizConfig(message){
       return;
     } else {
       // 이미 데이터가 있기문에 addQuizConfig()를 할 필요가 없음
+      let query = mongo.userModel.findOne({ id : message.author.id });
       query.updateOne({ $set: {"quizConfig.rarity": 0} }).exec()
       i.update({ content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`, components: [] });
       rarityMsgCollector.stop("done");
