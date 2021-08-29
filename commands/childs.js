@@ -5,6 +5,7 @@ const loadUserConfig = require("../tools/loadUserConfig")
 const CONSTANTS = require('../constants')
 const BlizzardToken = require('../tools/BlizzardToken');
 const safeAxiosGet = require("../tools/safeAxiosGet");
+const childRequest = require("../tools/childRequest");
 
 function preProcess(cards){
   return cards;
@@ -32,16 +33,9 @@ async function childs(message, args, info){
   let promises = [];
 
   if( resCard.childIds.length > 0 ){
-    promises = resCard.childIds.map( id => 
-      safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
-      { params : {
-        locale: userConfig.languageMode,
-        access_token: blizzardToken
-      }})
-      .then(res => res.data)
-    )
+    promises = childRequest(resCard.childIds, userConfig);
 
-    let pagi = new Paginator(message, promises, userConfig.paginateStep, resCard.childIds.length, preProcess, false, userConfig.goldenCardMode);
+    let pagi = new Paginator(message, promises, userConfig.paginateStep, resCard.childIds.length, preProcess, lengthEnabled = false, userConfig.goldenCardMode);
     let msgs = await pagi.next();
     searchingMessage.delete()
 
