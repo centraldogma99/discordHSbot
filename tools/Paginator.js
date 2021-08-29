@@ -117,15 +117,12 @@ class Paginator {
         components: [row]
       })
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON', time: waitingTime })
-        .then(i => {
-          let id = i.component.customId;
-          i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] });
-          return id;
-        })
-        .catch(() => "timeout");
+      .then(i => [i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] }), i.component.customId])
+      .catch(() => [undefined, "timeout"])
+        
       
       return {
-        'reaction': infoPromise,
+        'infoPromise': infoPromise,
         'infoMessage': infoMessage,
         'targetMessage': targetMessage
       }

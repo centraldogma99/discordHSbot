@@ -41,7 +41,8 @@ async function childs(message, args, info){
 
     while(msgs){
       let infoMessage = await msgs.infoMessage;
-      let reaction = await msgs.reaction;
+      [m, reaction] = await msgs.infoPromise;
+      await m;
       if( reaction === "next" ){
         await message.channel.sendTyping();
         await infoMessage.delete();
