@@ -42,7 +42,7 @@ function getRandomHint(message, card, hintUsed){
 }
 
 async function quiz(message, args){
-  let hintUsed = new Array(5).fill(false,0);
+  let hintUsed = new Array(5).fill(false, 0);
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
@@ -128,8 +128,12 @@ async function quiz(message, args){
     
     const buttonCollector = lastMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 15000, max: 1 });
     buttonCollector.on('collect', i => {
-      i.update({ content: "☑️  새로운 퀴즈를 가져옵니다...", components: [] });
-      quiz(message);
+      try{
+        i.update({ content: "☑️  새로운 퀴즈를 가져옵니다...", components: [] })
+        .then(() => quiz(message));
+      } catch(e) {
+        console.log(e)
+      }
     })
     buttonCollector.on('end', async (i, r) => {
       if(r == 'time') await lastMsg.delete();

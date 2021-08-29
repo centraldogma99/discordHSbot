@@ -36,9 +36,9 @@ client.on("ready", () => {
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
   // 개발시 주석처리할것
-  BlizzardToken.getToken()
-  .then(token => downloadDB(token))
-  .then(() => logger.serverLog("Server ON"))
+  // BlizzardToken.getToken()
+  // .then(token => downloadDB(token))
+  // .then(() => logger.serverLog("Server ON"))
 })
 
 client.on("messageCreate", async message => {
