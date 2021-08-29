@@ -40,19 +40,18 @@ async function childs(message, args, info){
     searchingMessage.delete()
 
     while(msgs){
-      let infoMessage = await msgs.infoMessage;
       [m, reaction] = await msgs.infoPromise;
       await m;
       if( reaction === "next" ){
         await message.channel.sendTyping();
-        await infoMessage.delete();
+        await msgs.infoMessage.delete();
         msgs = await pagi.next();
       } else if( reaction === "prev" ){
         await message.channel.sendTyping();
-        await infoMessage.delete();
+        await msgs.infoMessage.delete();
         msgs = await pagi.prev();
       } else if( reaction === "timeout" ){
-        infoMessage.delete();
+        msgs.infoMessage.delete();
         break;
       }
     }

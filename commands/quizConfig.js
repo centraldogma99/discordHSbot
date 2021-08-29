@@ -32,9 +32,9 @@ async function chanceConfig(message){
       return;
     }
   })
-  messageCollector.on('end', (m, r) => {
+  messageCollector.on('end', async (m, r) => {
     if(r == 'answered') {
-      message.channel.send(`☑️ \`기회 횟수\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
+      await message.channel.send(`☑️ \`기회 횟수\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
       m.first().delete();
     } else if(r == 'time'){
       message.channel.send(`？ 입력 시간이 초과되었습니다.`)
@@ -207,7 +207,7 @@ async function quizConfig(message){
   const chancesMsgCollector = chancesMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   chancesMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
-    await i.update({content: "⚙️ 설정할 `기회 횟수`를 채팅으로 입력해 주세요(3번 ~ 9번).", components: []})
+    await i.update({content: "⚙️ 설정할 `기회 횟수`를 채팅으로 입력해 주세요(3 ~ 9).", components: []})
     chanceConfig(message);
   })
   chancesMsgCollector.on('end', async (i, r) => {
