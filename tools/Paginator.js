@@ -45,7 +45,7 @@ class Paginator {
         try {
           cards = await this.promises[0];
         } catch(e) {
-          this.message.channel.send("‼️ 블리자드 서버 문제로 카드 정보를 가져오는 데 실패했습니다!");
+          await this.message.channel.send("‼️ 블리자드 서버 문제로 카드 정보를 가져오는 데 실패했습니다!");
           if(this.prevMessage) this.prevMessage.delete();
           console.log(e);
           return;
@@ -60,7 +60,7 @@ class Paginator {
       }
     }
     let targetCards = this.cards.slice(this.cursor, this.cursor + this.step);
-    return this.showMessages(targetCards);
+    return await this.showMessages(targetCards);
   }
 
   async showMessages(targetCards){

@@ -29,8 +29,9 @@ async function name(message, args, info){
   searchingMessage.delete();
 
   while(msgs){
-    let reaction = await msgs.reaction;
     let infoMessage = await msgs.infoMessage;
+    let reaction = await msgs.reaction;
+    
     if( reaction === "next" ){
       await message.channel.sendTyping();
       await infoMessage.delete();
