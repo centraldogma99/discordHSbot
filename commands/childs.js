@@ -3,7 +3,8 @@ const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig")
 const CONSTANTS = require('../constants')
-const BlizzardToken = require('../tools/BlizzardToken')
+const BlizzardToken = require('../tools/BlizzardToken');
+const safeAxiosGet = require("../tools/safeAxiosGet");
 
 function preProcess(cards){
   return cards;
@@ -32,16 +33,12 @@ async function childs(message, args, info){
 
   if( resCard.childIds.length > 0 ){
     promises = resCard.childIds.map( id => 
-      axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
+      safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
       { params : {
         locale: userConfig.languageMode,
         access_token: blizzardToken
       }})
       .then(res => res.data)
-      .catch((e) =>{
-        console.log(e);
-        return message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!")
-      })
     )
 
     let pagi = new Paginator(message, promises, userConfig.paginateStep, resCard.childIds.length, preProcess, false, userConfig.goldenCardMode);

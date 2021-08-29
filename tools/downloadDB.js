@@ -1,12 +1,13 @@
 const axios = require('axios')
 const mongo = require('../db');
 const CONSTANTS = require('../constants')
-const uniqueArray = require('./uniqueArray')
+const uniqueArray = require('./uniqueArray');
+const safeAxiosGet = require('./safeAxiosGet');
 
 async function downloadDB(blizzardToken){
   let promises = []
   for(let i = 1;i<=38;i++){
-    promises[i-1] = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: "ko_KR",
       pageSize: 100,
@@ -53,7 +54,7 @@ async function downloadDB(blizzardToken){
 
   promises = []
   for(let i = 1;i<=10;i++){
-    promises[i-1] = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: "ko_KR",
       pageSize: 100,

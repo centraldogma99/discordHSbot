@@ -2,13 +2,13 @@
   로컬 DB화 미루기 - 서치 성능 이슈(확인 안됨)
 */
 
-const axios = require("axios")
 const Paginator = require("../tools/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig")
 const uniqueArray = require('../tools/uniqueArray')
 const range = require('../tools/range')
 const CONSTANTS = require('../constants')
 const BlizzardToken = require("../tools/BlizzardToken");
+const safeAxiosGet = require("../tools/safeAxiosGet");
 
 function preProcess(cards){
   return uniqueArray(cards, "name");
@@ -27,7 +27,7 @@ async function all(message, args, info){
   const userConfig = await loadUserConfig(message.author);
   let className = class_ ? class_.name : undefined;
   let cardCount;
-  let temp = await axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+  let temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
     locale: userConfig.languageMode,
     textFilter: encodeURI(args),
@@ -57,7 +57,7 @@ async function all(message, args, info){
   let promises;
   // if ( userConfig.languageMode == "ko_KR" ){
   promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 1).map(i => 
-    axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: userConfig.languageMode,
       textFilter: encodeURI(args),
@@ -68,11 +68,7 @@ async function all(message, args, info){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
-    .catch((e) =>{
-      console.log(e);
-      return message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!")
-    })
-  );
+  )
   // }
   //  else if ( userConfig.languageMode == "en_US" ){
   //   promises = Promise.all(range( Math.ceil(cardCount / CONSTANTS.pageSize), 1).map(i => 
