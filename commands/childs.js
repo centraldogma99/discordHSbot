@@ -1,10 +1,6 @@
-const axios = require("axios")
 const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig")
-const CONSTANTS = require('../constants')
-const BlizzardToken = require('../tools/BlizzardToken');
-const safeAxiosGet = require("../tools/safeAxiosGet");
 const childRequest = require("../tools/childRequest");
 
 function preProcess(cards){
@@ -16,19 +12,22 @@ async function childs(message, args, info){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
     return;
   }
-  let fromDefault = info ? info.fromDefault : undefined;
-  let blizzardToken = await BlizzardToken.getToken();
-  const searchingMessage = await message.channel.send("🔍 검색 중입니다...");
-  await message.channel.sendTyping();
+  let resCard, searchingMessage;
   const userConfig = await loadUserConfig(message.author);
+  if ( !info?.fromDefault ){
+    searchingMessage = await message.channel.send("🔍 검색 중입니다...");
+    await message.channel.sendTyping();
 
-  const resCard = await getMostMatchingCard(args, userConfig.gameMode);
-  if (!resCard) {
-    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
-    return;
+    resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.class_);
+    if (!resCard) {
+      message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+      return;
+    }
+    await message.channel.send({files: [resCard.image]})
+  } else {
+    resCard = info?.card;
   }
-  // @여관주인 [카드명] 했을때 원본카드 이미지 출력 안하기
-  if( !fromDefault ){ await message.channel.send({files: [resCard.image]}) }
+  
   await message.channel.sendTyping();
   let promises = [];
 
@@ -37,7 +36,7 @@ async function childs(message, args, info){
 
     let pagi = new Paginator(message, promises, userConfig.paginateStep, resCard.childIds.length, preProcess, lengthEnabled = false, userConfig.goldenCardMode);
     let msgs = await pagi.next();
-    searchingMessage.delete()
+    searchingMessage?.delete()
 
     while(msgs){
       [m, reaction] = await msgs.infoPromise;

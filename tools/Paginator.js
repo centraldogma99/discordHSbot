@@ -41,15 +41,13 @@ class Paginator {
     // ? 끝일 때, 또는 처음 next가 실행되었을 때, 다음 promise 로드.
     while ( this.cursor + this.step >= this.cards.length ){
       if( this.promises.length > 0 ){
-        let cards;
-        try {
-          cards = await this.promises[0];
-        } catch(e) {
+        let cards = await this.promises[0]
+        .catch(async e => {
           await this.message.channel.send("‼️ 블리자드 서버 문제로 카드 정보를 가져오는 데 실패했습니다!");
           if(this.prevMessage) this.prevMessage.delete();
           console.log(e);
           return;
-        }
+        })
         cards = this.preProcess(cards);
         // TODO 더 나은 알고리즘 찾기
         // if (this.cards.length > 0)

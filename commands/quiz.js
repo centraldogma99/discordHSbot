@@ -130,12 +130,9 @@ async function quiz(message, args){
     
     const buttonCollector = lastMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 15000, max: 1 });
     buttonCollector.on('collect', i => {
-      try{
-        i.update({ content: "☑️  새로운 퀴즈를 가져옵니다...", components: [] })
-        .then(() => quiz(message));
-      } catch(e) {
-        console.log(e)
-      }
+      i.update({ content: "☑️  새로운 퀴즈를 가져옵니다...", components: [] })
+      .then(() => quiz(message))
+      .catch(e => {console.log(e); message.channel.send("퀴즈를 가져오던 중 오류가 발생했슶니다. 잠시 후 다시 시도해 주세요!")})
     })
     buttonCollector.on('end', async (i, r) => {
       if(r == 'time') await lastMsg.delete();

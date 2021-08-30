@@ -18,6 +18,11 @@ const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
 let logger;
 
+//개발시 주석처리할것
+// BlizzardToken.getToken()
+// .then(token => downloadDB(token))
+// .then(() => logger.serverLog("Database load complete"))
+
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
  
@@ -36,16 +41,13 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  // 개발시 주석처리할것
-  // BlizzardToken.getToken()
-  // .then(token => downloadDB(token))
-  // .then(() => logger.serverLog("Server ON"))
 })
 
 client.on("messageCreate", async message => {
   if( message.author.bot ) return;
   if( !message.mentions.has(client.user.id) ) return;
   if( message.mentions.everyone ) return;
+  if( message.type == 'REPLY') return;
   if( message.channel.doingQuiz ) {
     message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
     return;
@@ -55,7 +57,8 @@ client.on("messageCreate", async message => {
   const roleChecker = [
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.ATTACH_FILES,
-    Permissions.FLAGS.ADD_REACTIONS
+    Permissions.FLAGS.ADD_REACTIONS,
+    Permissions.FLAGS.MANAGE_MESSAGES
   ];
   
   if(message.channel.guild){
@@ -71,6 +74,8 @@ client.on("messageCreate", async message => {
     }
     if( !hasPermission ) {
       logger.serverLog(`No permission : ${ message.channel.id }`);
+      message.channel.send("‼️ 현재 채널에 봇이 활동할 권한이 부족합니다.\n'채널 보기', '메시지 보내기', '파일 첨부', '반응 추가하기', '메시지 관리' 중 하나라도 권한이 부족할 경우 이 오류가 발생합니다.")
+      .catch(console.log)
       return;
     }
   }
@@ -105,7 +110,7 @@ client.on("messageCreate", async message => {
         client.commands.get("사용법").execute(message, null);
         return;
       } else {
-        client.commands.get("defaultAction").execute(message, tokens.args);
+        client.commands.get("defaultAction").execute(message, tokens.args, {class_: tokens.class_});
       }
     } else {
       if( !client.commands.has(tokens.command) ) {

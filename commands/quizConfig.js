@@ -65,8 +65,10 @@ async function quizConfig(message){
 
   const row1 = new MessageActionRow()
     .addComponents([stdBtn, wildBtn]);
-  
-  let gameModeMsg = await message.channel.send({ content: "**⚙️ 퀴즈 게임 모드**", components: [row1] });
+
+
+  const firstMsg = await message.channel.send(`**${message.author.username}#${message.author.discriminator}가 퀴즈 설정 중...**`)
+  let gameModeMsg = await message.channel.send({ content: `**⚙️ 퀴즈 게임 모드**`, components: [row1] });
   const gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   gameModeMsgCollector.on('collect', async i => {
     userConfig = await loadUserConfig(message.author);
@@ -211,7 +213,10 @@ async function quizConfig(message){
     chanceConfig(message);
   })
   chancesMsgCollector.on('end', async (i, r) => {
-    if(r == 'time') await chancesMsg.delete();
+    if(r == 'time') {
+      chancesMsg.delete();
+      firstMsg.delete();
+    }
   })
 
   return;

@@ -1,16 +1,24 @@
-const axios = require('axios')
 const mongo = require('../db');
 const CONSTANTS = require('../constants')
 const uniqueArray = require('./uniqueArray');
 const safeAxiosGet = require('./safeAxiosGet');
 
 async function downloadDB(blizzardToken){
+  const pageSize = 100;
   let promises = []
-  for(let i = 1;i<=38;i++){
+  const wildCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+  { params: {
+    locale: "ko_KR",
+    pageSize: 1,
+    page : 1,
+    access_token: blizzardToken
+  }})
+  .then(res => res.data.cardCount)
+  for(let i = 1;i<=Math.ceil(wildCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: "ko_KR",
-      pageSize: 100,
+      pageSize: pageSize,
       page : i,
       access_token: blizzardToken
     }})
@@ -53,11 +61,21 @@ async function downloadDB(blizzardToken){
   }
 
   promises = []
-  for(let i = 1;i<=10;i++){
+  const stdCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+  { params: {
+    locale: "ko_KR",
+    pageSize: 1,
+    page : 1,
+    set: 'standard',
+    access_token: blizzardToken
+  }})
+  .then(res => res.data.cardCount)
+
+  for(let i = 1;i<=Math.ceil(stdCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: "ko_KR",
-      pageSize: 100,
+      pageSize: pageSize,
       page : i,
       set: 'standard',
       access_token: blizzardToken

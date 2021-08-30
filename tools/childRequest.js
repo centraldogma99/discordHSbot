@@ -25,14 +25,15 @@ function promiseBuilder(childIds, userConfig, unit){
       endIndex = startIndex + unit;
     }
     let childIdSliced = childIds.slice(startIndex, endIndex);
-    p = p
-    .then(() => Promise.all(childIdSliced.map( id => 
-      BlizzardToken.getToken()
-      .then(blizzardToken => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
+
+    let tokenPromise = BlizzardToken.getToken()
+    p = Promise.all([p, tokenPromise])
+    .then(([_, blizzardToken]) => Promise.all(childIdSliced.map( id => 
+      safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
       { params : {
         locale: userConfig.languageMode,
         access_token: blizzardToken
-      }}))
+      }})
       .then(res => res.data)
     )))
     arr = arr.concat(p);

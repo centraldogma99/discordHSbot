@@ -38,10 +38,10 @@ async function configure(message, args){
         break;
       }
     }
-
+    const firstMsg = await message.channel.send(`**${message.author.username}#${message.author.discriminator}가 설정 중...**`);
     const row1 = new MessageActionRow().addComponents(gameModeButtons)
     let gameModeMsg = await message.channel.send({
-      content: '⚙️ 게임모드 설정 (`정규`로 설정시 야생 카드는 검색되지 않습니다.)',
+      content: `**⚙️ 게임모드 설정**  *\`정규\`로 설정시 야생 카드는 검색되지 않습니다.*`,
       components: [row1]
     });
     let gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
@@ -62,7 +62,7 @@ async function configure(message, args){
       .setStyle('PRIMARY')
       .setLabel('페이지 설정')
     const row2 = new MessageActionRow().addComponents(pageMenuButton);
-    let pageMsg = await message.channel.send({ content: `**⚙️ 페이지 설정**  *한 페이지당 표시되는 카드 수를 설정합니다(1 ~ 9장).*    현재 설정 : \`${userConfig.paginateStep}\``, components: [row2] });
+    let pageMsg = await message.channel.send({ content: `**⚙️ 페이지 설정**  *한 페이지당 표시되는 카드 수를 설정합니다(1 ~ 9장).*\n현재 설정 : \`${userConfig.paginateStep}\``, components: [row2] });
     const pageMsgCollector = pageMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
     pageMsgCollector.on('collect', async (i) => {
       if (i.user.id != message.author.id) return;
@@ -127,7 +127,10 @@ async function configure(message, args){
       goldenCardModeMsgCollector.stop("done");
     })
     goldenCardModeMsgCollector.on('end', async (i, r) => {
-      if(r == 'time') await goldenCardModeMsg.delete();
+      if(r == 'time') {
+        goldenCardModeMsg.delete();
+        firstMsg.delete();
+      }
     })
     // 황금 설정 끝
   }
