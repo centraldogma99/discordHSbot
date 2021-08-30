@@ -42,6 +42,7 @@ function getRandomHint(message, card, hintUsed){
 }
 
 async function quiz(message, args){
+  message.channel.doingQuiz = true;
   let hintUsed = new Array(5).fill(false, 0);
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
@@ -108,6 +109,7 @@ async function quiz(message, args){
     }
   })
   messageCollector.on('end', async (m, reason) => {
+    message.channel.doingQuiz = false;
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
@@ -139,6 +141,7 @@ async function quiz(message, args){
       if(r == 'time') await lastMsg.delete();
     })
   })
+
 }
 
 module.exports = {

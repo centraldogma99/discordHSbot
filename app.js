@@ -1,6 +1,7 @@
 const { Client, Intents, Collection, Permissions } = require("discord.js");
 
-const client = new Client({ intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
+const client = new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
+
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const Logger = require("./tools/Logger");
@@ -45,27 +46,35 @@ client.on("messageCreate", async message => {
   if( message.author.bot ) return;
   if( !message.mentions.has(client.user.id) ) return;
   if( message.mentions.everyone ) return;
-
+  if( message.channel.doingQuiz ) {
+    message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
+    return;
+  }
+  
   // 현재 채널에 permission가지고 있는지 확인
   const roleChecker = [
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.ATTACH_FILES,
     Permissions.FLAGS.ADD_REACTIONS
   ];
-  let hasPermission = false;
-  for( const role of message.guild.me.roles.cache.values() ){
-    let myRolePermission = role.permissionsIn(message.channel);
-    if( myRolePermission.has(roleChecker) ){
-      if (role.name != '@everyone'){
-        hasPermission = true;
-        break;
-      } 
+  
+  if(message.channel.guild){
+    let hasPermission = false;
+    for( const role of message.guild.me.roles.cache.values() ){
+      let myRolePermission = role.permissionsIn(message.channel);
+      if( myRolePermission.has(roleChecker) ){
+        if (role.name != '@everyone'){
+          hasPermission = true;
+          break;
+        } 
+      }
+    }
+    if( !hasPermission ) {
+      logger.serverLog(`No permission : ${ message.channel.id }`);
+      return;
     }
   }
-  if( !hasPermission ) {
-    logger.serverLog(`No permission : ${ message.channel.id }`);
-    return;
-  }
+  
 
   // 메시지 받은것 로깅
   logger.messageLog(message);
