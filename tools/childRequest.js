@@ -17,6 +17,7 @@ function promiseBuilder(childIds, userConfig, unit){
   let startIndex = 0;
   let endIndex;
   let p = Promise.resolve();
+  let tokenPromise = BlizzardToken.getToken()
   let arr = [];
   while(startIndex < childIds.length){
     if (startIndex + unit > childIds.length){
@@ -26,7 +27,6 @@ function promiseBuilder(childIds, userConfig, unit){
     }
     let childIdSliced = childIds.slice(startIndex, endIndex);
 
-    let tokenPromise = BlizzardToken.getToken()
     p = Promise.all([p, tokenPromise])
     .then(([_, blizzardToken]) => Promise.all(childIdSliced.map( id => 
       safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
