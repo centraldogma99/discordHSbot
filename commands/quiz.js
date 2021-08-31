@@ -14,25 +14,23 @@ function getRandomHint(message, card, hintUsed){
   let a = getRandomInt(4);
   let promise;
   while(hintUsed[a]){
-    a = getRandomInt(5);
+    a = getRandomInt(4);
   }
-  if( a == 0 ){
-    promise = message.channel.send(`💡 이 카드의 이름은 ${card.alias.length}글자 입니다.`);
+  if(a == 0){
+    let len = card.alias.length;
+    let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2.5);
+    promise = message.channel.send(`💡 이 카드의 이름은 ${card.alias.length}글자이며, 처음 ${reslen}글자는 \`${card.alias.slice(0,reslen)}\`입니다.(띄어쓰기 무시)`);
   } else if(a == 1){
     let len = card.alias.length;
     let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2.5);
-    promise = message.channel.send(`💡 이 카드의 처음 ${reslen}글자는 \`${card.alias.slice(0,reslen)}\`입니다.(띄어쓰기 무시)`);
+    promise =  message.channel.send(`💡 이 카드의 이름은 ${card.alias.length}글자이며, 마지막 ${reslen}글자는 \`${card.alias.slice(card.alias.length-reslen)}\`입니다.(띄어쓰기 무시)`);
   } else if(a == 2){
-    let len = card.alias.length;
-    let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2.5);
-    promise =  message.channel.send(`💡 이 카드의 마지막 ${reslen}글자는 \`${card.alias.slice(card.alias.length-reslen)}\`입니다.(띄어쓰기 무시)`);
-  } else if(a == 3){
     if(!card.text || card.text.length == 0) return message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
     else {
       let len = Math.floor(card.text.length / 2);
       promise = message.channel.send(`💡 **카드 텍스트 힌트**  _${card.text.replace(/<\/?[^>]+(>|$)/g, "").slice(0, len)}..._ (후략)`);
     }
-  } else if(a == 4){
+  } else if(a == 3){
     promise = message.channel.send(`💡 이 카드의 초성은 \`${cho_hangul(card.alias)}\` 입니다.`)
   }
   return {
@@ -43,7 +41,7 @@ function getRandomHint(message, card, hintUsed){
 
 async function quiz(message, args){
   message.channel.doingQuiz = true;
-  let hintUsed = new Array(5).fill(false, 0);
+  let hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
@@ -73,7 +71,7 @@ async function quiz(message, args){
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quizImages.croppedImage]});
-  await message.channel.send("ℹ️  `포기` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  `힌트` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초, 기회 5번**")
+  await message.channel.send("ℹ️  `포기` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  `힌트` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**")
   
   const answerChecker = (ans) => {
     return targetCard.alias == ans.content.replace(/\s/g, '')
