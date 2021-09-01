@@ -5,7 +5,7 @@ function tokenizer(msgContent){
     
     if( !msgContent ) throw Error("NoContent");
     let ret = {}
-    let msgContentSplit = msgContent.trim().split(/\s+/);
+    let msgContentSplit = msgContent.trim().split(/ +|\t+/);
     let mention;
 
     if (msgContentSplit[0].startsWith('<@') && msgContentSplit[0].endsWith('>')){

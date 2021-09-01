@@ -10,6 +10,7 @@ async function deck(message, args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
     return;
   }
+  let code = args.split('\n').filter(line => line != '').filter(line => !line.startsWith('#'))[0];
   const userConfig = await loadUserConfig(message.author);
   const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   
@@ -19,7 +20,7 @@ async function deck(message, args){
     deckInfo = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/deck`,
     { params : {
       locale: userConfig.languageMode,
-      code: args,
+      code: code,
       access_token: blizzardToken
     }})
     .then(res => res.data)
@@ -46,7 +47,7 @@ async function deck(message, args){
   const str = Object.keys(obj).map(k => `${obj[k]} x (${costs[k]}) ${k}`).join('\n')
   await message.channel.send(`**${deckInfo.class.name} 덱**`);
   await message.channel.send(str);
-  
+
   await message.channel.sendTyping();
   const pagi = new Paginator(message, promises, userConfig.paginateStep, deckInfo.cards.length, c => c,
     false, userConfig.goldenCardMode)
