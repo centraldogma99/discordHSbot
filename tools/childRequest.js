@@ -35,6 +35,7 @@ function promiseBuilder(childIds, userConfig, unit){
         access_token: blizzardToken
       }})
       .then(res => res.data)
+      .catch(e => {throw e})
     )))
     arr = arr.concat(p);
     p = p.then(() => delay(delaySec));

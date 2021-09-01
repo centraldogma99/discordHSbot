@@ -68,6 +68,7 @@ async function all(message, args, info){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
+    .catch(e => {throw e})
   )
   // }
   //  else if ( userConfig.languageMode == "en_US" ){

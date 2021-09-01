@@ -14,6 +14,7 @@ async function downloadDB(blizzardToken){
     access_token: blizzardToken
   }})
   .then(res => res.data.cardCount)
+  .catch(console.log)
   for(let i = 1;i<=Math.ceil(wildCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
@@ -70,6 +71,7 @@ async function downloadDB(blizzardToken){
     access_token: blizzardToken
   }})
   .then(res => res.data.cardCount)
+  .catch(console.log)
 
   for(let i = 1;i<=Math.ceil(stdCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
