@@ -45,10 +45,11 @@ async function deck(message, args){
   }
   const str = Object.keys(obj).map(k => `${obj[k]} x (${costs[k]}) ${k}`).join('\n')
   await message.channel.send(`**${deckInfo.class.name} 덱**`);
+  await message.channel.send(str);
+  
   await message.channel.sendTyping();
   const pagi = new Paginator(message, promises, userConfig.paginateStep, deckInfo.cards.length, c => c,
     false, userConfig.goldenCardMode)
-  await message.channel.send(str);
   let msgs = await pagi.next();
   searchingMessage.delete();
 
