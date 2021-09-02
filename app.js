@@ -7,6 +7,7 @@ const fs = require('fs');
 const Logger = require("./tools/Logger");
 const downloadDB = require("./tools/downloadDB");
 const BlizzardToken = require("./tools/BlizzardToken");
+const axios = require("axios");
 
 require("dotenv").config()
 
@@ -15,6 +16,7 @@ const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
 const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
+const koreanBotToken = process.env.KOREANBOT_SECRET;
 let logChannel, logger;
 
 
@@ -28,6 +30,21 @@ for (const file of commandFiles){
   }
 }
 
+function updateKoreanBot(){
+  axios.post(`https://koreanbots.dev/api/v2/bots/868188628709425162/stats`,
+  {
+    "servers": client.guilds.cache.size
+  },
+  {
+    headers: {
+      "Authorization": koreanBotToken,
+      "Content-Type": "application/json"
+    }
+  })
+  .then(console.log)
+  .catch(console.log)
+}
+
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
   console.log(`I am in ${client.guilds.cache.size} servers.`)
@@ -36,6 +53,8 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
+  updateKoreanBot()
+  setInterval(updateKoreanBot, 120000);
 })
 
 client.on("messageCreate", async message => {
@@ -133,7 +152,7 @@ client.on("messageCreate", async message => {
 try {
   //개발시 주석처리할것
   BlizzardToken.getToken()
-  .then(token => downloadDB(token))
+  // .then(token => downloadDB(token))
   .then(() => client.login(discordToken))
   .then(() => console.log("DB load complete"))
 } catch(e){
