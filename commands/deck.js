@@ -4,6 +4,7 @@ const safeAxiosGet = require("../tools/safeAxiosGet");
 const CONSTANTS = require("../constants");
 const loadUserConfig = require("../tools/loadUserConfig");
 const requestWithDelay = require("../tools/requestWithDelay");
+const { MessageEmbed } = require("discord.js");
 
 async function deck(message, args){
   if(!args) {
@@ -30,7 +31,7 @@ async function deck(message, args){
   } catch (e) {
     console.log(e.response.status);
     if(e.response.status === 400)
-      message.channel.send("‼️ 오류가 발생했습니다. 잘못된 덱 코드입니다.");
+      message.channel.send("‼️ 잘못된 덱 코드입니다.");
     else
       message.channel.send("‼️ 서버 오류가 발생했습니다. 개발자에게 문의해 주세요!");
     return;
@@ -38,15 +39,22 @@ async function deck(message, args){
   const cards = deckInfo.cards.sort((a, b) => a.manaCost - b.manaCost);
   const promises = requestWithDelay(cards.map(card => Promise.resolve(card)));
   let names = cards.map(card => card.name)
-  let costs = Object.fromEntries(cards.map(card => [card.name, card.manaCost]))
+  let costsAndRarities = Object.fromEntries(cards.map(card => [card.name, {cost: card.manaCost, isLegendary: card.rarityId == 5? '⭐' : ''}]))
   let obj = {};
   for(const name of names){
     if(!obj[name]) obj[name] = 1;
     else obj[name] += 1;
   }
-  const str = Object.keys(obj).map(k => `${obj[k]} x (${costs[k]}) ${k}`).join('\n')
-  await message.channel.send(`**${deckInfo.class.name} 덱**`);
-  await message.channel.send(str);
+  const str = Object.keys(obj).map(
+    k => `${obj[k]} x (${costsAndRarities[k].cost}) ${k} ${costsAndRarities[k].isLegendary}`
+    ).join('\n')
+  // await message.channel.send(`**${deckInfo.class.name} 덱**`);
+  const embed = new MessageEmbed()
+    .setColor('#0099ff')
+    .setTitle(`**${deckInfo.class.name} 덱**`)
+    .setDescription(str)
+    .setThumbnail(deckInfo.hero.image)
+  await message.channel.send({embeds: [embed]});
 
   await message.channel.sendTyping();
   const pagi = new Paginator(message, promises, userConfig.paginateStep, deckInfo.cards.length, c => c,
