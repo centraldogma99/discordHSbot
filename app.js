@@ -7,7 +7,8 @@ const fs = require('fs');
 const Logger = require("./tools/Logger");
 const downloadDB = require("./tools/downloadDB");
 const BlizzardToken = require("./tools/BlizzardToken");
-const axios = require("axios");
+const updateKoreanBot = require("./tools/koreanbot/updateKoreanBot");
+const checkUserVote = require("./tools/koreanbot/checkUserVote");
 
 require("dotenv").config()
 
@@ -30,21 +31,6 @@ for (const file of commandFiles){
   }
 }
 
-function updateKoreanBot(){
-  axios.post(`https://koreanbots.dev/api/v2/bots/868188628709425162/stats`,
-  {
-    "servers": client.guilds.cache.size
-  },
-  {
-    headers: {
-      "Authorization": koreanBotToken,
-      "Content-Type": "application/json"
-    }
-  })
-  .then(console.log)
-  .catch(console.log)
-}
-
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
   console.log(`I am in ${client.guilds.cache.size} servers.`)
@@ -53,8 +39,8 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  updateKoreanBot()
-  setInterval(updateKoreanBot, 120000);
+  // updateKoreanBot()
+  // setInterval(updateKoreanBot, 120000);
 })
 
 client.on("messageCreate", async message => {

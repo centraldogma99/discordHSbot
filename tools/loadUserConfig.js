@@ -13,6 +13,15 @@ async function loadUserConfig(messageAuthor){
         rarity : 0,
         chances: 5,
         difficulty: 1
+      },
+      stats: {
+        point: 0,
+        quiz1: 0,
+        quiz2: 0,
+        quiz3: 0,
+        quiz4: 0,
+        quiz5: 0,
+        vote: 0
       }
     }
   }
@@ -30,13 +39,24 @@ async function loadUserConfig(messageAuthor){
         chances: 5,
         difficulty: 1
       }
+
+  const stats = {
+    point: 0,
+    quiz1: 0,
+    quiz2: 0,
+    quiz3: 0,
+    quiz4: 0,
+    quiz5: 0,
+    vote: 0
+  }
  
   return {
     gameMode : userConfig.gameMode ?? "wild",
     paginateStep : userConfig.paginateStep ?? 3,
     goldenCardMode : userConfig.goldenCardMode ?? false,
     languageMode : userConfig.languageMode ?? "ko_KR",
-    quizConfig : quizConfig
+    quizConfig : quizConfig,
+    stats : stats
   }
 }
 

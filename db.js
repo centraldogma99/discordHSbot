@@ -12,6 +12,15 @@ const userSchema = schema({
     rarity: Number,
     chances: Number,
     difficulty: Number
+  },
+  stats: {
+    point: { type: Number, default: 0 },
+    quiz1: { type: Number, default: 0 },
+    quiz2: { type: Number, default: 0 },
+    quiz3: { type: Number, default: 0 },
+    quiz4: { type: Number, default: 0 },
+    quiz5: { type: Number, default: 0 },
+    vote: { type: Number, default: 0 }
   }
 });
 
