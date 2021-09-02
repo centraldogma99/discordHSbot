@@ -119,7 +119,7 @@ async function downloadDB(blizzardToken){
   } catch(e) {
     console.log(e);
   }
-
+  promises = []
   const battlegroundsCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
     locale: "ko_KR",
