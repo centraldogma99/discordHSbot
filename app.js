@@ -6,8 +6,7 @@ const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const Logger = require("./tools/Logger");
 const downloadDB = require("./tools/downloadDB");
-const BlizzardToken = require("./tools/BlizzardToken")
-let logChannel;
+const BlizzardToken = require("./tools/BlizzardToken");
 
 require("dotenv").config()
 
@@ -16,12 +15,8 @@ const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
 const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
-let logger;
+let logChannel, logger;
 
-//개발시 주석처리할것
-// BlizzardToken.getToken()
-// .then(token => downloadDB(token))
-// .then(() => logger.serverLog("Database load complete"))
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -48,6 +43,14 @@ client.on("messageCreate", async message => {
   if( !message.mentions.has(client.user.id) ) return;
   if( message.mentions.everyone ) return;
   if( message.type == 'REPLY') return;
+  if( message.channel.isThread() ) {
+    try{
+      message.channel.send("‼️ 스레드는 아직 지원하지 않습니다.")
+    } catch(e) {
+      console.log(e);
+    }
+    return;
+  }
   if( message.channel.doingQuiz ) {
     message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
     return;
@@ -126,9 +129,15 @@ client.on("messageCreate", async message => {
   }
 })
 
+
 try {
-  client.login(discordToken)
+  //개발시 주석처리할것
+  BlizzardToken.getToken()
+  .then(token => downloadDB(token))
+  .then(() => client.login(discordToken))
+  .then(() => console.log("DB load complete"))
 } catch(e){
   console.log("로그인 실패")
+  console.log(e);
 }
 

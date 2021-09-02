@@ -7,6 +7,7 @@ async function cardNameInfer(cardName, gameMode='wild', callback){
   let db;
   if ( gameMode == 'standard' ) db = mongo.cardAliasStandardModel;
   else if ( gameMode == 'wild' ) db = mongo.cardAliasModel;
+  else if ( gameMode == 'battlegrounds' ) db = mongo.battlegroundsCardModel;
   else return;
 
   let temp = cardName.replace(/\s/g, '');

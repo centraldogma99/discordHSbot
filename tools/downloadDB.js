@@ -120,6 +120,62 @@ async function downloadDB(blizzardToken){
     console.log(e);
   }
 
+  const battlegroundsCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+  { params: {
+    locale: "ko_KR",
+    gameMode: "battlegrounds",
+    pageSize: 1,
+    page : 1,
+    access_token: blizzardToken
+  }})
+  .then(res => res.data.cardCount)
+  .catch(console.log)
+  for(let i = 1;i<=Math.ceil(battlegroundsCardCount/pageSize);i++){
+    promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    { params: {
+      locale: "ko_KR",
+      gameMode: "battlegrounds",
+      pageSize: pageSize,
+      page : i,
+      access_token: blizzardToken
+    }})
+    .then(res => res.data.cards)
+    .catch(console.log)
+  }
+  cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
+  names = cards.map(card => card.name);
+  namesNoSpace = names.map(name => name.replace(/\s/g, ''));
+  images = cards.map(card => card.image);
+  imageGolds = cards.map(card => card.imageGold)
+  childIds = cards.map(card => card.childIds)
+  rarityIds = cards.map(card => card.rarityId)
+  tiers = cards.map(card => {
+    if(!card.battlegrounds) return;
+    else return card.battlegrounds.tier?? "hero"
+  })
+  classIds = cards.map(card => card.classId)
+  texts = cards.map(card => card.text)
+  doc = [];
+  for(let i = 0;i<names.length;i++){
+    doc = doc.concat({ 
+      alias: namesNoSpace[i],
+      name: names[i],
+      image: images[i],
+      imageGold: imageGolds[i],
+      childIds: childIds[i],
+      rarityId: rarityIds[i],
+      tier: tiers[i],
+      classId: classIds[i],
+      text: texts[i]
+    });
+  }
+  doc = uniqueArray(doc, "alias");
+  try{
+    await mongo.battlegroundsCardModel.insertMany(doc)
+  } catch(e) {
+    console.log(e);
+  }
+
   // mongo.cardAliasModel.find().then(console.log)
   // mongo.cardAliasStandardModel.find().then(console.log)
 }

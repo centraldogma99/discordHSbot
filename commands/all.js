@@ -20,27 +20,33 @@ async function all(message, args, info){
     return;
   }
   let blizzardToken = await BlizzardToken.getToken();
-  let class_ = info.class_;
-  // inference 를 하면 안된다.
   let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
-  let className = class_ ? class_.name : undefined;
   let cardCount;
-  let temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-  { params: {
-    locale: userConfig.languageMode,
-    textFilter: encodeURI(args),
-    class: className,
-    set: userConfig.gameMode,
-    pageSize: 1,
-    page: 1,
-    access_token: blizzardToken
-  }})
-  .catch((e) =>{
-    console.log(e);
-    return message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!")
-  });
+
+  let temp;
+  try{
+    temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    { params: {
+      locale: userConfig.languageMode,
+      textFilter: encodeURI(args),
+      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
+      tier: info?.tier ?? null,
+      class: info?.class_?.name,
+      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
+      pageSize: 1,
+      page: 1,
+      access_token: blizzardToken
+    }})
+    .catch((e) =>{
+      console.log(e);
+      throw e;
+    });
+  } catch(e) {
+    message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!");
+    return;
+  }
 
   cardCount = temp.data.cardCount;
   if ( cardCount == 0 ){
@@ -61,8 +67,10 @@ async function all(message, args, info){
     { params: {
       locale: userConfig.languageMode,
       textFilter: encodeURI(args),
-      class: className,
-      set: userConfig.gameMode,
+      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : null,
+      class: info?.class_?.name,
+      tier: info?.tier ?? null,
+      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
       pageSize: CONSTANTS.pageSize,
       page : i,
       access_token: blizzardToken

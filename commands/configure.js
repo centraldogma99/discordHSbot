@@ -30,6 +30,10 @@ async function configure(message, args){
         .setCustomId('wild')
         .setLabel('야생')
         .setStyle('SECONDARY'),
+        new MessageButton()
+        .setCustomId('battlegrounds')
+        .setLabel('전장')
+        .setStyle('SECONDARY'),
     ];
     for (const button of gameModeButtons){
       if (button.customId == userConfig.gameMode){
