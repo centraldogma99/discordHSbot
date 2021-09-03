@@ -6,7 +6,7 @@ const mergeImages = require('./mergeImages');
 const { MessageButton, MessageActionRow } = require('discord.js');
 
 class Paginator {
-  constructor(message, promises, step, length, preProcess, lengthEnabled = true, goldenCardMode = false){
+  constructor(message, promises, step, length, preProcess, {lengthEnabled = true, goldenCardMode = false}){
     /*
       @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
       @promises 카드를 검색하는 promise들. 이들의 resolve값은 Array[card] 이어야 한다.

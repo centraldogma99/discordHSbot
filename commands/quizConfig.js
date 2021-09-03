@@ -2,50 +2,49 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const mongo = require("../db");
 const loadUserConfig = require('../tools/loadUserConfig');
 
-function addQuizConfig(messageAuthorId, fieldName, value){
+async function addQuizConfig(messageAuthorId, fieldName, value){
+  // @value should be typechecked before given as parameter
   let query = mongo.userModel.findOne({ id : messageAuthorId });
-  return query.exec()
-  .then( user => {
-    if(!user.quizConfig.gameMode && !user.quizConfig.rarity && !user.quizConfig.difficulty && !user.quizConfig.chances){
-      return query.updateOne({quizConfig: {[fieldName]: value}}).exec()
+  try {
+    const user = await query.exec();
+    if (!user.quizConfig.gameMode && !user.quizConfig.rarity && !user.quizConfig.difficulty && !user.quizConfig.chances) {
+      return query.updateOne({ quizConfig: { [fieldName]: value } }).exec();
     } else {
-      return query.updateOne({$set: {[`quizConfig.${fieldName}`]: value}}).exec()
+      return query.updateOne({ $set: { [`quizConfig.${fieldName}`]: value } }).exec();
     }
-  })
-  .catch( () => {
-    return mongo.userModel.insertMany([{
+  } catch (e) {
+    return await mongo.userModel.insertMany([{
       id: messageAuthorId,
-      quizConfig: {[fieldName]: value}
-    }])
-  })
-}
-
-async function chanceConfig(message){
-  const messageCollector = message.channel.createMessageCollector({ time: 30000, max: 1 });
-  messageCollector.on('collect', m => {
-    if(isNaN(m.content) || parseInt(m.content) < 3 || parseInt(m.content) > 9) {
-      messageCollector.stop("wrongValue");
-      return;
-    } else {
-      addQuizConfig(message.author.id, "chances", m.content)
-      messageCollector.stop("answered");
-      return;
-    }
-  })
-  messageCollector.on('end', async (m, r) => {
-    if(r == 'answered') {
-      await message.channel.send(`☑️ \`기회 횟수\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
-    } else if(r == 'time'){
-      message.channel.send(`？ 입력 시간이 초과되었습니다.`)
-    } else if(r == 'wrongValue'){
-      message.channel.send("‼️ 잘못된 값이 입력되었습니다.");
-    }
-  })
-  
+      quizConfig: { [fieldName]: value }
+    }]);
+  }
 }
 
 async function quizConfig(message){
-  let userConfig = await loadUserConfig(message.author);
+  async function chanceConfig(){
+    const messageCollector = message.channel.createMessageCollector({ time: 30000, max: 1 });
+    messageCollector.on('collect', async m => {
+      if(isNaN(m.content) || parseInt(m.content) < 3 || parseInt(m.content) > 9) {
+        messageCollector.stop("wrongValue");
+        return;
+      } else {
+        await addQuizConfig(message.author.id, "chances", parseInt(m.content))
+        messageCollector.stop("answered");
+        return;
+      }
+    })
+    messageCollector.on('end', async (m, r) => {
+      if(r == 'answered') {
+        await message.channel.send(`☑️ \`기회 횟수\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
+      } else if(r == 'time'){
+        message.channel.send(`？ 입력 시간이 초과되었습니다.`)
+      } else if(r == 'wrongValue'){
+        message.channel.send("‼️ 잘못된 값이 입력되었습니다.");
+      }
+    })
+  }
+
+  let userConfig = await loadUserConfig(message.author.id);
   let stdBtn = new MessageButton()
     .setCustomId('standard')
     .setLabel('정규')
@@ -62,15 +61,12 @@ async function quizConfig(message){
     wildBtn.setStyle('PRIMARY');
   }
 
-  const row1 = new MessageActionRow()
-    .addComponents([stdBtn, wildBtn]);
-
-
+  const row1 = new MessageActionRow().addComponents([stdBtn, wildBtn]);
   const firstMsg = await message.channel.send(`**${message.author.username}#${message.author.discriminator}가 퀴즈 설정 중...**`)
   let gameModeMsg = await message.channel.send({ content: `**⚙️ 퀴즈 게임 모드**`, components: [row1] });
   const gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   gameModeMsgCollector.on('collect', async i => {
-    userConfig = await loadUserConfig(message.author);
+    userConfig = await loadUserConfig(message.author.id);
     if (i.user.id != message.author.id) return;
     if(i.component.customId == 'standard')
       if (userConfig.quizConfig.rarity == 2) {
@@ -78,7 +74,7 @@ async function quizConfig(message){
         gameModeMsgCollector.stop("error")
         return;
       }
-    addQuizConfig(message.author.id, "gameMode", i.component.customId);
+    await addQuizConfig(message.author.id, "gameMode", i.component.customId);
     
     let val = i.component.label;
     await i.update({ content : `☑️ 퀴즈 게임 모드가 \`${val}\`(으)로 설정되었습니다.`, components: [] })
@@ -121,11 +117,10 @@ async function quizConfig(message){
     }
   }
 
-  const row2 = new MessageActionRow()
-    .addComponents(rarityButtons)
+  const row2 = new MessageActionRow().addComponents(rarityButtons)
   let rarityMsg = await message.channel.send({ content: "**⚙️ 퀴즈 카드 등급**   *파란 버튼을 누르면 카드등급 필터링을 해제할 수 있습니다.*", components: [row2] });
   const rarityMsgCollector = rarityMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
-  rarityMsgCollector.on('collect', async (i) => {
+  rarityMsgCollector.on('collect', async i => {
     // 방금 위에서 바뀌었을 경우를 위해 refresh
     userConfig = await loadUserConfig(message.author);
     if (i.user.id != message.author.id) return;
@@ -136,20 +131,19 @@ async function quizConfig(message){
           rarityMsgCollector.stop("error")
           return;
         }
-      await addQuizConfig(message.author.id, "rarity", i.component.customId);
+      await addQuizConfig(message.author.id, "rarity", parseInt(i.component.customId));
       i.update({ content: `☑️ 퀴즈 카드등급 필터링이 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
     } else {
-      // 이미 데이터가 있기문에 addQuizConfig()를 할 필요가 없음
-      let query = mongo.userModel.findOne({ id : message.author.id });
-      query.updateOne({ $set: {"quizConfig.rarity": 0} }).exec()
+      // It's guaranteed there is user config data, don't have to call addQuizConfig()
+      await mongo.userModel.updateOne({ id : message.author.id }, { $set: {"quizConfig.rarity": 0} }).exec()
       i.update({ content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
     }
   })
-  rarityMsgCollector.on('end', async (i, r) => {
+  rarityMsgCollector.on('end', async (_, r) => {
     if(r == 'time') await rarityMsg.delete();
   })
 
@@ -184,19 +178,18 @@ async function quizConfig(message){
       }
     }
   }
-  const row3 = new MessageActionRow()
-    .addComponents(difficultyButtons);
+  const row3 = new MessageActionRow().addComponents(difficultyButtons);
   let difficultyMsg = await message.channel.send({ content: "**⚙️ 퀴즈 난이도**   *숫자가 클수록 난이도가 높습니다.*", components: [row3] });
   const difficultyMsgCollector = difficultyMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
-  difficultyMsgCollector.on('collect', async (i) => {
+  difficultyMsgCollector.on('collect', async i => {
     if (i.user.id != message.author.id) return;
-    addQuizConfig(message.author.id, "difficulty", i.component.customId)
+    await addQuizConfig(message.author.id, "difficulty", parseInt(i.component.customId))
     
     i.update({ content: `☑️ \`난이도\`가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
     difficultyMsgCollector.stop("done");
   })
-  difficultyMsgCollector.on('end', async (i, r) => {
-    if(r == 'time') await difficultyMsg.delete();
+  difficultyMsgCollector.on('end', async (_, r) => {
+    if(r === 'time') await difficultyMsg.delete();
   })
 
   const chancesMenuButton = new MessageButton()
@@ -209,10 +202,11 @@ async function quizConfig(message){
   chancesMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
     await i.update({content: "⚙️ 설정할 `기회 횟수`를 채팅으로 입력해 주세요(3 ~ 9).", components: []})
+    
     chanceConfig(message);
   })
-  chancesMsgCollector.on('end', async (i, r) => {
-    if(r == 'time') {
+  chancesMsgCollector.on('end', async (_, r) => {
+    if(r === 'time') {
       chancesMsg.delete();
       firstMsg.delete();
     }

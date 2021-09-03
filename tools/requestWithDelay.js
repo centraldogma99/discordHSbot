@@ -1,8 +1,6 @@
 const delay = ms => new Promise(r => setTimeout(r, ms));
-const delayBetweenChunks = 200;
-const chunkUnit = 10;
 
-function requestWithDelay(requestPromises){
+function requestWithDelay(requestPromises, {delayBetweenChunks=200, chunkUnit=10} = {}){
   let p = Promise.resolve();
   let res = [];
   const numOfChunks = Math.ceil(requestPromises.length / chunkUnit);

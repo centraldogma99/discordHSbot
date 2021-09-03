@@ -43,7 +43,7 @@ async function quiz(message, args){
   message.channel.doingQuiz = true;
   let hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
-  const userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
   const difficulty = userConfig.quizConfig.difficulty;
   let chances = userConfig.quizConfig.chances;
   let db;

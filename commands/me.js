@@ -2,7 +2,7 @@ const { MessageEmbed } = require("discord.js");
 const loadUserConfig = require("../tools/loadUserConfig")
 
 async function me(message){
-  const userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
   const embed = new MessageEmbed()
     .setColor('#0099ff')
     .setTitle(`**${message.author.tag} 의 정보**`)

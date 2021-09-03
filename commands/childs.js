@@ -1,11 +1,10 @@
 const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
-const loadUserConfig = require("../tools/loadUserConfig")
-const childRequest = require("../tools/childRequest");
-
-function preProcess(cards){
-  return cards;
-}
+const loadUserConfig = require("../tools/loadUserConfig");
+const safeAxiosGet = require("../tools/safeAxiosGet")
+const BlizzardToken = require("../tools/BlizzardToken");
+const requestWithDelay = require("../tools/requestWithDelay")
+const CONSTANTS = require("../constants")
 
 async function childs(message, args, info){
   if(!args){
@@ -13,8 +12,9 @@ async function childs(message, args, info){
     return;
   }
   let resCard, searchingMessage;
-  const userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
   if ( !info?.fromDefault ){
+    // fromDefault가 false일 경우, 카드 찾기
     searchingMessage = await message.channel.send("🔍 검색 중입니다...");
     await message.channel.sendTyping();
 
@@ -25,16 +25,26 @@ async function childs(message, args, info){
     }
     await message.channel.send({files: [resCard.image]})
   } else {
+    // fromDefault true일 경우, defaultAction에서 card를 보내줌.
     resCard = info?.card;
   }
   
   await message.channel.sendTyping();
   let promises = [];
+  let blizzardToken = await BlizzardToken.getToken();
 
   if( resCard.childIds.length > 0 ){
-    promises = childRequest(resCard.childIds, userConfig);
+    promises = resCard.childIds.map(id => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
+      { params : {
+        locale: userConfig.languageMode,
+        access_token: blizzardToken
+      }}
+    )
+    .then(res => res.data)
+    .catch(e => {throw e}))
 
-    let pagi = new Paginator(message, promises, userConfig.paginateStep, resCard.childIds.length, preProcess, lengthEnabled = false, userConfig.goldenCardMode);
+    const pagi = new Paginator(message, requestWithDelay(promises), userConfig.paginateStep, resCard.childIds.length, c => c,
+      {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode});
     let msgs = await pagi.next();
     searchingMessage?.delete()
 

@@ -2,10 +2,6 @@ const Paginator = require("../tools/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig")
 const cardNameInfer = require("../tools/cardNameInfer");
 
-function preProcess(args){
-  return args;
-}
-
 async function name(message, args, info){
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
@@ -14,7 +10,7 @@ async function name(message, args, info){
   let class_ = info.class_;
   let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
-  const userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
 
   let resCards = await cardNameInfer(args, userConfig.gameMode);
   
@@ -24,7 +20,8 @@ async function name(message, args, info){
     return;
   }
 
-  let pagi = new Paginator(message, resCards, userConfig.paginateStep, resCards.length, preProcess, true, userConfig.goldenCardMode);
+  const pagi = new Paginator(message, resCards, userConfig.paginateStep, resCards.length, c => c,
+    {lengthEnabled: true, goldenCardMode: userConfig.goldenCardMode});
   let msgs = await pagi.next();
   searchingMessage.delete();
 

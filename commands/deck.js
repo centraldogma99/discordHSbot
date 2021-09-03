@@ -12,7 +12,7 @@ async function deck(message, args){
     return;
   }
   let code = args.split('\n').filter(line => line != '').filter(line => !line.startsWith('#'))[0];
-  const userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
   const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   
   const blizzardToken = await BlizzardToken.getToken();
@@ -58,7 +58,7 @@ async function deck(message, args){
 
   await message.channel.sendTyping();
   const pagi = new Paginator(message, promises, userConfig.paginateStep, deckInfo.cards.length, c => c,
-    false, userConfig.goldenCardMode)
+    {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode})
   let msgs = await pagi.next();
   searchingMessage.delete();
 
