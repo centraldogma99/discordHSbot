@@ -85,7 +85,6 @@ async function configure(message, args){
       messageCollector.on('end', async (m, r) => {
         if(r == 'answered') {
           await message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 \`페이지\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
-          m.first().delete();
           pageMsg.delete();
         } else if(r == 'time'){
           message.channel.send(`？ 입력 시간이 초과되었습니다.`)

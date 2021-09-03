@@ -35,7 +35,6 @@ async function chanceConfig(message){
   messageCollector.on('end', async (m, r) => {
     if(r == 'answered') {
       await message.channel.send(`☑️ \`기회 횟수\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
-      m.first().delete();
     } else if(r == 'time'){
       message.channel.send(`？ 입력 시간이 초과되었습니다.`)
     } else if(r == 'wrongValue'){
