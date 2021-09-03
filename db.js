@@ -3,15 +3,15 @@ const schema = mongoose.Schema;
 
 const userSchema = schema({
   id: { type: Number, required: true },
-  gameMode: { type: String },
-  paginateStep: { type: Number },
-  languageMode: { type: String },
-  goldenCardMode: { type: Boolean },
+  gameMode: { type: String, default: "wild" },
+  paginateStep: { type: Number, default: 3 },
+  languageMode: { type: String, default: "ko_KR" },
+  goldenCardMode: { type: Boolean, default: false },
   quizConfig: {
-    gameMode: String,
-    rarity: Number,
-    chances: Number,
-    difficulty: Number
+    gameMode: { type: String, default: "standard" },
+    rarity: { type: Number, default: 0 },
+    chances: { type: Number, default: 5 },
+    difficulty: { type: Number, default: 1}
   },
   stats: {
     point: { type: Number, default: 0 },
@@ -21,7 +21,8 @@ const userSchema = schema({
     quiz4: { type: Number, default: 0 },
     quiz5: { type: Number, default: 0 },
     vote: { type: Number, default: 0 }
-  }
+  },
+  gotPointFromVoteRecently: { type: Boolean, default: false }
 });
 
 const cardAliasSchema = schema({

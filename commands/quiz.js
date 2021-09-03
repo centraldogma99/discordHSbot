@@ -3,6 +3,10 @@ const mongo = require("../db");
 const generateQuiz = require("../tools/generateQuiz");
 const { MessageActionRow, MessageButton } = require('discord.js');
 const cho_hangul = require("../tools/cho_Hangul");
+const giveUserPoint = require("../tools/giveUserPoint");
+
+const quizParticipatePoint = 100;
+const quizAnswerPoint = 500;
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -47,6 +51,11 @@ async function quiz(message, args){
   const difficulty = userConfig.quizConfig.difficulty;
   let chances = userConfig.quizConfig.chances;
   let db;
+
+  // 퀴즈를 풀기 시작하면 100포인트 지급
+  await giveUserPoint(message.author.id, quizParticipatePoint)
+  .then(() => message.channel.send(`💰 퀴즈 참여로 ${quizParticipatePoint}포인트 지급!`))
+  .catch(console.log)
 
   if( userConfig.quizConfig.gameMode == 'standard'){
     db = mongo.cardAliasStandardModel;
@@ -111,6 +120,9 @@ async function quiz(message, args){
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
+      await giveUserPoint(message.author.id, quizAnswerPoint)
+      .then(() => message.channel.send(`💰 퀴즈 정답으로 ${quizAnswerPoint}포인트 지급!`))
+      .catch(console.log)
     } else if ( reason == "time" ){
       await message.channel.send(`⏰  시간 종료!`)
     } else if ( reason == "noChancesLeft" ){

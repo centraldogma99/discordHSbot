@@ -56,7 +56,7 @@ async function loadUserConfig(messageAuthor){
     goldenCardMode : userConfig.goldenCardMode ?? false,
     languageMode : userConfig.languageMode ?? "ko_KR",
     quizConfig : quizConfig,
-    stats : stats
+    stats : userConfig.stats
   }
 }
 
