@@ -21,8 +21,8 @@ async function addQuizConfig(messageAuthorId, fieldName, value){
 }
 
 async function quizConfig(message){
-  async function chanceConfig(){
-    const messageCollector = message.channel.createMessageCollector({ time: 30000, max: 1 });
+  async function chanceConfig(message){
+    const messageCollector = message.channel.createMessageCollector({ time: 30000 });
     messageCollector.on('collect', async m => {
       if(isNaN(m.content) || parseInt(m.content) < 3 || parseInt(m.content) > 9) {
         messageCollector.stop("wrongValue");
@@ -197,11 +197,11 @@ async function quizConfig(message){
     .setStyle('PRIMARY')
     .setLabel('퀴즈 기회 횟수 설정')
   const row4 = new MessageActionRow().addComponents(chancesMenuButton);
-  let chancesMsg = await message.channel.send({ content: "**⚙️ 퀴즈 기회 횟수 설정** ", components: [row4] });
+  let chancesMsg = await message.channel.send({ content: `**⚙️ 퀴즈 기회 횟수 설정**  현재 설정 : \`${userConfig.quizConfig.chances}\``, components: [row4] });
   const chancesMsgCollector = chancesMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   chancesMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
-    await i.update({content: "⚙️ 설정할 `기회 횟수`를 채팅으로 입력해 주세요(3 ~ 9).", components: []})
+    await i.update({content: `⚙️ 설정할 \`기회 횟수\`를 채팅으로 입력해 주세요(3 ~ 9). 현재 설정 : \`${userConfig.quizConfig.chances}\``, components: []})
     
     chanceConfig(message);
   })

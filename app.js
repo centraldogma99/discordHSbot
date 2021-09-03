@@ -39,8 +39,8 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  updateKoreanBot(client.guilds.cache.size)()
-  setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
+  // updateKoreanBot(client.guilds.cache.size)()
+  // setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
 })
 
 client.on("messageCreate", async message => {
