@@ -15,7 +15,9 @@ class Paginator {
       @numberOfCards 모든 카드의 개수. 단 이는 preProcess를 거치지 않은 상태이므로 정확하지 않다. #TODO
       @lengthEnabled numberOfCards 이슈를 해결하기 위해. false일 경우 length가 정확하지 않음을 의미 - 별도의 페이지 메시지.
     */
-    if(step < 1) throw new Error('a step must be an integer bigger than 0');
+    if(step < 1) throw new Error('Paginator: a step must be an integer bigger than 0');
+    if(!promises.length) throw Error('Paginator: promises must be given as array');
+    if(promises.length == 0) throw Error('Paginator: promises is null array');
     this.message = message;
     this.step = step;
     this.cursor = -step;

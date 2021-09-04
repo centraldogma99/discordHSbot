@@ -5,10 +5,11 @@ const client = new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUIL
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const Logger = require("./tools/Logger");
-const downloadDB = require("./tools/downloadDB");
+const {downloadDB, postDownload} = require("./tools/downloadDB");
 const BlizzardToken = require("./tools/BlizzardToken");
 const updateKoreanBot = require("./tools/koreanbot/updateKoreanBot");
 const checkUserVote = require("./tools/koreanbot/checkUserVote");
+const mongo = require("./db");
 
 require("dotenv").config()
 
@@ -138,6 +139,7 @@ try {
   //개발시 주석처리할것
   BlizzardToken.getToken()
   // .then(token => downloadDB(token))
+  .then(() => postDownload())
   .then(() => client.login(discordToken))
   .then(() => console.log("DB load complete"))
 } catch(e){

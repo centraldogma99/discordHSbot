@@ -12,7 +12,6 @@ function updateKoreanBot(num){
       "Content-Type": "application/json"
     }
   })
-  .then(console.log)
   .catch(console.log)
 }
 

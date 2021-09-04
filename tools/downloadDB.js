@@ -3,6 +3,11 @@ const CONSTANTS = require('../constants')
 const uniqueArray = require('./uniqueArray');
 const safeAxiosGet = require('./safeAxiosGet');
 
+function postDownload(){
+  // after download ended
+  mongo.cardAliasModel.updateOne({"name":"가시가 돋친 탈것"}, {$set: {"image":"https://imgur.com/WpA3ScQ.png"}}).exec();
+}
+
 async function downloadDB(blizzardToken){
   const pageSize = 100;
   let promises = []
@@ -119,6 +124,7 @@ async function downloadDB(blizzardToken){
   } catch(e) {
     console.log(e);
   }
+
   promises = []
   const battlegroundsCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
@@ -175,10 +181,12 @@ async function downloadDB(blizzardToken){
   } catch(e) {
     console.log(e);
   }
-
   // mongo.cardAliasModel.find().then(console.log)
   // mongo.cardAliasStandardModel.find().then(console.log)
 }
 
 
-module.exports = downloadDB;
+module.exports = {
+  downloadDB: downloadDB,
+  postDownload: postDownload
+}
