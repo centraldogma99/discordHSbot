@@ -71,7 +71,7 @@ async function configure(message){
       if (i.user.id != message.author.id) return;
       await i.update({content: `⚙️ 설정할 \`페이지\`를 채팅으로 입력해 주세요(1 ~ 9).  현재 설정 : \`${userConfig.paginateStep}\``, components: []})
       const messageCollector = message.channel.createMessageCollector({ time: 30000 });
-      messageCollector.on('collect', m => {
+      messageCollector.on('collect', async m => {
         if(isNaN(m.content) || parseInt(m.content) < 1 || parseInt(m.content) > 9) {
           messageCollector.stop("wrongValue");
           return;

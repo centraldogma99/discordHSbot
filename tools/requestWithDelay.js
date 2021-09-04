@@ -6,8 +6,6 @@ function requestWithDelay(requestPromises, {delayBetweenChunks=200, chunkUnit=10
   const numOfChunks = Math.ceil(requestPromises.length / chunkUnit);
   if( requestPromises.length == 0){
     return [];
-  } else if(requestPromises.length == 1){
-    return requestPromises;
   }
   for(let j = 0; j < numOfChunks; j++){
     p = p.then(() => Promise.all(requestPromises.slice(chunkUnit * j, chunkUnit * (j+1))))
