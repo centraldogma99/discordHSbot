@@ -3,28 +3,43 @@
 */
 
 const Paginator = require("../tools/Paginator");
-const loadUserConfig = require("../tools/loadUserConfig")
-const uniqueArray = require('../tools/uniqueArray')
-const range = require('../tools/range')
-const CONSTANTS = require('../constants')
+const loadUserConfig = require("../tools/loadUserConfig");
+const uniqueArray = require('../tools/uniqueArray');
+const range = require('../tools/range');
+const CONSTANTS = require('../constants');
 const BlizzardToken = require("../tools/BlizzardToken");
 const safeAxiosGet = require("../tools/safeAxiosGet");
-
-function preProcess(cards){
-  return uniqueArray(cards, "name");
-}
 
 async function all(message, args, info){
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
     return;
   }
-  let blizzardToken = await BlizzardToken.getToken();
-  let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
-  await message.channel.sendTyping();
-  const userConfig = await loadUserConfig(message.author);
-  let cardCount;
 
+  const blizzardToken = await BlizzardToken.getToken();
+  const userConfig = await loadUserConfig(message.author.id);
+
+  function axiosShort(page){
+    return () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    { params: {
+      locale: userConfig.languageMode,
+      textFilter: encodeURI(args),
+      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
+      tier: info?.tier ?? null,
+      class: info?.class_?.name,
+      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
+      pageSize: CONSTANTS.pageSize,
+      page: page,
+      access_token: blizzardToken
+    }})
+    .then(res => res.data.cards)
+    .catch(e => {throw e})
+  }
+  
+  const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
+  await message.channel.sendTyping();
+
+  let cardCount;
   let temp;
   try{
     temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
@@ -35,15 +50,13 @@ async function all(message, args, info){
       tier: info?.tier ?? null,
       class: info?.class_?.name,
       set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
-      pageSize: 1,
+      pageSize: CONSTANTS.pageSize,
       page: 1,
       access_token: blizzardToken
     }})
-    .catch((e) =>{
-      console.log(e);
-      throw e;
-    });
+    .catch(e => {throw e})
   } catch(e) {
+    console.log(e);
     message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!");
     return;
   }
@@ -53,55 +66,20 @@ async function all(message, args, info){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
-  if ( cardCount > CONSTANTS.cardCountLimit ){
-    message.channel.send("‼️ 검색 결과가 너무 많습니다! 좀더 구체적인 검색어를 입력해 주세요.");
-    return;
-  }
 
-  // ! pageSize가 너무 작으면 429:too many request 발생
-  // TODO pageSize가 paginateStep보다 작으면 오류 발생. 현재는 50으로 유지할 것. 이거고치지않았나..?
   let promises;
-  // if ( userConfig.languageMode == "ko_KR" ){
-  promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 1).map(i => 
-    safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-    { params: {
-      locale: userConfig.languageMode,
-      textFilter: encodeURI(args),
-      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : null,
-      class: info?.class_?.name,
-      tier: info?.tier ?? null,
-      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
-      pageSize: CONSTANTS.pageSize,
-      page : i,
-      access_token: blizzardToken
-    }})
-    .then(res => res.data.cards)
-    .catch(e => {throw e})
-  )
-  // }
-  //  else if ( userConfig.languageMode == "en_US" ){
-  //   promises = Promise.all(range( Math.ceil(cardCount / CONSTANTS.pageSize), 1).map(i => 
-  //     axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-  //     { params: {
-  //       locale: "ko_KR",
-  //       textFilter: encodeURI(args),
-  //       class: class_,
-  //       set: userConfig.gameMode,
-  //       pageSize: CONSTANTS.pageSize,
-  //       page : i,
-  //       access_token: blizzardToken
-  //     }})) // [Array[Card], Array[Card], ...]
-  //     .then(res => res.map(cards => cards.map(card => card.id))) // [Array[Id], Array[Id], ... ]
-  //     .then(ids => ids.map(id => 
-  //       axios.get(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
-  //       { params : {
-  //         locale: userConfig.languageMode,
-  //         access_token: blizzardToken
-  //       }})))
-  //     .then(res => res.map( card => card.data ))
-  //   );
-  // }
-  let pagi = new Paginator(message, promises, userConfig.paginateStep, cardCount, preProcess, true, userConfig.goldenCardMode);
+  if( Math.ceil(cardCount / CONSTANTS.pageSize) > 1 ){
+    promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 2).map(i => 
+      axiosShort(i)
+    )
+    promises = [() => Promise.resolve(temp.data.cards), ...promises]
+  } else {
+    promises = [() => Promise.resolve(temp.data.cards)]
+  }
+  
+  const pagi = new Paginator(message, promises, true, CONSTANTS.pageSize, userConfig.paginateStep, cardCount,
+    cardsArray => uniqueArray(cardsArray, "name"),
+    {lengthEnabled: true, goldenCardMode: userConfig.goldenCardMode});
   let msgs = await pagi.next();
   searchingMessage.delete();
 

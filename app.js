@@ -5,11 +5,13 @@ const client = new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUIL
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');
 const Logger = require("./tools/Logger");
-const downloadDB = require("./tools/downloadDB");
+const {downloadDB, postDownload} = require("./tools/downloadDB");
 const BlizzardToken = require("./tools/BlizzardToken");
-const messageChecker = require("./tools/messageChecker");
 const updateKoreanBot = require("./tools/koreanbot/updateKoreanBot");
 const checkUserVote = require("./tools/koreanbot/checkUserVote");
+const mongo = require("./db");
+const permissionChecker = require("./tools/permissionChecker");
+const RequestScheduler = require("./tools/RequestScheduler")
 
 require("dotenv").config()
 
@@ -40,12 +42,26 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  // updateKoreanBot()
-  // setInterval(updateKoreanBot, 120000);
+  // updateKoreanBot(client.guilds.cache.size)()
+  // setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
 })
 
 client.on("messageCreate", async message => {
-  if(!messageChecker(message, logger, client.user.id)) return;
+  if( message.author.bot ) return;
+  if( !message.mentions.has(client.user.id) ) return;
+  if( message.mentions.everyone ) return;
+  if( message.type == 'REPLY') return;
+
+  if( message.channel.doingQuiz ) {
+    message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
+    return;
+  }
+  
+  // 현재 채널에 permission가지고 있는지 확인
+  // 스레드에서는 권한 설정을 따로 안 하기 때문에 ㄱㅊ
+  if(!message.channel.isThread()){
+    if(!permissionChecker(message, logger)) return;
+  }
 
   // 메시지 받은것 로깅
   logger.messageLog(message);
@@ -97,8 +113,11 @@ try {
   //개발시 주석처리할것
   BlizzardToken.getToken()
   // .then(token => downloadDB(token))
+  .then(() => postDownload())
   .then(() => client.login(discordToken))
   .then(() => console.log("DB load complete"))
+  setInterval(() => console.log(RequestScheduler.reqRate[0]), 10000)
+  setInterval(() => console.log(RequestScheduler.reqRate[1]), 1000)
 } catch(e){
   console.log("로그인 실패")
   console.log(e);

@@ -11,7 +11,7 @@ const userSchema = schema({
     gameMode: { type: String, default: "standard" },
     rarity: { type: Number, default: 0 },
     chances: { type: Number, default: 5 },
-    difficulty: { type: Number, default: 1}
+    difficulty: { type: Number, default: 1 }
   },
   stats: {
     point: { type: Number, default: 0 },

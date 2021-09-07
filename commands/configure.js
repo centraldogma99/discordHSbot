@@ -2,22 +2,21 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const mongo = require('../db');
 const loadUserConfig = require('../tools/loadUserConfig');
 
-function addConfig(messageAuthorId, fieldName, value){
+async function addConfig(messageAuthorId, fieldName, value){
   let query = mongo.userModel.findOne({ id : messageAuthorId });
-  return query.exec()
-  .then( user => 
-    user.updateOne({[fieldName]: value}).exec()
-  )
-  .catch( () => 
-    mongo.userModel.insertMany([{
+  try {
+    const user = await query.exec();
+    return user.updateOne({ [fieldName]: value }).exec();
+  } catch (e) {
+    return await mongo.userModel.insertMany([{
       id: messageAuthorId,
-      gameMode : value
-    }])
-  )
+      [fieldName]: value
+    }]);
+  }
 }
 
-async function configure(message, args){
-  let userConfig = await loadUserConfig(message.author);
+async function configure(message){
+  const userConfig = await loadUserConfig(message.author.id);
   
   if(true) {
     // 게임모드 설정 시작
@@ -55,48 +54,10 @@ async function configure(message, args){
       await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 게임모드가 "${i.component.label}"(으)로 설정되었습니다.`, components: [] })
       gameModeMsgCollector.stop("done");
     })
-    gameModeMsgCollector.on('end', async (i, r) => {
+    gameModeMsgCollector.on('end', async (_, r) => {
       if(r == 'time') await gameModeMsg.delete();
     })
     // 게임모드 설정 끝
-    
-    // 페이지 설정 시작
-    const pageMenuButton = new MessageButton()
-      .setCustomId('pageMenu')
-      .setStyle('PRIMARY')
-      .setLabel('페이지 설정')
-    const row2 = new MessageActionRow().addComponents(pageMenuButton);
-    let pageMsg = await message.channel.send({ content: `**⚙️ 페이지 설정**  *한 페이지당 표시되는 카드 수를 설정합니다(1 ~ 9장).*\n현재 설정 : \`${userConfig.paginateStep}\``, components: [row2] });
-    const pageMsgCollector = pageMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
-    pageMsgCollector.on('collect', async (i) => {
-      if (i.user.id != message.author.id) return;
-      await i.update({content: `⚙️ 설정할 \`페이지\`를 채팅으로 입력해 주세요(1 ~ 9).  현재 설정 : \`${userConfig.paginateStep}\``, components: []})
-      const messageCollector = message.channel.createMessageCollector({ time: 30000, max: 1 });
-      messageCollector.on('collect', m => {
-        if(isNaN(m.content) || parseInt(m.content) < 1 || parseInt(m.content) > 9) {
-          messageCollector.stop("wrongValue");
-          return;
-        } else {
-          addConfig(message.author.id, "paginateStep", parseInt(m.content))
-          messageCollector.stop("answered");
-          return;
-        }
-      })
-      messageCollector.on('end', async (m, r) => {
-        if(r == 'answered') {
-          await message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 \`페이지\`가 \`${m.first().content}\` (으)로 설정되었습니다.`);
-          pageMsg.delete();
-        } else if(r == 'time'){
-          message.channel.send(`？ 입력 시간이 초과되었습니다.`)
-        } else if(r == 'wrongValue'){
-          message.channel.send("‼️ 잘못된 값이 입력되었습니다.");
-        }
-      })
-    })
-    pageMsgCollector.on('end', async (i, r) => {
-      if(r == 'time') await pageMsg.delete();
-    })
-    // 페이지 설정 끝
 
     // 황금 설정 시작
     let goldenCardModeButtons = [
@@ -110,7 +71,7 @@ async function configure(message, args){
         .setStyle('SECONDARY'),
     ];
     for (const button of goldenCardModeButtons){
-      if (button.customId == userConfig.goldenCardMode.toString()){
+      if ((button.customId === 'true') == userConfig.goldenCardMode){
         button.setStyle("PRIMARY");
         button.setDisabled(true);
         break;
@@ -125,17 +86,55 @@ async function configure(message, args){
     let goldenCardModeMsgCollector = goldenCardModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
     goldenCardModeMsgCollector.on('collect', async i => {
       if ( i.user.id != message.author.id ) return;
-      await addConfig(message.author.id, "goldenCardMode", i.component.customId)
+      await addConfig(message.author.id, "goldenCardMode", i.component.customId === 'true')
       await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 황금카드모드가 "${i.component.label}"으로 설정되었습니다.`, components: [] })
       goldenCardModeMsgCollector.stop("done");
     })
-    goldenCardModeMsgCollector.on('end', async (i, r) => {
+    goldenCardModeMsgCollector.on('end', async (_, r) => {
       if(r == 'time') {
         goldenCardModeMsg.delete();
         firstMsg.delete();
       }
     })
     // 황금 설정 끝
+
+    // 페이지 설정 시작
+    const pageMenuButton = new MessageButton()
+      .setCustomId('pageMenu')
+      .setStyle('PRIMARY')
+      .setLabel('페이지 설정')
+    const row2 = new MessageActionRow().addComponents(pageMenuButton);
+    let pageMsg = await message.channel.send({ content: `**⚙️ 페이지 설정**  *한 페이지당 표시되는 카드 수를 설정합니다(1 ~ 9).*\n현재 설정 : \`${userConfig.paginateStep}\``, components: [row2] });
+    const pageMsgCollector = pageMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
+    pageMsgCollector.on('collect', async (i) => {
+      if (i.user.id != message.author.id) return;
+      await i.update({content: `⚙️ 설정할 \`페이지\`를 채팅으로 입력해 주세요(1 ~ 9).  현재 설정 : \`${userConfig.paginateStep}\``, components: []})
+      const messageCollector = message.channel.createMessageCollector({ time: 30000 });
+      messageCollector.on('collect', async m => {
+        if(isNaN(m.content) || parseInt(m.content) < 1 || parseInt(m.content) > 9) {
+          messageCollector.stop("wrongValue");
+          return;
+        } else {
+          await addConfig(message.author.id, "paginateStep", parseInt(m.content))
+          messageCollector.stop("answered");
+          return;
+        }
+      })
+      messageCollector.on('end', async (m, r) => {
+        if(r == 'answered') {
+          await message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 \`페이지\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
+          pageMsg.delete();
+        } else if(r == 'time'){
+          message.channel.send(`？ 입력 시간이 초과되었습니다.`)
+        } else if(r == 'wrongValue'){
+          message.channel.send("‼️ 잘못된 값이 입력되었습니다.");
+        }
+      })
+    })
+    pageMsgCollector.on('end', async (_, r) => {
+      if(r == 'time') await pageMsg.delete();
+    })
+    // 페이지 설정 끝
   }
 }
 module.exports = {

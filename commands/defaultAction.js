@@ -6,7 +6,7 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 async function defaultAction(message, args, info){
   let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
-  let userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
 
   const resCard = await getMostMatchingCard( args, userConfig.gameMode, info?.class_ );
   if (!resCard) {

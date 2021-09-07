@@ -5,15 +5,7 @@ const checkUserVote = require("../tools/koreanbot/checkUserVote");
 const loadUserConfig = require("../tools/loadUserConfig")
 
 async function me(message){
-  if(!isUserRegistered(message.author.id)){
-    message.channel.send("‼️ 등록되지 않은 사용자입니다. `@여관주인 !등록`을 통해 등록해주세요.")
-    return;
-  }
-  const userVoted = await checkUserVote(message.author.id)
-  if(userVoted) {
-    await giveUserPoint(message.author.id, 1000);
-  }
-  const userConfig = await loadUserConfig(message.author);
+  const userConfig = await loadUserConfig(message.author.id);
   const embed = new MessageEmbed()
     .setColor('#0099ff')
     .setTitle(`**${message.author.tag} 의 정보**`)
