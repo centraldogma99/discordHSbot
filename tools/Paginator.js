@@ -48,6 +48,11 @@ class Paginator {
     this.lengthEnabled = lengthEnabled;
     this.goldenCardMode = goldenCardMode;
     this.numberOfCards = length;
+
+    if(!this.isBlizzardReq){
+      this.cards = this.promises;
+      this.promises = [];
+    }
   }
 
   prev(){
@@ -123,10 +128,6 @@ class Paginator {
           this.promises = this.promises.slice(numOfPromisesNextPage);
         }
       }
-    
-    } else {
-      this.cards = this.promises;
-      this.promises = [];
     }
     let targetCards = this.cards.slice(this.cursor, this.cursor + this.paginateStep);
     return this.showMessages(targetCards);
