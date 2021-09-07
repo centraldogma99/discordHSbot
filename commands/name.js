@@ -20,7 +20,7 @@ async function name(message, args, info){
     return;
   }
 
-  const pagi = new Paginator(message, resCards, userConfig.paginateStep, resCards.length, c => c,
+  const pagi = new Paginator(message, resCards, false, null, userConfig.paginateStep, resCards.length, null,
     {lengthEnabled: true, goldenCardMode: userConfig.goldenCardMode});
   let msgs = await pagi.next();
   searchingMessage.delete();

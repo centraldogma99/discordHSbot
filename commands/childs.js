@@ -1,10 +1,9 @@
 const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
-const safeAxiosGet = require("../tools/safeAxiosGet")
+const safeAxiosGet = require("../tools/safeAxiosGet");
 const BlizzardToken = require("../tools/BlizzardToken");
-const requestWithDelay = require("../tools/requestWithDelay")
-const CONSTANTS = require("../constants")
+const CONSTANTS = require("../constants");
 
 async function childs(message, args, info){
   if(!args){
@@ -34,16 +33,16 @@ async function childs(message, args, info){
   let blizzardToken = await BlizzardToken.getToken();
 
   if( resCard.childIds.length > 0 ){
-    promises = resCard.childIds.map(id => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
+    promises = resCard.childIds.map(id => () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
       { params : {
         locale: userConfig.languageMode,
         access_token: blizzardToken
       }}
     )
     .then(res => res.data)
-    .catch(e => {throw e}))
-
-    const pagi = new Paginator(message, requestWithDelay(promises), userConfig.paginateStep, resCard.childIds.length, c => c,
+    .catch(e => {throw e}));
+    
+    const pagi = new Paginator(message, promises, true, 1, userConfig.paginateStep, resCard.childIds.length, c => c,
       {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode});
     let msgs = await pagi.next();
     searchingMessage?.delete()

@@ -3,13 +3,12 @@
 */
 
 const Paginator = require("../tools/Paginator");
-const loadUserConfig = require("../tools/loadUserConfig")
-const uniqueArray = require('../tools/uniqueArray')
-const range = require('../tools/range')
-const CONSTANTS = require('../constants')
+const loadUserConfig = require("../tools/loadUserConfig");
+const uniqueArray = require('../tools/uniqueArray');
+const range = require('../tools/range');
+const CONSTANTS = require('../constants');
 const BlizzardToken = require("../tools/BlizzardToken");
 const safeAxiosGet = require("../tools/safeAxiosGet");
-const requestWithDelay = require("../tools/requestWithDelay");
 
 async function all(message, args, info){
   if(!args){
@@ -21,7 +20,7 @@ async function all(message, args, info){
   const userConfig = await loadUserConfig(message.author.id);
 
   function axiosShort(page){
-    return safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    return () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
       locale: userConfig.languageMode,
       textFilter: encodeURI(args),
@@ -33,6 +32,8 @@ async function all(message, args, info){
       page: page,
       access_token: blizzardToken
     }})
+    .then(res => res.data.cards)
+    .catch(e => {throw e})
   }
   
   const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
@@ -41,12 +42,21 @@ async function all(message, args, info){
   let cardCount;
   let temp;
   try{
-    temp = await axiosShort(1)
-    .catch((e) =>{
-      console.log(e);
-      throw e;
-    });
+    temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
+    { params: {
+      locale: userConfig.languageMode,
+      textFilter: encodeURI(args),
+      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
+      tier: info?.tier ?? null,
+      class: info?.class_?.name,
+      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
+      pageSize: CONSTANTS.pageSize,
+      page: 1,
+      access_token: blizzardToken
+    }})
+    .catch(e => {throw e})
   } catch(e) {
+    console.log(e);
     message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!");
     return;
   }
@@ -56,24 +66,19 @@ async function all(message, args, info){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
-  // if ( cardCount > CONSTANTS.cardCountLimit ){
-  //   message.channel.send("‼️ 검색 결과가 너무 많습니다! 좀더 구체적인 검색어를 입력해 주세요.");
-  //   return;
-  // }
+
   let promises;
   if( Math.ceil(cardCount / CONSTANTS.pageSize) > 1 ){
     promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 2).map(i => 
       axiosShort(i)
-      .then(res => res.data.cards)
-      .catch(e => {throw e})
     )
-    promises = [Promise.resolve(temp.data.cards), ...promises]
+    promises = [() => Promise.resolve(temp.data.cards), ...promises]
   } else {
-    promises = [Promise.resolve(temp.data.cards)]
+    promises = [() => Promise.resolve(temp.data.cards)]
   }
   
-  const pagi = new Paginator(message, requestWithDelay(promises, {delayBetweenChunks: 3000, chunkUnit: 1}), userConfig.paginateStep, cardCount,
-    cardsArray => uniqueArray(cardsArray.reduce((f,s) => f.concat(s)), "name"),
+  const pagi = new Paginator(message, promises, true, CONSTANTS.pageSize, userConfig.paginateStep, cardCount,
+    cardsArray => uniqueArray(cardsArray, "name"),
     {lengthEnabled: true, goldenCardMode: userConfig.goldenCardMode});
   let msgs = await pagi.next();
   searchingMessage.delete();

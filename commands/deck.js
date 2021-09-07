@@ -3,8 +3,8 @@ const Paginator = require("../tools/Paginator");
 const safeAxiosGet = require("../tools/safeAxiosGet");
 const CONSTANTS = require("../constants");
 const loadUserConfig = require("../tools/loadUserConfig");
-const requestWithDelay = require("../tools/requestWithDelay");
 const { MessageEmbed } = require("discord.js");
+const RequestScheduler = require("../tools/RequestScheduler");
 
 async function deck(message, args){
   if(!args) {
@@ -16,9 +16,7 @@ async function deck(message, args){
   const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   
   const blizzardToken = await BlizzardToken.getToken();
-  let deckInfo;
-  try {
-    deckInfo = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/deck`,
+  let deckInfoPromise = () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/deck`,
     { params : {
       locale: userConfig.languageMode,
       code: code,
@@ -28,16 +26,19 @@ async function deck(message, args){
     .catch(e => {
       throw e;
     })
+  let deckInfo;
+  try{
+    deckInfo = await RequestScheduler.getRes(RequestScheduler.addReq(deckInfoPromise));
+    if(deckInfo instanceof Error) throw deckInfo;
   } catch (e) {
     console.log(e.response.status);
     if(e.response.status === 400)
       message.channel.send("‼️ 잘못된 덱 코드입니다.");
     else
-      message.channel.send("‼️ 서버 오류가 발생했습니다. 개발자에게 문의해 주세요!");
+      message.channel.send("‼️ 오류가 발생했습니다. 다시 시도해 주세요! 문제가 지속되면 개발자에게 문의해 주세요!");
     return;
   }
   const cards = deckInfo.cards.sort((a, b) => a.manaCost - b.manaCost);
-  const promises = requestWithDelay(cards.map(card => Promise.resolve(card)));
   let names = cards.map(card => card.name)
   let costsAndRarities = Object.fromEntries(cards.map(card => [card.name, {cost: card.manaCost, isLegendary: card.rarityId == 5? '⭐' : ''}]))
   let obj = {};
@@ -57,7 +58,7 @@ async function deck(message, args){
   await message.channel.send({embeds: [embed]});
 
   await message.channel.sendTyping();
-  const pagi = new Paginator(message, promises, userConfig.paginateStep, deckInfo.cards.length, c => c,
+  const pagi = new Paginator(message, cards, false, null, userConfig.paginateStep, deckInfo.cards.length, null,
     {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode})
   let msgs = await pagi.next();
   searchingMessage.delete();
