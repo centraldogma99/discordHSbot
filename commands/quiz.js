@@ -43,7 +43,7 @@ function getRandomHint(message, card, hintUsed){
   }
 }
 
-async function quiz(message, args){
+async function quiz(message){
   message.channel.doingQuiz = true;
   let hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
@@ -115,6 +115,7 @@ async function quiz(message, args){
       m.channel.send(`❌  틀렸습니다! 기회가 ${chances}번 남았습니다.`)
     }
   })
+
   messageCollector.on('end', async (m, reason) => {
     message.channel.doingQuiz = false;
     await message.channel.sendTyping();
@@ -123,6 +124,9 @@ async function quiz(message, args){
       await giveUserPoint(message.author.id, quizAnswerPoint)
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${quizAnswerPoint}포인트 지급!`))
       .catch(console.log)
+      
+      const user = await mongo.userModel.findOne({ id: m.last().author.id }).exec()
+      await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec()
     } else if ( reason == "time" ){
       await message.channel.send(`⏰  시간 종료!`)
     } else if ( reason == "noChancesLeft" ){
