@@ -6,7 +6,6 @@ const cho_hangul = require("../tools/cho_Hangul");
 const giveUserPoint = require("../tools/giveUserPoint");
 
 const quizParticipatePoint = 50;
-let quizAnswerPoint = 400;
 const quizMultiplier = 2;
 
 function getRandomInt(max) {
@@ -45,6 +44,7 @@ function getRandomHint(message, card, hintUsed){
 }
 
 async function quiz(message){
+  let quizAnswerPoint = 400;
   message.channel.doingQuiz = true;
   let hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
