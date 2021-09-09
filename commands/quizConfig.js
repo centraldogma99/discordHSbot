@@ -70,7 +70,7 @@ async function quizConfig(message){
     if (i.user.id != message.author.id) return;
     if(i.component.customId == 'standard')
       if (userConfig.quizConfig.rarity == 2) {
-        i.update({ content: "❌  `정규` 게임모드와 `기본` 등급을 함께 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
+        await i.update({ content: "❌  `정규` 게임모드와 `기본` 등급을 함께 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
         gameModeMsgCollector.stop("error")
         return;
       }
@@ -127,18 +127,18 @@ async function quizConfig(message){
     if ( i.component.style != "PRIMARY" ) {
       if(userConfig.quizConfig.gameMode == 'standard')
         if (i.component.customId == 2) {
-          i.update({ content: "❌  `정규` 게임모드에서는 `기본` 등급을 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
+          await i.update({ content: "❌  `정규` 게임모드에서는 `기본` 등급을 선택할 수 없습니다(정규에는 기본카드가 없음).", components: [] });
           rarityMsgCollector.stop("error")
           return;
         }
       await addQuizConfig(message.author.id, "rarity", parseInt(i.component.customId));
-      i.update({ content: `☑️ 퀴즈 카드등급 필터링이 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
+      await i.update({ content: `☑️ 퀴즈 카드등급 필터링이 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
     } else {
       // It's guaranteed there is user config data, don't have to call addQuizConfig()
       await mongo.userModel.updateOne({ id : message.author.id }, { $set: {"quizConfig.rarity": 0} }).exec()
-      i.update({ content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`, components: [] });
+      await i.update({ content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
     }
@@ -185,7 +185,7 @@ async function quizConfig(message){
     if (i.user.id != message.author.id) return;
     await addQuizConfig(message.author.id, "difficulty", parseInt(i.component.customId))
     
-    i.update({ content: `☑️ \`난이도\`가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
+    await i.update({ content: `☑️ \`난이도\`가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
     difficultyMsgCollector.stop("done");
   })
   difficultyMsgCollector.on('end', async (_, r) => {
