@@ -81,7 +81,7 @@ async function quiz(message){
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quizImages.croppedImage]});
-  await message.channel.send(`ℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
+  await message.channel.send(`ℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n채팅 앞에 '-'(빼기)를 붙이면 답으로 인식되지 않습니다(예) -이거뭐더라?\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
   const answerChecker = (ans) => {
     return targetCard.alias == ans.content.replace(/\s/g, '')

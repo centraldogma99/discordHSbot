@@ -54,7 +54,6 @@ class Hint {
       })(),
       (() => {
         if(card.classId){
-          console.log(card.classId)
           if(card.classId == 12){
             return `💡 이 카드는 **중립** 카드입니다.`
           }
@@ -158,7 +157,7 @@ async function quiz_chosung(message){
 
   const quizChosung = cho_hangul(targetCard.name);
   const hint = new Hint(message, targetCard);
-  await message.channel.send(`이 카드는 무엇일까요?\n\n**${quizChosung.replace(/\s/g, '')}**\n\nℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 120초**\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
+  await message.channel.send(`이 카드는 무엇일까요?\n\n**${quizChosung.replace(/\s/g, '')}**\n\nℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 120초**\n채팅 앞에 '-'(빼기)를 붙이면 답으로 인식되지 않습니다(예) -이거뭐더라?\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
   const answerChecker = (ans) => {
     return targetCard.alias == ans.content.replace(/\s/g, '')
@@ -223,7 +222,7 @@ async function quiz_chosung(message){
     buttonCollector.on('collect', i => {
       i.update({ content: "☑️  새로운 퀴즈를 가져옵니다...", components: [] })
       .then(() => quiz_chosung(message))
-      .catch(e => {console.log(e); message.channel.send("퀴즈를 가져오던 중 오류가 발생했슶니다. 잠시 후 다시 시도해 주세요!")})
+      .catch(e => {console.log(e); message.channel.send("퀴즈를 가져오던 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요!")})
     })
     buttonCollector.on('end', async (_, r) => {
       if(r == 'time') await lastMsg.delete();
