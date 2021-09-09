@@ -1,4 +1,4 @@
-const translateClass = require('./translateClass.json');
+const translateClass = require('./jsons/class.json');
 
 function tokenizer(msgContent){
     const prefix = '!';
@@ -28,7 +28,7 @@ function tokenizer(msgContent){
       let korClass = msgContentSplit[0].substring(1, msgContentSplit[0].length-1);
       
       for (const cls of translateClass){
-        if (cls.aliases.includes(korClass)) resClass = cls;
+        if (cls.nameKor.includes(korClass)) resClass = cls;
       }
       if( !resClass ) throw Error("WrongClass");
       ret['class_'] = resClass;

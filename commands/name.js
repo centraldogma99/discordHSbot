@@ -14,7 +14,7 @@ async function name(message, args, info){
 
   let resCards = await cardNameInfer(args, userConfig.gameMode);
   
-  if(class_ && resCards) resCards = resCards.filter(card => card.classId == class_.classId)
+  if(class_ && resCards) resCards = resCards.filter(card => card.classId == class_.id)
   if ( !resCards || resCards.length <= 0 ) {
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;

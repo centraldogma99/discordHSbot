@@ -116,8 +116,8 @@ try {
   .then(() => postDownload())
   .then(() => client.login(discordToken))
   .then(() => console.log("DB load complete"))
-  setInterval(() => console.log(RequestScheduler.reqRate[0]), 10000)
-  setInterval(() => console.log(RequestScheduler.reqRate[1]), 1000)
+  // setInterval(() => console.log(RequestScheduler.reqRate[0]), 10000)
+  // setInterval(() => console.log(RequestScheduler.reqRate[1]), 1000)
 } catch(e){
   console.log("로그인 실패")
   console.log(e);

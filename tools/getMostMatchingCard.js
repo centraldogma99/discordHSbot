@@ -8,7 +8,7 @@ const cardNameInfer = require("./cardNameInfer");
 function callBackBuilder(args, class_){
   return (cards) => {
     let res = cards;
-    if(class_) res = res.filter(card => card.classId == class_.classId)
+    if(class_) res = res.filter(card => card.classId == class_.id)
     let resNames = res.map(res => res.name);
     let ratings = stringSimilarity.findBestMatch(args, resNames);
     return res[ratings.bestMatchIndex];

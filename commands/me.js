@@ -31,7 +31,7 @@ async function me(message){
 }
 
 module.exports = {
-  name: ["나"],
+  name: ["나", "내정보", "마이페이지", "기여도", "포인트"],
   description: "me",
   execute: me
 }

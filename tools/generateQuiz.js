@@ -1,8 +1,3 @@
-/*
-  FIXME 영역 고치기
-  FIXME difficulty 구현
-*/
-
 const cropImage = require("./cropImage");
 
 function getRandomInt(min, max) {

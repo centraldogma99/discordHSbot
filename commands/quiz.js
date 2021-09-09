@@ -5,8 +5,9 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const cho_hangul = require("../tools/cho_Hangul");
 const giveUserPoint = require("../tools/giveUserPoint");
 
-const quizParticipatePoint = 100;
-const quizAnswerPoint = 500;
+const quizParticipatePoint = 50;
+let quizAnswerPoint = 400;
+const quizMultiplier = 2;
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -52,9 +53,9 @@ async function quiz(message){
   let chances = userConfig.quizConfig.chances;
   let db;
 
-  // 퀴즈를 풀기 시작하면 100포인트 지급
+  // 퀴즈를 풀기 시작하면 포인트 지급
   await giveUserPoint(message.author.id, quizParticipatePoint)
-  .then(() => message.channel.send(`💰 퀴즈 참여로 ${quizParticipatePoint}포인트 지급!`))
+  .then(() => message.channel.send(`💰 퀴즈 참여로 ${quizParticipatePoint}포인트 획득!`))
   .catch(console.log)
 
   if( userConfig.quizConfig.gameMode == 'standard'){
@@ -80,7 +81,7 @@ async function quiz(message){
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quizImages.croppedImage]});
-  await message.channel.send("ℹ️  `포기` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  `힌트` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**")
+  await message.channel.send(`ℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
   const answerChecker = (ans) => {
     return targetCard.alias == ans.content.replace(/\s/g, '')
@@ -88,7 +89,8 @@ async function quiz(message){
   const filter = m => !m.author.bot;
 
   const messageCollector = message.channel.createMessageCollector( { filter, time: 30000 })
-  messageCollector.on('collect', m => {
+  messageCollector.on('collect', async m => {
+    if(m.content.startsWith('-')) return;
     if ( m.content == '포기'){
       messageCollector.stop("userAbort");
       return;
@@ -101,9 +103,11 @@ async function quiz(message){
         message.channel.send("‼️  힌트를 모두 사용했습니다.");
         return;
       }
+      quizAnswerPoint /= quizMultiplier;
       k = getRandomHint(message, targetCard, hintUsed);
       hintUsed[k.hint] = true;
       k.promise;
+      await message.channel.send(`💰 획득 포인트 : ${Math.ceil(quizAnswerPoint)}`)
       return;
     } else {
       chances -= 1;
@@ -121,12 +125,12 @@ async function quiz(message){
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
-      await giveUserPoint(message.author.id, quizAnswerPoint)
-      .then(() => message.channel.send(`💰 퀴즈 정답으로 ${quizAnswerPoint}포인트 지급!`))
+      await giveUserPoint(message.author.id, Math.ceil(quizAnswerPoint))
+      .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)
       
       const user = await mongo.userModel.findOne({ id: m.last().author.id }).exec()
-      await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec()
+      if(user) await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec();
     } else if ( reason == "time" ){
       await message.channel.send(`⏰  시간 종료!`)
     } else if ( reason == "noChancesLeft" ){

@@ -12,10 +12,8 @@ function permissionChecker(message, logger){
     for( const role of message.guild.me.roles.cache.values() ){
       let myRolePermission = role.permissionsIn(message.channel);
       if( myRolePermission.has(roleChecker) ){
-        if (role.name != '@everyone'){
-          hasPermission = true;
-          break;
-        } 
+        hasPermission = true;
+        break;
       }
     }
     if( !hasPermission ) {

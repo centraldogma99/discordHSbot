@@ -44,6 +44,12 @@ async function downloadDB(blizzardToken){
   cardSetIds = cards.map(card => card.cardSetId)
   classIds = cards.map(card => card.classId)
   texts = cards.map(card => card.text)
+  cardTypeIds = cards.map(card => card.cardTypeId)
+  healths = cards.map(card => card.health)
+  attacks = cards.map(card => card.attack)
+  durabilities = cards.map(card => card.durability)
+  minionTypeIds = cards.map(card => card.minionTypeId)
+  spellSchoolIds = cards.map(card => card.spellSchoolId)
   doc = [];
   for(let i = 0;i<names.length;i++){
     doc = doc.concat({ 
@@ -56,7 +62,13 @@ async function downloadDB(blizzardToken){
       manaCost: manaCosts[i],
       cardSetId: cardSetIds[i],
       classId: classIds[i],
-      text: texts[i]
+      text: texts[i],
+      cardTypeId: cardTypeIds[i],
+      health: healths[i],
+      attack: attacks[i],
+      durability: durabilities[i],
+      minionTypeId: minionTypeIds[i],
+      spellSchoolId: spellSchoolIds[i]
     });
   }
   doc = uniqueArray(doc, "alias");
@@ -103,6 +115,12 @@ async function downloadDB(blizzardToken){
   cardSetIds = cards.map(card => card.cardSetId)
   classIds = cards.map(card => card.classId)
   texts = cards.map(card => card.text)
+  cardTypeIds = cards.map(card => card.cardTypeId)
+  healths = cards.map(card => card.health)
+  attacks = cards.map(card => card.attack)
+  durabilities = cards.map(card => card.durability)
+  minionTypeIds = cards.map(card => card.minionTypeId)
+  spellSchoolIds = cards.map(card => card.spellSchoolId)
   doc = [];
   for(let i = 0;i<names.length;i++){
     doc = doc.concat({ 
@@ -115,7 +133,13 @@ async function downloadDB(blizzardToken){
       manaCost: manaCosts[i],
       cardSetId: cardSetIds[i],
       classId: classIds[i],
-      text: texts[i]
+      text: texts[i],
+      cardTypeId: cardTypeIds[i],
+      health: healths[i],
+      attack: attacks[i],
+      durability: durabilities[i],
+      minionTypeId: minionTypeIds[i],
+      spellSchoolId: spellSchoolIds[i]
     });
   }
   doc = uniqueArray(doc, "alias");
@@ -155,12 +179,15 @@ async function downloadDB(blizzardToken){
   imageGolds = cards.map(card => card.imageGold)
   childIds = cards.map(card => card.childIds)
   rarityIds = cards.map(card => card.rarityId)
+  healths = cards.map(card => card.health)
+  attacks = cards.map(card => card.attack)
   tiers = cards.map(card => {
     if(!card.battlegrounds) return;
     else return card.battlegrounds.tier?? "hero"
   })
   classIds = cards.map(card => card.classId)
   texts = cards.map(card => card.text)
+  minionTypeIds = cards.map(card => card.minionTypeId);
   doc = [];
   for(let i = 0;i<names.length;i++){
     doc = doc.concat({ 
@@ -172,7 +199,10 @@ async function downloadDB(blizzardToken){
       rarityId: rarityIds[i],
       tier: tiers[i],
       classId: classIds[i],
-      text: texts[i]
+      text: texts[i],
+      health: healths[i],
+      attack: attacks[i],
+      minionTypeId: minionTypeIds[i]
     });
   }
   doc = uniqueArray(doc, "alias");

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "united-in-stormwind",
+    "nameKor": "스톰윈드",
+    "id": 1578
+  },
+  {
+    "name": "forged-in-the-barrens",
+    "nameKor": "불모의 땅",
+    "id": 1525
+  },
+  {
+    "name": "madness-at-the-darkmoon-faire",
+    "nameKor": "광기의 다크문 축제",
+    "id": 1466
+  },
+  {
+    "name": "scholomance-academy",
+    "nameKor": "스칼로맨스 아카데미",
+    "id": 1443
+  },
+  {
+    "name": "ashes-of-outland",
+    "nameKor": "황폐한 아웃랜드",
+    "id": 1414
+  },
+  {
+    "name": "decent-of-dragons",
+    "nameKor": "용의 강림",
+    "id": 1347
+  },
+  {
+    "name": "saviors-of-uldum",
+    "nameKor": "울둠의 구원자",
+    "id": 1158
+  },
+  {
+    "name": "rise-of-shadows",
+    "nameKor": "어둠의 반격",
+    "id": 1130
+  },
+  {
+    "name": "the-witchwood",
+    "nameKor": "마녀숲",
+    "id": 1125
+  },
+  {
+    "name": "the-boomsday-project",
+    "nameKor": "박사 붐의 폭심만만 프로젝트",
+    "id": 1127
+  },
+  {
+    "name": "rastakhans-rumble",
+    "nameKor": "라스타칸의 대난투",
+    "id": 1129
+  },
+  {
+    "name": "journey-to-ungoro",
+    "nameKor": "운고로를 향한 여정",
+    "id": 27
+  },
+  {
+    "name": "knights-of-the-frozen-throne",
+    "nameKor": "얼어붙은 왕좌의 기사들",
+    "id": 1001
+  },
+  {
+    "name": "kobolds-and-catacombs",
+    "nameKor": "코볼트와 지하 미궁",
+    "id": 1004
+  },
+  {
+    "name": "whispers-of-the-old-gods",
+    "nameKor": "고대 신의 속삭임",
+    "id": 21
+  },
+  {
+    "name": "one-night-in-karazhan",
+    "nameKor": "한여름 밤의 카라잔",
+    "id": 23
+  },
+  {
+    "name": "mean-streets-of-gadgetzan",
+    "nameKor": "비열한 거리의 가젯잔",
+    "id": 25
+  },
+  {
+    "name": "goblins-vs-gnomes",
+    "nameKor": "고블린 대 노움",
+    "id": 13
+  },
+  {
+    "name": "the-grand-tournament",
+    "nameKor": "대 마상 시합",
+    "id": 15
+  },
+  {
+    "name": "league-of-explorers",
+    "nameKor": "탐험가 연맹",
+    "id": 20
+  },
+  {
+    "name": "blackrock-mountain",
+    "nameKor": "검은바위 산",
+    "id": 14
+  },
+  {
+    "name": "curse-of-naxxramas",
+    "nameKor": "낙스라마스의 저주",
+    "id": 12
+  }
+]

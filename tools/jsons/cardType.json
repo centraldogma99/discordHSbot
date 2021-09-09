@@ -1,0 +1,27 @@
+[
+  {
+    "name": "hero",
+    "nameKor": "영웅 변신 카드",
+    "id": 3
+  },
+  {
+    "name": "spell",
+    "nameKor": "주문",
+    "id": 5
+  },
+  {
+    "name": "minion",
+    "nameKor": "하수인",
+    "id": 4
+  },
+  {
+    "name": "weapon",
+    "nameKor": "무기",
+    "id": 7
+  },
+  {
+    "name": "hero-ability",
+    "nameKor": "영웅 능력",
+    "id": 10
+  }
+]

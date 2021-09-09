@@ -35,7 +35,13 @@ const cardAliasSchema = schema({
   manaCost: { type: Number },
   cardSetId: { type: Number },
   classId: { type: Number },
-  text: { type: String }
+  cardTypeId: { type: Number },
+  health: { type: Number },
+  attack: { type: Number },
+  durability: { type: Number },
+  text: { type: String },
+  minionTypeId: { type: Number },
+  spellSchoolId: { type: Number }
 });
 
 const battlegroundCardSchema = schema({
@@ -47,7 +53,10 @@ const battlegroundCardSchema = schema({
   rarityId: { type: Number },
   tier: { type: String },
   classId: { type: Number },
-  text: { type: String }
+  text: { type: String },
+  health: { type: Number },
+  attack: { type: Number },
+  minionTypeId: { type: Number }
 });
 
 class Mongo{
