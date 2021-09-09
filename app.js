@@ -1,6 +1,6 @@
 const { Client, Intents, Collection } = require("discord.js");
 
-const client = new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] });
+const client = new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES ] });
 
 const tokenizer = require("./tools/tokenizer");
 const fs = require('fs');

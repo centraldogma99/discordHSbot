@@ -47,7 +47,7 @@ class Hint {
         // cardSet json에 고전이 없음.
         const r = translateToKor(cardSet, card.cardSetId);
         if(r){
-          return `💡 이 카드는 확장팩 **${r}** 에 출시되었습니다.`;
+          return `💡 이 카드는 **${r}** 카드입니다.`;
         } else {
           return `💡 이 카드는 **고전** 카드입니다.`;
         }
@@ -65,7 +65,7 @@ class Hint {
     ],
       (() => {
         if(card.cardTypeId == 4) return [
-          `💡 이 카드의 스탯은 **${card.attack}/${card.health}** 입니다.`,
+          `💡 이 카드의 스탯은 **${card.manaCost}코스트, ${card.attack}/${card.health}** 입니다.`,
           (() => {
             if(card.minionTypeId) {
               return `💡 이 카드의 종족값은 **${translateToKor(minionType, card.minionTypeId)}** 입니다.`
@@ -123,7 +123,7 @@ class Hint {
 
 async function quiz_chosung(message){
   message.channel.doingQuiz = true;
-  let quizAnswerPoint = 1500;
+  let quizAnswerPoint = 1000;
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author.id);
   let chances = userConfig.quizConfig.chances;
@@ -157,24 +157,25 @@ async function quiz_chosung(message){
 
   const quizChosung = cho_hangul(targetCard.name);
   const hint = new Hint(message, targetCard);
-  await message.channel.send(`이 카드는 무엇일까요?\n\n**${quizChosung.replace(/\s/g, '')}**\n\nℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 120초**\n채팅 앞에 '-'(빼기)를 붙이면 답으로 인식되지 않습니다(예) -이거뭐더라?\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
+  await message.channel.send(`이 카드는 무엇일까요?\n\n**${quizChosung.replace(/\s/g, '')}**\n\nℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 120초**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
-  const answerChecker = (ans) => {
-    return targetCard.alias == ans.content.replace(/\s/g, '')
+  const answerChecker = (content) => {
+    return targetCard.alias == content.replace(/\s/g, '')
   }
   const filter = m => !m.author.bot;
 
   const messageCollector = message.channel.createMessageCollector( { filter, time: quizTimeLimit })
   messageCollector.on('collect', async m => {
-    if(m.content.startsWith('-')) return;
-    if ( m.content == '포기'){
+    if(!m.content.startsWith('-')) return;
+    const content = m.content.slice(1);
+    if ( content == '포기'){
       messageCollector.stop("userAbort");
       return;
     }
-    if ( answerChecker(m) ) {
+    if ( answerChecker(content) ) {
       messageCollector.stop("answered");
       return;
-    } else if (m.content == '힌트'){
+    } else if (content == '힌트'){
       await hint.getHint();
       if(hint.level < 3) {
         quizAnswerPoint /= pointMultiplier
@@ -200,7 +201,8 @@ async function quiz_chosung(message){
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)
       
-      const user = await mongo.userModel.findOne({ id: m.last().author.id }).exec()
+
+      const user = await loadUserConfig(m.last().author.id);
       if(user) await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec()
       else {message.channel.send("뭔가 잘못됐군요... 일해라 개발자!")}
     } else if ( reason == "time" ){

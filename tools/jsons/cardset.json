@@ -1,5 +1,25 @@
 [
   {
+    "name": "legacy",
+    "nameKor": "고전",
+    "id": 1635
+  },
+  {
+    "name": "legacy",
+    "nameKor": "고전",
+    "id": 3
+  },
+  {
+    "name": "legacy",
+    "nameKor": "고전",
+    "id": 4
+  },
+  {
+    "name": "core",
+    "nameKor": "핵심",
+    "id": 1637
+  },
+  {
     "name": "united-in-stormwind",
     "nameKor": "스톰윈드",
     "id": 1578

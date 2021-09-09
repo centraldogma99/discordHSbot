@@ -81,24 +81,25 @@ async function quiz(message){
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quizImages.croppedImage]});
-  await message.channel.send(`ℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n채팅 앞에 '-'(빼기)를 붙이면 답으로 인식되지 않습니다(예) -이거뭐더라?\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
+  await message.channel.send(`ℹ️  \`포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n-채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
-  const answerChecker = (ans) => {
-    return targetCard.alias == ans.content.replace(/\s/g, '')
+  const answerChecker = (content) => {
+    return targetCard.alias == content.replace(/\s/g, '')
   }
   const filter = m => !m.author.bot;
 
   const messageCollector = message.channel.createMessageCollector( { filter, time: 30000 })
   messageCollector.on('collect', async m => {
-    if(m.content.startsWith('-')) return;
-    if ( m.content == '포기'){
+    if(!m.content.startsWith('-')) return;
+    const content = m.content.slice(1);
+    if ( content == '포기'){
       messageCollector.stop("userAbort");
       return;
     }
-    if ( answerChecker(m) ) {
+    if ( answerChecker(content) ) {
       messageCollector.stop("answered");
       return;
-    } else if (m.content == '힌트'){
+    } else if (content == '힌트'){
       if( hintUsed.reduce((f,s) => f && s) ) { 
         message.channel.send("‼️  힌트를 모두 사용했습니다.");
         return;
@@ -129,7 +130,7 @@ async function quiz(message){
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)
       
-      const user = await mongo.userModel.findOne({ id: m.last().author.id }).exec()
+      const user = await loadUserConfig(m.last().author.id);
       if(user) await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec();
     } else if ( reason == "time" ){
       await message.channel.send(`⏰  시간 종료!`)
