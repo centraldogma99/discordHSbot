@@ -2,7 +2,7 @@ const loadUserConfig = require("../tools/loadUserConfig");
 const mongo = require("../db");
 const generateQuiz = require("../tools/generateQuiz");
 const { MessageActionRow, MessageButton } = require('discord.js');
-const cho_hangul = require("../tools/cho_Hangul");
+const cho_hangul = require("../tools/helpers/cho_Hangul");
 const giveUserPoint = require("../tools/giveUserPoint");
 
 const quizParticipatePoint = 50;

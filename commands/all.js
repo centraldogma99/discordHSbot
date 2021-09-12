@@ -4,11 +4,11 @@
 
 const Paginator = require("../tools/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig");
-const uniqueArray = require('../tools/uniqueArray');
-const range = require('../tools/range');
+const uniqueArray = require('../tools/helpers/uniqueArray');
+const range = require('../tools/helpers/range');
 const CONSTANTS = require('../constants');
 const BlizzardToken = require("../tools/BlizzardToken");
-const safeAxiosGet = require("../tools/safeAxiosGet");
+const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
 
 async function all(message, args, info){
   if(!args){

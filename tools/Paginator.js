@@ -1,7 +1,7 @@
-const uniqueArray = require('./uniqueArray')
-const mergeImages = require('./mergeImages');
+const uniqueArray = require('./helpers/uniqueArray')
+const mergeImages = require('./helpers/mergeImages');
 const { MessageButton, MessageActionRow } = require('discord.js');
-const RequestScheduler = require('./RequestScheduler');
+const RequestScheduler = require('./helpers/RequestScheduler');
 
 // How paginator works
 // next 

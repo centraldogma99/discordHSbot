@@ -1,7 +1,7 @@
 const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
-const safeAxiosGet = require("../tools/safeAxiosGet");
+const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
 const BlizzardToken = require("../tools/BlizzardToken");
 const CONSTANTS = require("../constants");
 

@@ -1,10 +1,10 @@
 const BlizzardToken = require("../tools/BlizzardToken");
 const Paginator = require("../tools/Paginator");
-const safeAxiosGet = require("../tools/safeAxiosGet");
+const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
 const CONSTANTS = require("../constants");
 const loadUserConfig = require("../tools/loadUserConfig");
 const { MessageEmbed } = require("discord.js");
-const RequestScheduler = require("../tools/RequestScheduler");
+const RequestScheduler = require("../tools/helpers/RequestScheduler");
 
 async function deck(message, args){
   if(!args) {

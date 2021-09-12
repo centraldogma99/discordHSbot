@@ -8,7 +8,7 @@ const axios = require('axios');
 // 주어진 시간 이후에 주어진 이유로 reject하는 promise를 만들어 준다.
 function rejectDelay(reason){
   const t = 200;
-  return new Promise((resolve, reject) => {
+  return new Promise((_, reject) => {
     setTimeout(reject.bind(null, reason), t);
   })
 }
