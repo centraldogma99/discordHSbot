@@ -41,7 +41,8 @@ const cardAliasSchema = schema({
   durability: { type: Number },
   text: { type: String },
   minionTypeId: { type: Number },
-  spellSchoolId: { type: Number }
+  spellSchoolId: { type: Number },
+  multiClassIds: { type: [Number] }
 });
 
 const battlegroundCardSchema = schema({

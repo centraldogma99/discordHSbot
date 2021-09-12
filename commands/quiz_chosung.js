@@ -53,11 +53,13 @@ class Hint {
         }
       })(),
       (() => {
+        if(card.multiClassIds?.length >= 2){
+          return `💡 이 카드는 **이중 직업** 카드입니다.`;
+        }
         if(card.classId){
           if(card.classId == 12){
-            return `💡 이 카드는 **중립** 카드입니다.`
+            return `💡 이 카드는 **중립** 카드입니다.`;
           }
-          
           return `💡 이 카드는 **${translateToKor(class_, card.classId)[0]}** 카드입니다.`
         }
       })(),
@@ -197,12 +199,12 @@ async function quiz_chosung(message){
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
+
+      const user = await loadUserConfig(m.last().author.id);
       await giveUserPoint(message.author.id, Math.ceil(quizAnswerPoint))
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)
       
-
-      const user = await loadUserConfig(m.last().author.id);
       if(user) await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec()
       else {message.channel.send("뭔가 잘못됐군요... 일해라 개발자!")}
     } else if ( reason == "time" ){

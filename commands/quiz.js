@@ -126,11 +126,11 @@ async function quiz(message){
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
+      const user = await loadUserConfig(m.last().author.id);
       await giveUserPoint(message.author.id, Math.ceil(quizAnswerPoint))
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)
       
-      const user = await loadUserConfig(m.last().author.id);
       if(user) await user.updateOne({$set: {["stats.quiz1"]: user.stats.quiz1 + 1 }}).exec();
     } else if ( reason == "time" ){
       await message.channel.send(`⏰  시간 종료!`)

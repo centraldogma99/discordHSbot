@@ -90,7 +90,7 @@ async function configure(message){
       await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 황금카드모드가 "${i.component.label}"으로 설정되었습니다.`, components: [] })
       goldenCardModeMsgCollector.stop("done");
     })
-    goldenCardModeMsgCollector.on('end', async (_, r) => {
+    goldenCardModeMsgCollector.on('end', (_, r) => {
       if(r == 'time') {
         goldenCardModeMsg.delete();
         firstMsg.delete();

@@ -1,5 +1,5 @@
 const mongo = require('../db')
-
+// id is guaranteed to exist
 function giveUserPoint(id, point){
   const userQuery = mongo.userModel.findOne({ id: id })
   return userQuery.exec()

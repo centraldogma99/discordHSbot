@@ -1,6 +1,5 @@
 const { MessageEmbed } = require("discord.js");
 const giveUserPoint = require("../tools/giveUserPoint");
-const isUserRegistered = require("../tools/isUserRegistered");
 const checkUserVote = require("../tools/koreanbot/checkUserVote");
 const loadUserConfig = require("../tools/loadUserConfig")
 
