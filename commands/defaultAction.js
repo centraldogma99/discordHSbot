@@ -18,7 +18,7 @@ async function defaultAction(message, args, info){
     (resCard.imageGold ? resCard.imageGold : resCard.image) : resCard.image;
   
   msgObj = {files: [targetImage]}
-  searchingMessage.delete();
+  searchingMessage.delete().catch(console.log);
 
   if( resCard.childIds.length > 0 ){
     const btn = new MessageButton()
@@ -35,7 +35,7 @@ async function defaultAction(message, args, info){
       await childs.execute(message, args, { fromDefault: true, card: resCard });
     })
     buttonCollector.on('end', async (i, r) => {
-      if(r == 'time') await msg.delete();
+      if(r == 'time') await msg.delete().catch(console.log);
     })
   } else {
     await message.channel.send(msgObj);

@@ -61,21 +61,21 @@ async function deck(message, args){
   const pagi = new Paginator(message, cards, false, null, userConfig.paginateStep, deckInfo.cards.length, null,
     {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode})
   let msgs = await pagi.next();
-  searchingMessage.delete();
+  searchingMessage.delete().catch(console.log);
 
   while(msgs){
     const [m, reaction] = await msgs.infoPromise;
     await m;
     if( reaction === "next" ){
       await message.channel.sendTyping();
-      await msgs.infoMessage.delete();
+      await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.next();
     } else if( reaction === "prev" ){
       await message.channel.sendTyping();
-      await msgs.infoMessage.delete();
+      await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.prev();
     } else if( reaction === "timeout" ){
-      msgs.infoMessage.delete();
+      msgs.infoMessage.delete().catch(console.log);
       break;
     }
   }

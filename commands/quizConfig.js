@@ -81,7 +81,7 @@ async function quizConfig(message){
     gameModeMsgCollector.stop("done")
   })
   gameModeMsgCollector.on('end', async (i, r) => {
-    if(r == 'time') await gameModeMsg.delete();
+    if(r == 'time') await gameModeMsg.delete().catch(console.log);
   })
 
 
@@ -144,7 +144,7 @@ async function quizConfig(message){
     }
   })
   rarityMsgCollector.on('end', async (_, r) => {
-    if(r == 'time') await rarityMsg.delete();
+    if(r == 'time') await rarityMsg.delete().catch(console.log);
   })
 
   let difficultyButtons = [
@@ -189,7 +189,7 @@ async function quizConfig(message){
     difficultyMsgCollector.stop("done");
   })
   difficultyMsgCollector.on('end', async (_, r) => {
-    if(r === 'time') await difficultyMsg.delete();
+    if(r === 'time') await difficultyMsg.delete().catch(console.log);
   })
 
   const chancesMenuButton = new MessageButton()
@@ -207,8 +207,8 @@ async function quizConfig(message){
   })
   chancesMsgCollector.on('end', async (_, r) => {
     if(r === 'time') {
-      chancesMsg.delete();
-      firstMsg.delete();
+      chancesMsg.delete().catch(console.log);
+      firstMsg.delete().catch(console.log);
     }
   })
 

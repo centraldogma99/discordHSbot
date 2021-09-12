@@ -55,7 +55,7 @@ async function configure(message){
       gameModeMsgCollector.stop("done");
     })
     gameModeMsgCollector.on('end', async (_, r) => {
-      if(r == 'time') await gameModeMsg.delete();
+      if(r == 'time') await gameModeMsg.delete().catch(console.log);
     })
     // 게임모드 설정 끝
 
@@ -92,8 +92,8 @@ async function configure(message){
     })
     goldenCardModeMsgCollector.on('end', (_, r) => {
       if(r == 'time') {
-        goldenCardModeMsg.delete();
-        firstMsg.delete();
+        goldenCardModeMsg.delete().catch(console.log);
+        firstMsg.delete().catch(console.log);
       }
     })
     // 황금 설정 끝
@@ -123,7 +123,7 @@ async function configure(message){
       messageCollector.on('end', async (m, r) => {
         if(r == 'answered') {
           await message.channel.send(`☑️ ${message.author.username}#${message.author.discriminator}님의 \`페이지\`가 \`${m.first().content}\` (으)로 설정되었습니다.`)
-          pageMsg.delete();
+          pageMsg.delete().catch(console.log);
         } else if(r == 'time'){
           message.channel.send(`？ 입력 시간이 초과되었습니다.`)
         } else if(r == 'wrongValue'){
@@ -132,7 +132,7 @@ async function configure(message){
       })
     })
     pageMsgCollector.on('end', async (_, r) => {
-      if(r == 'time') await pageMsg.delete();
+      if(r == 'time') await pageMsg.delete().catch(console.log);
     })
     // 페이지 설정 끝
   }

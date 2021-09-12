@@ -153,8 +153,8 @@ async function quiz(message){
       .then(() => quiz(message))
       .catch(e => {console.log(e); message.channel.send("퀴즈를 가져오던 중 오류가 발생했슶니다. 잠시 후 다시 시도해 주세요!")})
     })
-    buttonCollector.on('end', async (i, r) => {
-      if(r == 'time') await lastMsg.delete();
+    buttonCollector.on('end', async (_, r) => {
+      if(r == 'time') await lastMsg.delete().catch(console.log);
     })
   })
 

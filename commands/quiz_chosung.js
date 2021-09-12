@@ -229,7 +229,7 @@ async function quiz_chosung(message){
       .catch(e => {console.log(e); message.channel.send("퀴즈를 가져오던 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요!")})
     })
     buttonCollector.on('end', async (_, r) => {
-      if(r == 'time') await lastMsg.delete();
+      if(r == 'time') await lastMsg.delete().catch(console.log);
     })
   })
 }
