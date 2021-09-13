@@ -1,6 +1,6 @@
-const Paginator = require("../tools/Paginator");
-const loadUserConfig = require("../tools/loadUserConfig")
+const loadUserConfig = require("../tools/loadUserConfig");
 const cardNameInfer = require("../tools/cardNameInfer");
+const Paginator = require("../tools_ts/Paginator");
 
 async function name(message, args, info){
   if(!args){
@@ -20,8 +20,7 @@ async function name(message, args, info){
     return;
   }
 
-  const pagi = new Paginator(message, resCards, false, null, userConfig.paginateStep, resCards.length, null,
-    {lengthEnabled: true, goldenCardMode: userConfig.goldenCardMode});
+  const pagi = new Paginator(message, resCards.map(card => card.image), userConfig.paginateStep);
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 
