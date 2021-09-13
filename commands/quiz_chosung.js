@@ -140,6 +140,8 @@ async function quiz_chosung(message){
     db = mongo.cardAliasStandardModel;
   } else if( userConfig.quizConfig.gameMode == 'wild'){
     db = mongo.cardAliasModel;
+  } else if( userConfig.quizConfig.gameMode == 'realwild' ){
+    db = mongo.cardRealWildModel;
   }
 
   let targetCard;

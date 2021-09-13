@@ -53,15 +53,22 @@ async function quizConfig(message){
     .setCustomId('wild')
     .setLabel('야생')
     .setStyle('SECONDARY')
+  let realWildBtn = new MessageButton()
+  .setCustomId('realwild')
+  .setLabel('야생(정규 제외)')
+  .setStyle('SECONDARY')
   if (userConfig.quizConfig.gameMode == 'standard'){
     stdBtn.setDisabled(true);
     stdBtn.setStyle('PRIMARY');
   } else if (userConfig.quizConfig.gameMode == 'wild'){
     wildBtn.setDisabled(true);
     wildBtn.setStyle('PRIMARY');
+  } else if (userConfig.quizConfig.gameMode == 'realwild'){
+    realWildBtn.setDisabled(true);
+    realWildBtn.setStyle('PRIMARY');
   }
 
-  const row1 = new MessageActionRow().addComponents([stdBtn, wildBtn]);
+  const row1 = new MessageActionRow().addComponents([stdBtn, wildBtn, realWildBtn]);
   const firstMsg = await message.channel.send(`**${message.author.username}#${message.author.discriminator}가 퀴즈 설정 중...**`)
   let gameModeMsg = await message.channel.send({ content: `**⚙️ 퀴즈 게임 모드**`, components: [row1] });
   const gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });

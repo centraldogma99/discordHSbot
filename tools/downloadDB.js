@@ -10,7 +10,8 @@ function postDownload(){
 
 async function downloadDB(blizzardToken){
   const pageSize = 100;
-  let promises = []
+  let promises = [];
+  let doc = [];
   const wildCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
     locale: "ko_KR",
@@ -34,48 +35,28 @@ async function downloadDB(blizzardToken){
     })
   }
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
-  names = cards.map(card => card.name);
-  namesNoSpace = names.map(name => name.replace(/\s/g, ''));
-  images = cards.map(card => card.image);
-  imageGolds = cards.map(card => card.imageGold)
-  childIds = cards.map(card => card.childIds)
-  rarityIds = cards.map(card => card.rarityId)
-  manaCosts = cards.map(card => card.manaCost)
-  cardSetIds = cards.map(card => card.cardSetId)
-  classIds = cards.map(card => card.classId)
-  texts = cards.map(card => card.text)
-  cardTypeIds = cards.map(card => card.cardTypeId)
-  healths = cards.map(card => card.health)
-  attacks = cards.map(card => card.attack)
-  durabilities = cards.map(card => card.durability)
-  minionTypeIds = cards.map(card => card.minionTypeId)
-  spellSchoolIds = cards.map(card => card.spellSchoolId)
-  multiClassIds = cards.map(card => card.multiClassIds)
-  doc = [];
-  for(let i = 0;i<names.length;i++){
-    doc = doc.concat({ 
-      alias: namesNoSpace[i],
-      name: names[i],
-      image: images[i],
-      imageGold: imageGolds[i],
-      childIds: childIds[i],
-      rarityId: rarityIds[i],
-      manaCost: manaCosts[i],
-      cardSetId: cardSetIds[i],
-      classId: classIds[i],
-      text: texts[i],
-      cardTypeId: cardTypeIds[i],
-      health: healths[i],
-      attack: attacks[i],
-      durability: durabilities[i],
-      minionTypeId: minionTypeIds[i],
-      spellSchoolId: spellSchoolIds[i],
-      multiClassIds: multiClassIds[i]
-    });
-  }
-  doc = uniqueArray(doc, "alias");
+  let wilddoc = cards.map(card => {return {
+    alias: card.name.replace(/\s/g, ''),
+    name: card.name,
+    image: card.image,
+    imageGold: card.imageGold,
+    childIds: card.childIds,
+    rarityId: card.rarityId,
+    manaCost: card.manaCost,
+    cardSetId: card.cardSetId,
+    classId: card.classId,
+    text: card.text,
+    cardTypeId: card.cardTypeId,
+    health: card.health,
+    attack: card.attack,
+    durability: card.durability,
+    minionTypeId: card.minionTypeId,
+    spellSchoolId: card.spellSchoolId,
+    multiClassIds: card.multiClassId
+  }})
+  wilddoc = uniqueArray(wilddoc, "alias");
   try{
-    await mongo.cardAliasModel.insertMany(doc)
+    await mongo.cardAliasModel.insertMany(wilddoc)
   } catch(e) {
     console.log(e);
   }
@@ -107,48 +88,35 @@ async function downloadDB(blizzardToken){
     })
   }
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
-  names = cards.map(card => card.name);
-  namesNoSpace = names.map(name => name.replace(/\s/g, ''));
-  images = cards.map(card => card.image);
-  imageGolds = cards.map(card => card.imageGold)
-  childIds = cards.map(card => card.childIds)
-  rarityIds = cards.map(card => card.rarityId)
-  manaCosts = cards.map(card => card.manaCost)
-  cardSetIds = cards.map(card => card.cardSetId)
-  classIds = cards.map(card => card.classId)
-  texts = cards.map(card => card.text)
-  cardTypeIds = cards.map(card => card.cardTypeId)
-  healths = cards.map(card => card.health)
-  attacks = cards.map(card => card.attack)
-  durabilities = cards.map(card => card.durability)
-  minionTypeIds = cards.map(card => card.minionTypeId)
-  spellSchoolIds = cards.map(card => card.spellSchoolId)
-  multiClassIds = cards.map(card => card.multiClassIds)
-  doc = [];
-  for(let i = 0;i<names.length;i++){
-    doc = doc.concat({ 
-      alias: namesNoSpace[i],
-      name: names[i],
-      image: images[i],
-      imageGold: imageGolds[i],
-      childIds: childIds[i],
-      rarityId: rarityIds[i],
-      manaCost: manaCosts[i],
-      cardSetId: cardSetIds[i],
-      classId: classIds[i],
-      text: texts[i],
-      cardTypeId: cardTypeIds[i],
-      health: healths[i],
-      attack: attacks[i],
-      durability: durabilities[i],
-      minionTypeId: minionTypeIds[i],
-      spellSchoolId: spellSchoolIds[i],
-      multiClassIds: multiClassIds[i]
-    });
-  }
-  doc = uniqueArray(doc, "alias");
+  let stddoc = cards.map(card => {return {
+    alias: card.name.replace(/\s/g, ''),
+    name: card.name,
+    image: card.image,
+    imageGold: card.imageGold,
+    childIds: card.childIds,
+    rarityId: card.rarityId,
+    manaCost: card.manaCost,
+    cardSetId: card.cardSetId,
+    classId: card.classId,
+    text: card.text,
+    cardTypeId: card.cardTypeId,
+    health: card.health,
+    attack: card.attack,
+    durability: card.durability,
+    minionTypeId: card.minionTypeId,
+    spellSchoolId: card.spellSchoolId,
+    multiClassIds: card.multiClassId
+  }})
+  stddoc = uniqueArray(stddoc, "alias");
   try{
-    await mongo.cardAliasStandardModel.insertMany(doc)
+    await mongo.cardAliasStandardModel.insertMany(stddoc)
+  } catch(e) {
+    console.log(e);
+  }
+
+  let realwilddoc = wilddoc.filter(card => !(stddoc.map(card => card.name).includes(card.name)));
+  try{
+    await mongo.cardRealWildModel.insertMany(realwilddoc);
   } catch(e) {
     console.log(e);
   }
@@ -177,38 +145,20 @@ async function downloadDB(blizzardToken){
     .catch(console.log)
   }
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
-  names = cards.map(card => card.name);
-  namesNoSpace = names.map(name => name.replace(/\s/g, ''));
-  images = cards.map(card => card.image);
-  imageGolds = cards.map(card => card.imageGold)
-  childIds = cards.map(card => card.childIds)
-  rarityIds = cards.map(card => card.rarityId)
-  healths = cards.map(card => card.health)
-  attacks = cards.map(card => card.attack)
-  tiers = cards.map(card => {
-    if(!card.battlegrounds) return;
-    else return card.battlegrounds.tier?? "hero"
-  })
-  classIds = cards.map(card => card.classId)
-  texts = cards.map(card => card.text)
-  minionTypeIds = cards.map(card => card.minionTypeId);
-  doc = [];
-  for(let i = 0;i<names.length;i++){
-    doc = doc.concat({ 
-      alias: namesNoSpace[i],
-      name: names[i],
-      image: images[i],
-      imageGold: imageGolds[i],
-      childIds: childIds[i],
-      rarityId: rarityIds[i],
-      tier: tiers[i],
-      classId: classIds[i],
-      text: texts[i],
-      health: healths[i],
-      attack: attacks[i],
-      minionTypeId: minionTypeIds[i]
-    });
-  }
+  doc = cards.map(card => {return {
+    alias: card.name.replace(/\s/g, ''),
+    name: card.name,
+    image: card.image,
+    imageGold: card.imageGold,
+    childIds: card.childIds,
+    rarityId: card.rarityId,
+    tier: card.battlegrounds ? (card.battlegrounds.tier ?? "hero") : null,
+    classId: card.classId,
+    text: card.text,
+    health: card.health,
+    attack: card.attack,
+    minionTypeId: card.minionTypeId
+  }})
   doc = uniqueArray(doc, "alias");
   try{
     await mongo.battlegroundsCardModel.insertMany(doc)

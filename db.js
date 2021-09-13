@@ -75,6 +75,7 @@ class Mongo{
       this.userModel = mongoose.model("users", userSchema);
       this.cardAliasModel = mongoose.model('cardAliases', cardAliasSchema);
       this.cardAliasStandardModel = mongoose.model('cardAliasStandards', cardAliasSchema);
+      this.cardRealWildModel = mongoose.model('cardRealWilds', cardAliasSchema);
       this.battlegroundsCardModel = mongoose.model('battlegroundsCards', battlegroundCardSchema);
     })
     db.on('disconnected', () => {
