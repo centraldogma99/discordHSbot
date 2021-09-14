@@ -3,6 +3,7 @@ const cardNameInfer = require("../tools/cardNameInfer");
 const Paginator = require("../tools_ts/Paginator");
 
 async function name(message, args, info){
+  // DB는 이미 중복 제거되어 있으므로 중복 처리 필요 없음
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
     return;

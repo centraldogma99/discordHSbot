@@ -96,6 +96,7 @@ class Paginator {
 
     // this.cards 장전하기
     if(this.isPromise){
+      this.promises = this.promises as (() => Promise<imageAddr | imageAddr[]>)[]
       // 페이지를 채우기 위해서 resolve 되어야 할 promise 개수 구하기. "대강" 한 페이지를 채우는.
       // 마지막 Promise덩어리가 promiseResSize만큼이지 않을 수도 있다.
       const promiseUnitSize = Math.ceil(this.paginateStep / this.promiseResSize);
@@ -109,9 +110,7 @@ class Paginator {
           let numOfPromisesNeedToResolved = promiseUnitSize;
 
           let reqIdsCurrent: number[] = Array(numOfPromisesNeedToResolved).fill(null);
-          reqIdsCurrent = reqIdsCurrent.map((_, index) => RequestScheduler.addReq(
-            (this.promises as (() => Promise<imageAddr | imageAddr[]>)[])[index]
-          ));
+          reqIdsCurrent = reqIdsCurrent.map((_, index) => RequestScheduler.addReq(this.promises[index]));
           images = await Promise.all(reqIdsCurrent.map(reqId => RequestScheduler.getRes(reqId)));
           
           // 배열의 길이를 넘어가서 slice를 하더라도 정상동작(빈 배열이 됨)
@@ -161,14 +160,19 @@ class Paginator {
         }
       }
     } else {
-      if(this.images.length == 0) this.images = this.promises as imageAddr[]
+      if(this.images.length == 0) {
+        this.images = this.promises as imageAddr[];
+        this.promises = [];
+      }
     }
     let targetImages = this.images.slice(this.cursor, this.cursor + this.paginateStep);
     return this.showMessages(targetImages);
   }
 
   async showMessages(targetImages: imageAddr[]){
-    let isLongResult = this.images.length > this.paginateStep
+    let isLongResult = this.numberOfCards ?
+      this.numberOfCards > this.paginateStep : 
+      (this.images.length > this.paginateStep) || this.promises.length > 0
     
     const mergeImage = await mergeImages(targetImages, this.paginateStep % 3 == 0 ? 3 : 2);
     

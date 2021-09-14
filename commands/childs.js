@@ -39,7 +39,7 @@ async function childs(message, args, info){
         access_token: blizzardToken
       }}
     )
-    .then(res => res.data)
+    .then(res => res.data.image)
     .catch(e => {throw e}));
     const pagi = new Paginator(message, promises, userConfig.paginateStep, isPromise = true, lengthEnabled = false, 0, promiseResSize = 1)
     let msgs = await pagi.next();

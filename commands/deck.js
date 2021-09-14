@@ -1,10 +1,11 @@
 const BlizzardToken = require("../tools/BlizzardToken");
-const Paginator = require("../tools/Paginator");
+const Paginator = require("../tools_ts/Paginator");
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
 const CONSTANTS = require("../constants");
 const loadUserConfig = require("../tools/loadUserConfig");
 const { MessageEmbed } = require("discord.js");
 const RequestScheduler = require("../tools/helpers/RequestScheduler");
+const uniqueArray = require("../tools/helpers/uniqueArray");
 
 async function deck(message, args){
   if(!args) {
@@ -38,7 +39,7 @@ async function deck(message, args){
       message.channel.send("‼️ 오류가 발생했습니다. 다시 시도해 주세요! 문제가 지속되면 개발자에게 문의해 주세요!");
     return;
   }
-  const cards = deckInfo.cards.sort((a, b) => a.manaCost - b.manaCost);
+  let cards = deckInfo.cards.sort((a, b) => a.manaCost - b.manaCost);
   let names = cards.map(card => card.name)
   let costsAndRarities = Object.fromEntries(cards.map(card => [card.name, {cost: card.manaCost, isLegendary: card.rarityId == 5? '⭐' : ''}]))
   let obj = {};
@@ -58,8 +59,9 @@ async function deck(message, args){
   await message.channel.send({embeds: [embed]});
 
   await message.channel.sendTyping();
-  const pagi = new Paginator(message, cards, false, null, userConfig.paginateStep, deckInfo.cards.length, null,
-    {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode})
+  // remove redundant cards
+  cards = uniqueArray(cards, 'name');
+  const pagi = new Paginator(message, cards.map(card => card.image), userConfig.paginateStep)
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 
