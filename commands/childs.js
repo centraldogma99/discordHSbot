@@ -1,4 +1,4 @@
-const Paginator = require("../tools/Paginator");
+const Paginator = require("../tools_ts/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
@@ -39,11 +39,9 @@ async function childs(message, args, info){
         access_token: blizzardToken
       }}
     )
-    .then(res => res.data)
+    .then(res => res.data.image)
     .catch(e => {throw e}));
-    
-    const pagi = new Paginator(message, promises, true, 1, userConfig.paginateStep, resCard.childIds.length, c => c,
-      {lengthEnabled: false, goldenCardMode: userConfig.goldenCardMode});
+    const pagi = new Paginator(message, promises, userConfig.paginateStep, isPromise = true, lengthEnabled = false, 0, promiseResSize = 1)
     let msgs = await pagi.next();
     searchingMessage?.delete().catch(console.log);
 

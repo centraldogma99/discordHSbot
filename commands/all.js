@@ -2,7 +2,7 @@
   로컬 DB화 미루기 - 서치 성능 이슈(확인 안됨)
 */
 
-const Paginator = require("../tools/Paginator");
+const Paginator = require("../tools_ts/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig");
 const uniqueArray = require('../tools/helpers/uniqueArray');
 const range = require('../tools/helpers/range');
@@ -33,6 +33,8 @@ async function all(message, args, info){
       access_token: blizzardToken
     }})
     .then(res => res.data.cards)
+    .then(cards => uniqueArray(cards, "name"))
+    .then(cards => cards.map(card => card.image))
     .catch(e => {throw e})
   }
   
@@ -66,20 +68,19 @@ async function all(message, args, info){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
+  let firstCards = uniqueArray(temp.data.cards, "name");
 
   let promises;
   if( Math.ceil(cardCount / CONSTANTS.pageSize) > 1 ){
     promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 2).map(i => 
       axiosShort(i)
     )
-    promises = [() => Promise.resolve(temp.data.cards), ...promises]
+    promises = [() => Promise.resolve(firstCards.map(card => card.image)), ...promises]
   } else {
-    promises = [() => Promise.resolve(temp.data.cards)]
+    promises = [() => Promise.resolve(firstCards.map(card => card.image))]
   }
   
-  const pagi = new Paginator(message, promises, true, CONSTANTS.pageSize, userConfig.paginateStep, cardCount,
-    cardsArray => uniqueArray(cardsArray, "name"),
-    {lengthEnabled: true, goldenCardMode: userConfig.goldenCardMode});
+  const pagi = new Paginator(message, promises, userConfig.paginateStep, true, true, cardCount, CONSTANTS.pageSize);
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 
