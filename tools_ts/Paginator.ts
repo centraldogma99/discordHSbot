@@ -1,7 +1,7 @@
-const uniqueArray: (array: any[], element?: string) => any[] = require('./helpers/uniqueArray');
-const mergeImages: (imageURLs: unknown[], cardsPerLine: number) => Promise<Buffer> = require('./helpers/mergeImages');
-import { Message, MessageButton, MessageActionRow } from "discord.js";
-const RequestScheduler = require('./helpers/RequestScheduler');
+const uniqueArray: (array: any[], element?: string) => any[] = require('../tools/helpers/uniqueArray');
+const mergeImages: (imageURLs: unknown[], cardsPerLine: number) => Promise<Buffer> = require('../tools/helpers/mergeImages');
+const { Message, MessageButton, MessageActionRow } = require("discord.js");
+const RequestScheduler = require('../tools/helpers/RequestScheduler');
 
 interface imageAddr {
   _imageAddrASDF: void;
@@ -21,8 +21,8 @@ interface Card {
   text: string
 }
 
-export class Paginator {
-  message: Message;
+class Paginator {
+  message: typeof Message;
   paginateStep: number;
   // @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
   cursor: number;
@@ -31,13 +31,13 @@ export class Paginator {
   images: imageAddr[];
   lengthEnabled: boolean;
   numberOfCards: number;
-  prevMessage: Message;
+  prevMessage: typeof Message;
   isPromise: boolean;
   promiseResSize: number;
   nextPagePromise: Promise<imageAddr[]> | Promise<imageAddr[][]>;
 
   constructor(
-    message: Message,
+    message: typeof Message,
     promises: (() => Promise<imageAddr | imageAddr[]>)[] | imageAddr[],
     paginateStep: number,
     isPromise: boolean = false,
@@ -109,7 +109,9 @@ export class Paginator {
           let numOfPromisesNeedToResolved = promiseUnitSize;
 
           let reqIdsCurrent: number[] = Array(numOfPromisesNeedToResolved).fill(null);
-          reqIdsCurrent = reqIdsCurrent.map((_, index) => RequestScheduler.addReq(this.promises[index]));
+          reqIdsCurrent = reqIdsCurrent.map((_, index) => RequestScheduler.addReq(
+            (this.promises as (() => Promise<imageAddr | imageAddr[]>)[])[index]
+          ));
           images = await Promise.all(reqIdsCurrent.map(reqId => RequestScheduler.getRes(reqId)));
           
           // 배열의 길이를 넘어가서 slice를 하더라도 정상동작(빈 배열이 됨)
@@ -159,7 +161,7 @@ export class Paginator {
         }
       }
     } else {
-      if(!this.images) this.images = this.promises as imageAddr[]
+      if(this.images.length == 0) this.images = this.promises as imageAddr[]
     }
     let targetImages = this.images.slice(this.cursor, this.cursor + this.paginateStep);
     return this.showMessages(targetImages);
@@ -205,7 +207,7 @@ export class Paginator {
         components: [new MessageActionRow().addComponents(moveButtons)]
       })
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON', time: waitingTime })
-      .then(i => [i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] }), (i.component as MessageButton).customId])
+      .then(i => [i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] }), (i.component as typeof MessageButton).customId])
       .catch(() => [undefined, "timeout"])
       
       return {
@@ -218,3 +220,5 @@ export class Paginator {
     }
   }
 }
+
+module.exports = Paginator;
