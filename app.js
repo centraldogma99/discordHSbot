@@ -112,7 +112,7 @@ client.on("messageCreate", async message => {
 try {
   //개발시 주석처리할것
   BlizzardToken.getToken()
-  // .then(token => downloadDB(token))
+  .then(token => downloadDB(token))
   .then(() => postDownload())
   .then(() => client.login(discordToken))
   .then(() => console.log("DB load complete"))

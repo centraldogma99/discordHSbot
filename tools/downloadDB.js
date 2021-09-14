@@ -52,7 +52,7 @@ async function downloadDB(blizzardToken){
     durability: card.durability,
     minionTypeId: card.minionTypeId,
     spellSchoolId: card.spellSchoolId,
-    multiClassIds: card.multiClassId
+    multiClassIds: card.multiClassIds
   }})
   wilddoc = uniqueArray(wilddoc, "alias");
   try{
@@ -105,7 +105,7 @@ async function downloadDB(blizzardToken){
     durability: card.durability,
     minionTypeId: card.minionTypeId,
     spellSchoolId: card.spellSchoolId,
-    multiClassIds: card.multiClassId
+    multiClassIds: card.multiClassIds
   }})
   stddoc = uniqueArray(stddoc, "alias");
   try{
