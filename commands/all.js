@@ -2,7 +2,7 @@
   로컬 DB화 미루기 - 서치 성능 이슈(확인 안됨)
 */
 
-const Paginator = require("../tools_ts/Paginator");
+const Paginator = require("../tools/Paginator");
 const loadUserConfig = require("../tools/loadUserConfig");
 const uniqueArray = require('../tools/helpers/uniqueArray');
 const range = require('../tools/helpers/range');

@@ -1,4 +1,4 @@
-const Paginator = require("../tools_ts/Paginator");
+const Paginator = require("../tools/Paginator");
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");

@@ -1,5 +1,5 @@
 const BlizzardToken = require("../tools/BlizzardToken");
-const Paginator = require("../tools_ts/Paginator");
+const Paginator = require("../tools/Paginator");
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
 const CONSTANTS = require("../constants");
 const loadUserConfig = require("../tools/loadUserConfig");
