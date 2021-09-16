@@ -1,7 +1,8 @@
+type imageAddr = string;
 const axios = require('axios');
 const sharp = require('sharp');
 
-async function mergeImages(imageURLs, cardsPerLine=3){
+export async function mergeImages(imageURLs: imageAddr[], cardsPerLine=3): Promise<Buffer>{
   if( imageURLs.length == 0 ){
     return;
   }
@@ -12,19 +13,15 @@ async function mergeImages(imageURLs, cardsPerLine=3){
         responseType: "arraybuffer"
       })
       .then(res => res.data)
-      .catch((e) =>{
-        console.log(e);
-      })
-    ))
+      .catch(e => console.log(e))
+    ));
   
     const base = axios({
       url: imageURLs[0],
       responseType: "arraybuffer"
     })
     .then(res => res.data)
-    .catch((e) =>{
-      console.log(e);
-    });
+    .catch(e => console.log(e));
   
     let composite = files.reduce( (input, overlay) => 
       input.then(
@@ -55,5 +52,3 @@ async function mergeImages(imageURLs, cardsPerLine=3){
     return res;
   }
 }
-
-module.exports = mergeImages;

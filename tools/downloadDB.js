@@ -1,6 +1,6 @@
 const mongo = require('../db');
 const CONSTANTS = require('../constants')
-const uniqueArray = require('./helpers/uniqueArray');
+const { uniqueArray } = require('./helpers/uniqueArray');
 const safeAxiosGet = require('./helpers/safeAxiosGet');
 
 function postDownload(){

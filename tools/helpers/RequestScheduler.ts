@@ -1,13 +1,13 @@
-class RequestScheduler {
-  static queue;
-  static resQueue;
-  static queueId = 0;
-  static recentReqsInHour = 0;
-  static recentReqsInSec = 0;
-  static interval;
-  static timer;
-
-  constructor(interval){
+class RequestScheduler<T> {
+  queue: {key: number, value: (() => Promise<T[]>) | (() => Promise<T>)}[];
+  resQueue: {key: number, value: T | T[]}[];
+  queueId = 0;
+  recentReqsInHour = 0;
+  recentReqsInSec = 0;
+  interval: number;
+  timer: ReturnType<typeof setTimeout>;
+  
+  constructor(interval: number){
     this.queue = [];
     this.resQueue = [];
     this.queueId = 0;
@@ -21,24 +21,25 @@ class RequestScheduler {
     let f = () => {
       const v = this.queue.shift()
       if(v){
-        let size;
+        let size: number;
         if(typeof v.value === 'function'){
           size = 1;
           v.value()
-          .then(res => this.resQueue.push({key: v.key, value: res}))
+          .then((res: T | T[]) => this.resQueue.push({key: v.key, value: res}))
           .catch(e => {
             console.log(e);
             this.resQueue.push({key: v.key, value: e})
           });
-        } else if(Array.isArray(v.value)){
-          size = v.value.length;
-          v.value.map(f => f())
-          .then(resArr => this.resQueue.push({key: v.key, value: resArr}))
-          .catch(e => {
-            console.log(e);
-            this.resQueue.push({key: v.key, value: e})
-          });
-        }
+        } 
+        // else if(Array.isArray(v.value)){
+        //   size = v.value.length;
+        //   v.value.map(f => f()
+        //   .then(resArr => this.resQueue.push({key: v.key, value: resArr}))
+        //   .catch(e => {
+        //     console.log(e);
+        //     this.resQueue.push({key: v.key, value: e})
+        //   }));
+        // }
         clearInterval(this.timer)
         this.timer = setInterval(f, this.interval * size);
         this.recentReqsInHour += size;
@@ -55,8 +56,7 @@ class RequestScheduler {
     return [`${this.recentReqsInHour} reqs/h`, `${this.recentReqsInSec} reqs/s`];
   }
 
-  addReq(reqFunc){
-    // @reqFunc : (() => Promise<any>)[] 또는 () => Promise<any>
+  addReq(reqFunc: (() => Promise<T[]>) | (() => Promise<T>)): number{
     if(!Array.isArray(reqFunc) && typeof reqFunc != 'function') return null;
     this.queue.push({key: this.queueId, value: reqFunc});
     if(this.queueId < 1000000){
@@ -67,7 +67,7 @@ class RequestScheduler {
     }
   }
 
-  getRes(queueId){
+  getRes(queueId: number): Promise<T | T[]>{
     // @queueId는 null일 수 있음
     if(queueId === null) return null;
     return new Promise(resolve => {
@@ -77,9 +77,10 @@ class RequestScheduler {
           resolve(res.value);
           clearInterval(timer);
         }
-      }, 10)
+      }, 5)
     })
   }
 }
 
-module.exports = new RequestScheduler(10);
+const requestScheduler = new RequestScheduler<string>(10);
+export { requestScheduler }

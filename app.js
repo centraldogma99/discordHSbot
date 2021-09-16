@@ -11,7 +11,7 @@ const updateKoreanBot = require("./tools/koreanbot/updateKoreanBot");
 const checkUserVote = require("./tools/koreanbot/checkUserVote");
 const mongo = require("./db");
 const permissionChecker = require("./tools/permissionChecker");
-const RequestScheduler = require("./tools/helpers/RequestScheduler")
+import { RequestScheduler } from "./tools/helpers/RequestScheduler";
 
 require("dotenv").config()
 

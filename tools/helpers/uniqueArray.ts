@@ -1,4 +1,5 @@
-function uniqueArray(array, element) {
+"use strict";
+export function uniqueArray(array: any[], element?: string): any[] {
   let seen = {};
   if (!element){
     return array.filter( item => {
@@ -9,5 +10,3 @@ function uniqueArray(array, element) {
     return seen.hasOwnProperty(item[element]) ? false : (seen[item[element]] = true);
   })
 }
-
-module.exports = uniqueArray;

@@ -1,4 +1,4 @@
-const Paginator = require("../tools/Paginator");
+import { Paginator } from "../tools/Paginator";
 const getMostMatchingCard = require("../tools/getMostMatchingCard");
 const loadUserConfig = require("../tools/loadUserConfig");
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
@@ -41,7 +41,7 @@ async function childs(message, args, info){
     )
     .then(res => res.data.image)
     .catch(e => {throw e}));
-    const pagi = new Paginator(message, promises, userConfig.paginateStep, isPromise = true, lengthEnabled = false, 0, promiseResSize = 1)
+    const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, 1)
     let msgs = await pagi.next();
     searchingMessage?.delete().catch(console.log);
 

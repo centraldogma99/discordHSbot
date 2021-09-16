@@ -1,6 +1,6 @@
 const loadUserConfig = require("../tools/loadUserConfig");
 const cardNameInfer = require("../tools/cardNameInfer");
-const Paginator = require("../tools/Paginator");
+import { Paginator } from "../tools/Paginator";
 
 async function name(message, args, info){
   // DB는 이미 중복 제거되어 있으므로 중복 처리 필요 없음
@@ -21,7 +21,7 @@ async function name(message, args, info){
     return;
   }
 
-  const pagi = new Paginator(message, resCards.map(card => card.image), userConfig.paginateStep);
+  const pagi = new Paginator(message, { value: resCards.map(card => card.image) }, userConfig.paginateStep);
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 

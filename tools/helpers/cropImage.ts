@@ -1,9 +1,9 @@
 const sharp = require('sharp');
 const getImage = require('./getImage')
 
-async function cropImage(imageURL, width, height, left, top){
+export async function cropImage(imageURL, width, height, left, top){
   let image = await getImage(imageURL);
-  const croppedImage = await sharp(image).extract({
+  const croppedImage = await new sharp(image).extract({
     width: width,
     height: height,
     left: left,
@@ -14,5 +14,3 @@ async function cropImage(imageURL, width, height, left, top){
     originalImage: image
   }
 }
-
-module.exports = cropImage;

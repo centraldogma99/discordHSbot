@@ -1,4 +1,4 @@
-const cropImage = require("./helpers/cropImage");
+const { cropImage } = require("./helpers/cropImage");
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);

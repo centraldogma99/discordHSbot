@@ -1,11 +1,11 @@
 const BlizzardToken = require("../tools/BlizzardToken");
-const Paginator = require("../tools/Paginator");
+import { Paginator } from "../tools/Paginator";
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
 const CONSTANTS = require("../constants");
 const loadUserConfig = require("../tools/loadUserConfig");
 const { MessageEmbed } = require("discord.js");
-const RequestScheduler = require("../tools/helpers/RequestScheduler");
-const uniqueArray = require("../tools/helpers/uniqueArray");
+import { RequestScheduler } from "../tools/helpers/RequestScheduler";
+const { uniqueArray } = require("../tools/helpers/uniqueArray");
 
 async function deck(message, args){
   if(!args) {
@@ -61,7 +61,7 @@ async function deck(message, args){
   await message.channel.sendTyping();
   // remove redundant cards
   cards = uniqueArray(cards, 'name');
-  const pagi = new Paginator(message, cards.map(card => card.image), userConfig.paginateStep)
+  const pagi = new Paginator(message, { value: cards.map(card => card.image) }, userConfig.paginateStep)  // #FIXME maybe
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 

@@ -2,10 +2,10 @@
   로컬 DB화 미루기 - 서치 성능 이슈(확인 안됨)
 */
 
-const Paginator = require("../tools/Paginator");
+import { Paginator } from "../tools/Paginator";
 const loadUserConfig = require("../tools/loadUserConfig");
-const uniqueArray = require('../tools/helpers/uniqueArray');
-const range = require('../tools/helpers/range');
+const { uniqueArray } = require('../tools/helpers/uniqueArray');
+import { range } from '../tools/helpers/range';
 const CONSTANTS = require('../constants');
 const BlizzardToken = require("../tools/BlizzardToken");
 const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
@@ -80,7 +80,7 @@ async function all(message, args, info){
     promises = [() => Promise.resolve(firstCards.map(card => card.image))]
   }
   
-  const pagi = new Paginator(message, promises, userConfig.paginateStep, true, true, cardCount, CONSTANTS.pageSize);
+  const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, CONSTANTS.pageSize, true, cardCount)
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 
