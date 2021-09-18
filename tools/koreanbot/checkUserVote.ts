@@ -1,8 +1,9 @@
-const axios = require('axios')
-const koreanBotToken = process.env.KOREANBOT_SECRET;
-const mongo = require('../../db')
+import axios from 'axios';
+import mongo from '../../db';
 
-async function checkUserVote(userId){
+const koreanBotToken = process.env.KOREANBOT_SECRET;
+
+export async function checkUserVote(userId: number | string){
   // userID is guaranteed to exist
   const user = mongo.userModel.findOne({ id: userId })
   let data = await axios.get(`https://koreanbots.dev/api/v2/bots/868188628709425162/vote`,
@@ -27,5 +28,3 @@ async function checkUserVote(userId){
   }
   return false;
 }
-
-module.exports = checkUserVote

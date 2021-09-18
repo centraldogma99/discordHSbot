@@ -1,8 +1,10 @@
-const loadUserConfig = require("../tools/loadUserConfig");
-const cardNameInfer = require("../tools/cardNameInfer");
+import { loadUserConfig } from "../tools/loadUserConfig";
+import { cardNameInfer } from "../tools/cardNameInfer";
+import { Message } from "discord.js";
 import { Paginator } from "../tools/Paginator";
+import { searchInfo } from "../types/searchInfo";
 
-async function name(message, args, info){
+async function name(message: Message, args: string, info: searchInfo){
   // DB는 이미 중복 제거되어 있으므로 중복 처리 필요 없음
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
@@ -21,12 +23,12 @@ async function name(message, args, info){
     return;
   }
 
-  const pagi = new Paginator(message, { value: resCards.map(card => card.image) }, userConfig.paginateStep);
+  const pagi = new Paginator(message, { value: resCards.map(card => card.image), isPromise: false }, userConfig.paginateStep);
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 
   while(msgs){
-    [m, reaction] = await msgs.infoPromise;
+    const [m, reaction] = await msgs.infoPromise;
     await m;
     if( reaction === "next" ){
       await message.channel.sendTyping();

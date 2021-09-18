@@ -1,6 +1,6 @@
-const mongo = require("../db");
+import mongo from "../db";
 
-async function loadUserConfig(userId){
+export async function loadUserConfig(userId: number | string){
   const user = await mongo.userModel.findOne({ id: userId }).exec();
   if(!user){
     await mongo.userModel.insertMany([{
@@ -11,5 +11,3 @@ async function loadUserConfig(userId){
     return user;
   }
 }
-
-module.exports = loadUserConfig;

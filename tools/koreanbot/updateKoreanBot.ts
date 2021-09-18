@@ -1,7 +1,7 @@
-const axios = require('axios')
+import axios from 'axios';
 const koreanBotToken = process.env.KOREANBOT_SECRET;
 
-function updateKoreanBot(num){
+export function updateKoreanBot(num: number){
   return () => axios.post(`https://koreanbots.dev/api/v2/bots/868188628709425162/stats`,
   {
     "servers": num
@@ -14,5 +14,3 @@ function updateKoreanBot(num){
   })
   .catch(console.log)
 }
-
-module.exports = updateKoreanBot;

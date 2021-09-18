@@ -1,11 +1,11 @@
-const { MessageEmbed } = require("discord.js");
-const giveUserPoint = require("../tools/giveUserPoint");
-const checkUserVote = require("../tools/koreanbot/checkUserVote");
-const loadUserConfig = require("../tools/loadUserConfig")
+import { Message, MessageEmbed } from "discord.js";
+import { giveUserPoint } from "../tools/giveUserPoint";
+import { checkUserVote } from "../tools/koreanbot/checkUserVote";
+import { loadUserConfig } from "../tools/loadUserConfig";
 
 const heartPoint = 5000;
 
-async function me(message){
+async function me(message: Message){
   let userConfig = await loadUserConfig(message.author.id);
   const voted = await checkUserVote(message.author.id);
   if(voted) {

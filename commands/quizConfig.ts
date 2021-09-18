@@ -1,6 +1,6 @@
-const { MessageActionRow, MessageButton } = require('discord.js');
-const mongo = require("../db");
-const loadUserConfig = require('../tools/loadUserConfig');
+import { MessageActionRow, MessageButton } from 'discord.js';
+import mongo from "../db";
+import { loadUserConfig } from '../tools/loadUserConfig';
 
 async function addQuizConfig(messageAuthorId, fieldName, value){
   // @value should be typechecked before given as parameter

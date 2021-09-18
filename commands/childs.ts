@@ -1,16 +1,19 @@
 import { Paginator } from "../tools/Paginator";
-const getMostMatchingCard = require("../tools/getMostMatchingCard");
-const loadUserConfig = require("../tools/loadUserConfig");
-const safeAxiosGet = require("../tools/helpers/safeAxiosGet");
-const BlizzardToken = require("../tools/BlizzardToken");
-const CONSTANTS = require("../constants");
+import { getMostMatchingCard } from "../tools/getMostMatchingCard";
+import { loadUserConfig } from "../tools/loadUserConfig";
+import { safeAxiosGet } from "../tools/helpers/safeAxiosGet";
+import { BlizzardToken } from "../tools/BlizzardToken";
+import CONSTANTS from "../constants";
+import { Message } from "discord.js";
+import { searchInfo } from "../types/searchInfo";
+import { card } from "../types/card";
 
-async function childs(message, args, info){
+async function childs(message: Message, args: string, info: searchInfo){
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
     return;
   }
-  let resCard, searchingMessage;
+  let resCard: card, searchingMessage: Message;
   const userConfig = await loadUserConfig(message.author.id);
   if ( !info?.fromDefault ){
     // fromDefault가 false일 경우, 카드 찾기
@@ -46,7 +49,7 @@ async function childs(message, args, info){
     searchingMessage?.delete().catch(console.log);
 
     while(msgs){
-      [m, reaction] = await msgs.infoPromise;
+      const [m, reaction] = await msgs.infoPromise;
       await m;
       if( reaction === "next" ){
         await message.channel.sendTyping();
@@ -72,4 +75,4 @@ module.exports = {
   name : ['관련', '토큰'],
   description : 'childs',
   execute : childs
-}
+};

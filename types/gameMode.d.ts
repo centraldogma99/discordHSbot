@@ -1,0 +1,1 @@
+export type gameMode = 'standard' | 'wild' | 'battlegrounds';

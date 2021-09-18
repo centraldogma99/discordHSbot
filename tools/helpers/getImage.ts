@@ -1,6 +1,6 @@
-const axios = require('axios');
+import axios from 'axios';
 
-export function getImage(imageURL){
+export function getImage(imageURL: string){
   let image = axios({ 
     url: imageURL,
     responseType: "arraybuffer"

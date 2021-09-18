@@ -1,8 +1,8 @@
-const { MessageActionRow, MessageButton } = require('discord.js');
-const mongo = require('../db');
-const loadUserConfig = require('../tools/loadUserConfig');
+import { Message, MessageActionRow, MessageActionRowComponent, MessageButton } from 'discord.js';
+import mongo from '../db';
+import { loadUserConfig } from '../tools/loadUserConfig';
 
-async function addConfig(messageAuthorId, fieldName, value){
+async function addConfig(messageAuthorId: string | number, fieldName: string, value: any){
   let query = mongo.userModel.findOne({ id : messageAuthorId });
   try {
     const user = await query.exec();
@@ -15,7 +15,7 @@ async function addConfig(messageAuthorId, fieldName, value){
   }
 }
 
-async function configure(message){
+async function configure(message: Message){
   const userConfig = await loadUserConfig(message.author.id);
   
   if(true) {
@@ -48,10 +48,10 @@ async function configure(message){
       components: [row1]
     });
     let gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
-    gameModeMsgCollector.on('collect', async i => {
+    gameModeMsgCollector.on('collect', async i  => {
       if ( i.user.id != message.author.id ) return;
-      await addConfig(message.author.id, "gameMode", i.component.customId);
-      await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 게임모드가 "${i.component.label}"(으)로 설정되었습니다.`, components: [] })
+      await addConfig(message.author.id, "gameMode", (i.component as MessageActionRowComponent).customId);
+      await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 게임모드가 "${(i.component as any).label}"(으)로 설정되었습니다.`, components: [] })
       gameModeMsgCollector.stop("done");
     })
     gameModeMsgCollector.on('end', async (_, r) => {
@@ -60,42 +60,42 @@ async function configure(message){
     // 게임모드 설정 끝
 
     // 황금 설정 시작
-    let goldenCardModeButtons = [
-      new MessageButton()
-        .setCustomId('false')
-        .setLabel('일반')
-        .setStyle('SECONDARY'),
-      new MessageButton()
-        .setCustomId('true')
-        .setLabel('황금')
-        .setStyle('SECONDARY'),
-    ];
-    for (const button of goldenCardModeButtons){
-      if ((button.customId === 'true') == userConfig.goldenCardMode){
-        button.setStyle("PRIMARY");
-        button.setDisabled(true);
-        break;
-      }
-    }
+    // let goldenCardModeButtons = [
+    //   new MessageButton()
+    //     .setCustomId('false')
+    //     .setLabel('일반')
+    //     .setStyle('SECONDARY'),
+    //   new MessageButton()
+    //     .setCustomId('true')
+    //     .setLabel('황금')
+    //     .setStyle('SECONDARY'),
+    // ];
+    // for (const button of goldenCardModeButtons){
+    //   if ((button.customId === 'true') == userConfig.goldenCardMode){
+    //     button.setStyle("PRIMARY");
+    //     button.setDisabled(true);
+    //     break;
+    //   }
+    // }
 
-    const row3 = new MessageActionRow().addComponents(goldenCardModeButtons);
-    let goldenCardModeMsg = await message.channel.send({
-      content: '⚙️ 황금카드 설정(황금카드 이미지가 없으면 일반 카드로 검색됩니다.)',
-      components: [row3]
-    });
-    let goldenCardModeMsgCollector = goldenCardModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
-    goldenCardModeMsgCollector.on('collect', async i => {
-      if ( i.user.id != message.author.id ) return;
-      await addConfig(message.author.id, "goldenCardMode", i.component.customId === 'true')
-      await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 황금카드모드가 "${i.component.label}"으로 설정되었습니다.`, components: [] })
-      goldenCardModeMsgCollector.stop("done");
-    })
-    goldenCardModeMsgCollector.on('end', (_, r) => {
-      if(r == 'time') {
-        goldenCardModeMsg.delete().catch(console.log);
-        firstMsg.delete().catch(console.log);
-      }
-    })
+    // const row3 = new MessageActionRow().addComponents(goldenCardModeButtons);
+    // let goldenCardModeMsg = await message.channel.send({
+    //   content: '⚙️ 황금카드 설정(황금카드 이미지가 없으면 일반 카드로 검색됩니다.)',
+    //   components: [row3]
+    // });
+    // let goldenCardModeMsgCollector = goldenCardModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
+    // goldenCardModeMsgCollector.on('collect', async i => {
+    //   if ( i.user.id != message.author.id ) return;
+    //   await addConfig(message.author.id, "goldenCardMode", (i.component as MessageActionRowComponent).customId === 'true')
+    //   await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 황금카드모드가 "${(i.component as any).label}"으로 설정되었습니다.`, components: [] })
+    //   goldenCardModeMsgCollector.stop("done");
+    // })
+    // goldenCardModeMsgCollector.on('end', (_, r) => {
+    //   if(r == 'time') {
+    //     goldenCardModeMsg.delete().catch(console.log);
+    //     firstMsg.delete().catch(console.log);
+    //   }
+    // })
     // 황금 설정 끝
 
     // 페이지 설정 시작
@@ -111,7 +111,7 @@ async function configure(message){
       await i.update({content: `⚙️ 설정할 \`페이지\`를 채팅으로 입력해 주세요(1 ~ 9).  현재 설정 : \`${userConfig.paginateStep}\``, components: []})
       const messageCollector = message.channel.createMessageCollector({ time: 30000 });
       messageCollector.on('collect', async m => {
-        if(isNaN(m.content) || parseInt(m.content) < 1 || parseInt(m.content) > 9) {
+        if(isNaN(m.content as any) || parseInt(m.content) < 1 || parseInt(m.content) > 9) {
           messageCollector.stop("wrongValue");
           return;
         } else {

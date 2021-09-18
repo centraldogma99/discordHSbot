@@ -1,9 +1,10 @@
-const loadUserConfig = require("../tools/loadUserConfig");
-const mongo = require("../db");
-const generateQuiz = require("../tools/generateQuiz");
-const { MessageActionRow, MessageButton } = require('discord.js');
-const { cho_hangul } = require("../tools/helpers/cho_Hangul");
-const giveUserPoint = require("../tools/giveUserPoint");
+import { loadUserConfig } from "../tools/loadUserConfig";
+import mongo from "../db";
+import { generateQuiz } from "../tools/generateQuiz";
+import { Message, MessageActionRow, MessageButton } from 'discord.js';
+import { cho_hangul } from "../tools/helpers/cho_Hangul";
+import { giveUserPoint } from "../tools/giveUserPoint";
+import { card } from "../types/card";
 
 const quizParticipatePoint = 50;
 const quizMultiplier = 2;
@@ -12,7 +13,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function getRandomHint(message, card, hintUsed){
+function getRandomHint(message: Message, card: card, hintUsed: boolean[]){
   // 글자수, 처음/마지막 몇 글자, 텍스트의 절반
   if(hintUsed.reduce((f,s) => f && s)) return;
   let a = getRandomInt(4);
@@ -29,7 +30,7 @@ function getRandomHint(message, card, hintUsed){
     let reslen = Math.floor(len/3) == 0 ? 1 : Math.floor(len/2.5);
     promise =  message.channel.send(`💡 이 카드의 이름은 ${card.alias.length}글자이며, 마지막 ${reslen}글자는 \`${card.alias.slice(card.alias.length-reslen)}\`입니다.(띄어쓰기 무시)`);
   } else if(a == 2){
-    if(!card.text || card.text.length == 0) return message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
+    if(!card.text || card.text.length == 0) promise = message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
     else {
       let len = Math.floor(card.text.length / 2);
       promise = message.channel.send(`💡 **카드 텍스트 힌트**  _${card.text.replace(/<\/?[^>]+(>|$)/g, "").slice(0, len)}..._ (후략)`);
@@ -43,9 +44,9 @@ function getRandomHint(message, card, hintUsed){
   }
 }
 
-async function quiz(message){
+async function quiz(message: Message){
   let quizAnswerPoint = 400;
-  message.channel.doingQuiz = true;
+  (message.channel as any).doingQuiz = true;
   let hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author.id);
@@ -66,7 +67,7 @@ async function quiz(message){
     db = mongo.cardRealWildModel;
   }
 
-  let targetCard;
+  let targetCard: card;
   if ( userConfig.quizConfig.rarity != 0 ){
     targetCard = (await db
       .aggregate([
@@ -85,7 +86,7 @@ async function quiz(message){
   await message.channel.send({files: [quizImages.croppedImage]});
   await message.channel.send(`ℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
-  const answerChecker = (content) => {
+  const answerChecker = (content: string) => {
     return targetCard.alias == content.replace(/\s/g, '')
   }
   const filter = m => !m.author.bot;
@@ -107,7 +108,7 @@ async function quiz(message){
         return;
       }
       quizAnswerPoint /= quizMultiplier;
-      k = getRandomHint(message, targetCard, hintUsed);
+      let k = getRandomHint(message, targetCard, hintUsed);
       hintUsed[k.hint] = true;
       k.promise;
       await message.channel.send(`💰 획득 포인트 : ${Math.ceil(quizAnswerPoint)}`)
@@ -124,7 +125,7 @@ async function quiz(message){
   })
 
   messageCollector.on('end', async (m, reason) => {
-    message.channel.doingQuiz = false;
+    (message.channel as any).doingQuiz = false;
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);

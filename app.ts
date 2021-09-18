@@ -1,17 +1,17 @@
-const { Client, Intents, Collection } = require("discord.js");
+import { Client, Intents, Collection } from "discord.js";
 
-const client = new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES ] });
+const client = <any>new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES ] });
 
-const tokenizer = require("./tools/tokenizer");
-const fs = require('fs');
-const Logger = require("./tools/Logger");
-const {downloadDB, postDownload} = require("./tools/downloadDB");
-const BlizzardToken = require("./tools/BlizzardToken");
-const updateKoreanBot = require("./tools/koreanbot/updateKoreanBot");
-const checkUserVote = require("./tools/koreanbot/checkUserVote");
-const mongo = require("./db");
-const permissionChecker = require("./tools/permissionChecker");
-import { RequestScheduler } from "./tools/helpers/RequestScheduler";
+import { tokenizer } from "./tools/tokenizer";
+import fs from 'fs';
+import { Logger } from "./tools/Logger";
+import { downloadDB, postDownload } from "./tools/downloadDB";
+import { BlizzardToken } from "./tools/BlizzardToken";
+import { updateKoreanBot } from "./tools/koreanbot/updateKoreanBot";
+import { checkUserVote } from "./tools/koreanbot/checkUserVote";
+import mongo from "./db";
+import { permissionChecker } from "./tools/permissionChecker";
+import { requestScheduler as RequestScheduler } from "./tools/helpers/RequestScheduler";
 
 require("dotenv").config()
 
@@ -25,7 +25,7 @@ let logChannel, logger;
 
 
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./built/commands').filter(file => file.endsWith('.js'));
  
 for (const file of commandFiles){
   const command = require(`./commands/${file}`);
@@ -52,7 +52,7 @@ client.on("messageCreate", async message => {
   if( message.mentions.everyone ) return;
   if( message.type == 'REPLY') return;
 
-  if( message.channel.doingQuiz ) {
+  if( (message.channel as any).doingQuiz ) {
     message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
     return;
   }

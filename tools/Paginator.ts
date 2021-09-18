@@ -1,57 +1,26 @@
 import { uniqueArray } from "../tools/helpers/uniqueArray";
 import { mergeImages } from '../tools/helpers/mergeImages';
-const { Message, MessageButton, MessageActionRow } = require("discord.js");
+import { Message, MessageButton, MessageActionRow } from "discord.js";
 import { requestScheduler as RequestScheduler } from '../tools/helpers/RequestScheduler';
 type imageAddr = string;
 
-interface Card {
-  alias: string,
-  name: string,
-  image: imageAddr,
-  imageGold?: imageAddr,
-  childIds?: string,
-  rarityId: Number,
-  manaCost: Number,
-  cardSetId: Number,
-  classId: Number,
-  text: string
-}
-
-interface imageAddrPromiseWrapper {
-  value: (() => Promise<imageAddr>)[],
-  isPromise: true
-}
-
-interface imageAddrPromiseArrayWrapper {
-  value: (() => Promise<imageAddr[]>)[],
-  isPromise: true
-}
-
-interface imageAddrArr {
-  value: imageAddr[],
-  isPromise: false
-}
-
-type imageAddrPromiseParameter = imageAddrPromiseArrayWrapper | imageAddrPromiseWrapper
-type imageAddrParameter =  imageAddrPromiseParameter | imageAddrArr;
-
 export class Paginator {
-  message: typeof Message;
+  message: Message;
   paginateStep: number;
   // @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
   cursor: number;
-  promises: imageAddrParameter;
+  promises: ({ value: (() => Promise<imageAddr>)[], isPromise: true } | { value: (() => Promise<imageAddr[]>)[], isPromise: true } | { value: imageAddr[], isPromise: false});
   // @images promise가 resolve된 후 반환된 image들이 저장된다.
   images: imageAddr[];
   lengthEnabled: boolean;
   numberOfCards: number;
-  prevMessage: typeof Message;
+  prevMessage: Message;
   promiseResSize: number;
   nextPagePromise: Promise<(imageAddr | imageAddr[] | Error)[]>;
 
   constructor(
-    message: typeof Message,
-    promises: imageAddrParameter,
+    message: Message,
+    promises: ({ value: (() => Promise<imageAddr>)[], isPromise: true } | { value: (() => Promise<imageAddr[]>)[], isPromise: true } | { value: imageAddr[], isPromise: false }),
     paginateStep: number,
     promiseResSize? : number,
     lengthEnabled: boolean = false,
@@ -102,12 +71,11 @@ export class Paginator {
     this.cursor = this.cursor + this.paginateStep;
 
     // this.cards 장전하기
-    if(this.promises.isPromise){
-      // 페이지를 채우기 위해서 resolve 되어야 할 promise 개수 구하기. "대강" 한 페이지를 채우는.
-      // 마지막 Promise덩어리가 promiseResSize만큼이지 않을 수도 있다.
-      const promiseUnitSize = Math.ceil(this.paginateStep / this.promiseResSize);
-      
-      while( this.cursor + this.paginateStep > this.images.length && (this.promises.value.length > 0 || this.nextPagePromise)){
+    while( this.cursor + this.paginateStep > this.images.length && (this.promises.value.length > 0 || this.nextPagePromise)){
+      if(this.promises.isPromise){
+        // 페이지를 채우기 위해서 resolve 되어야 할 promise 개수 구하기. "대강" 한 페이지를 채우는.
+        // 마지막 Promise덩어리가 promiseResSize만큼이지 않을 수도 있다.
+        const promiseUnitSize = Math.ceil(this.paginateStep / this.promiseResSize);
         // 카드 큐(this.cards)에 표시할 카드가 부족한 경우 반복
         // 더 풀어낼 promise가 있는 경우에만 실행된다.
         let images: (imageAddr | imageAddr[] | Error)[];
@@ -116,7 +84,9 @@ export class Paginator {
           let numOfPromisesNeedToResolved = promiseUnitSize;
 
           let reqIdsCurrent: number[] = Array(numOfPromisesNeedToResolved).fill(null);
-          reqIdsCurrent = reqIdsCurrent.map((_, index) => RequestScheduler.addReq(this.promises.value[index] as ));
+          reqIdsCurrent = reqIdsCurrent.map((_, index) => RequestScheduler.addReq(
+            (this.promises.value as ((() => Promise<imageAddr>)[] | (() => Promise<imageAddr[]>)[]))[index])  // FIXME ts 문제?
+          );
           images = await Promise.all(reqIdsCurrent.map(reqId => RequestScheduler.getRes(reqId)));
           // 배열의 길이를 넘어가서 slice를 하더라도 정상동작(빈 배열이 됨)
           this.promises.value = this.promises.value.slice(numOfPromisesNeedToResolved);
@@ -129,9 +99,9 @@ export class Paginator {
         let processedImages: imageAddr[] = [];
         try {
           for(const image of images){
-            if(!(image instanceof Error)){
+            if(!(image instanceof Error) && image != null){
               processedImages = processedImages.concat(image);
-            } else {
+            } else if(image instanceof Error) {
               throw image;
             }
           }
@@ -142,7 +112,6 @@ export class Paginator {
         }
 
         // TODO 더 나은 알고리즘 찾기
-        // TODO promiseResSize가 마지막 페이지인 경우(다르다)
         this.images = uniqueArray(this.images.concat(processedImages));
 
         if( this.promises.value.length > 0 ){
@@ -151,15 +120,15 @@ export class Paginator {
           // 요청하려는 promise가 남은 promise보다 많은 경우
           if(numOfPromisesNextPage > this.promises.value.length) numOfPromisesNextPage = this.promises.value.length;
           let reqIdsNext = Array(numOfPromisesNextPage).fill(null);
-          reqIdsNext = reqIdsNext.map((_, index) => RequestScheduler.addReq(this.promises[index].value));
+          reqIdsNext = reqIdsNext.map((_, index) => RequestScheduler.addReq((this.promises as any).value[index]));
           this.nextPagePromise = Promise.all(reqIdsNext.map(reqId => RequestScheduler.getRes(reqId)));
           this.promises.value = this.promises.value.slice(numOfPromisesNextPage);
         }
+      } else {
+        this.images = this.promises.value as string[];  // FIXME: ts 문제?
+        this.promises.value = [];
       }
-    } else {
-      this.images = this.promises.value as string[];  // FIXME: ts 문제?
-      this.promises.value = [];
-    }
+    } 
     let targetImages = this.images.slice(this.cursor, this.cursor + this.paginateStep);
     return this.showMessages(targetImages);
   }
@@ -206,7 +175,7 @@ export class Paginator {
         components: [new MessageActionRow().addComponents(moveButtons)]
       })
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON', time: waitingTime })
-      .then(i => [i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] }), (i.component as typeof MessageButton).customId])
+      .then(i => [i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] }), (i.component as MessageButton).customId])
       .catch(() => [undefined, "timeout"])
       
       return {

@@ -1,12 +1,10 @@
-const mongoose = require('mongoose')
-const schema = mongoose.Schema;
+import mongoose from 'mongoose';
 
-const userSchema = schema({
+const userSchema = new mongoose.Schema({
   id: { type: Number, required: true },
   gameMode: { type: String, default: "wild" },
   paginateStep: { type: Number, default: 3 },
   languageMode: { type: String, default: "ko_KR" },
-  goldenCardMode: { type: Boolean, default: false },
   quizConfig: {
     gameMode: { type: String, default: "standard" },
     rarity: { type: Number, default: 0 },
@@ -25,7 +23,7 @@ const userSchema = schema({
   gotPointFromVoteRecently: { type: Boolean, default: false }
 });
 
-const cardAliasSchema = schema({
+const cardAliasSchema = new mongoose.Schema({
   alias: { type: String, required: true, unique: true, dropDups: true },
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -45,7 +43,7 @@ const cardAliasSchema = schema({
   multiClassIds: { type: [Number] }
 });
 
-const battlegroundCardSchema = schema({
+const battlegroundCardSchema = new mongoose.Schema({
   alias: { type: String, required: true, unique: true, dropDups: true },
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -64,6 +62,11 @@ class Mongo{
   constructor(){
     this.connectDB();
   }
+  userModel: mongoose.Model<any, {}, {}>;
+  cardAliasModel: mongoose.Model<any, {}, {}>;
+  cardAliasStandardModel: mongoose.Model<any, {}, {}>;
+  cardRealWildModel: mongoose.Model<any, {}, {}>;
+  battlegroundsCardModel: mongoose.Model<any, {}, {}>;
 
   connectDB(){
     mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
@@ -85,4 +88,4 @@ class Mongo{
   }
 }
 
-module.exports = new Mongo();
+export = new Mongo();

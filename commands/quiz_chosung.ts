@@ -1,31 +1,36 @@
-const loadUserConfig = require("../tools/loadUserConfig");
-const mongo = require("../db");
-const { MessageActionRow, MessageButton } = require('discord.js');
-const { cho_hangul } = require("../tools/helpers/cho_Hangul");
-const giveUserPoint = require("../tools/giveUserPoint");
-const generateQuiz = require("../tools/generateQuiz");
+import { loadUserConfig } from "../tools/loadUserConfig";
+import mongo from "../db";
+import { Message, MessageActionRow, MessageButton } from 'discord.js';
+import { cho_hangul } from "../tools/helpers/cho_Hangul";
+import { giveUserPoint } from "../tools/giveUserPoint";
+import { generateQuiz } from "../tools/generateQuiz";
 
-const rarity = require("../tools/jsons/rarity.json");
-const cardSet = require("../tools/jsons/cardset.json");
-const cardType = require("../tools/jsons/cardType.json");
-const class_ = require("../tools/jsons/class.json");
-const minionType = require("../tools/jsons/minionType.json");
-const spellSchool = require("../tools/jsons/spellSchool.json");
+import rarity from "../tools/jsons/rarity.json";
+import cardSet from "../tools/jsons/cardset.json";
+import cardType from "../tools/jsons/cardType.json";
+import class_ from "../tools/jsons/class.json";
+import minionType from "../tools/jsons/minionType.json";
+import spellSchool from "../tools/jsons/spellSchool.json";
+import { card } from "../types/card";
 
 const quizParticipatePoint = 50;
 const quizTimeLimit = 120000;
 const pointMultiplier = 1.5;
 
-function getRandomInt(max) {
+function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
 
-function translateToKor(json, id){
+function translateToKor(json: any[], id: number | string){
   return json.filter(e => e.id === id)[0]?.nameKor;
 }
 
 class Hint {
-  constructor(message, card){
+  message: Message;
+  card: card;
+  level: number;
+  hints: any[][];
+  constructor(message: Message, card: card){
     this.message = message;
     this.card = card;
     this.level = 0;
@@ -83,7 +88,7 @@ class Hint {
           `💡 이 카드의 공격력/내구도는 **${card.attack}/${card.durability}** 입니다.`
         ]
       })()
-    , [
+    ,[
       `💡 처음 ${reslen}글자는 **\`${card.alias.slice(0,reslen)}\`**입니다.(띄어쓰기 무시)`,
       `💡 마지막 ${reslen}글자는 **\`${card.alias.slice(len-reslen)}\`**입니다.(띄어쓰기 무시)`,
       card.text == "" ? `💡 이 카드는 카드 텍스트가 없습니다.` :

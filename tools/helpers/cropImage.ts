@@ -1,9 +1,15 @@
-const sharp = require('sharp');
-const getImage = require('./getImage')
+import sharp from 'sharp';
+import { getImage } from './getImage';
 
-export async function cropImage(imageURL, width, height, left, top){
+export async function cropImage(
+  imageURL: string,
+  width: number,
+  height:number,
+  left:number,
+  top:number
+){
   let image = await getImage(imageURL);
-  const croppedImage = await new sharp(image).extract({
+  const croppedImage = await sharp(image).extract({
     width: width,
     height: height,
     left: left,

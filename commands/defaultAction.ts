@@ -1,9 +1,10 @@
-const childs = require("./childs")
-const getMostMatchingCard = require("../tools/getMostMatchingCard");
-const loadUserConfig = require("../tools/loadUserConfig");
-const { MessageActionRow, MessageButton } = require('discord.js');
+const childs = require("./childs");
+import { getMostMatchingCard } from "../tools/getMostMatchingCard";
+import { loadUserConfig } from "../tools/loadUserConfig";
+import { Message, MessageActionRow, MessageButton } from 'discord.js';
+import { searchInfo } from "../types/searchInfo";
 
-async function defaultAction(message, args, info){
+async function defaultAction(message: Message, args: string, info: searchInfo){
   let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author.id);
@@ -17,7 +18,7 @@ async function defaultAction(message, args, info){
   const targetImage = userConfig.goldenCardMode ?
     (resCard.imageGold ? resCard.imageGold : resCard.image) : resCard.image;
   
-  msgObj = {files: [targetImage]}
+  let msgObj: { files: string[], components?: MessageActionRow[]} = {files: [targetImage]}
   searchingMessage.delete().catch(console.log);
 
   if( resCard.childIds.length > 0 ){
@@ -34,7 +35,7 @@ async function defaultAction(message, args, info){
       await i.update({ content: "☑️  관련 카드를 가져옵니다...", components: [] })
       await childs.execute(message, args, { fromDefault: true, card: resCard });
     })
-    buttonCollector.on('end', async (i, r) => {
+    buttonCollector.on('end', async (_, r) => {
       if(r == 'time') await msg.delete().catch(console.log);
     })
   } else {
@@ -47,4 +48,4 @@ module.exports = {
   name : ['defaultAction'],
   description : 'defaultAction',
   execute : defaultAction
-}
+};

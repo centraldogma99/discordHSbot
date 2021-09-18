@@ -1,6 +1,6 @@
 type imageAddr = string;
-const axios = require('axios');
-const sharp = require('sharp');
+import axios from 'axios';
+import sharp from 'sharp';
 
 export async function mergeImages(imageURLs: imageAddr[], cardsPerLine=3): Promise<Buffer>{
   if( imageURLs.length == 0 ){

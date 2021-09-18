@@ -1,13 +1,14 @@
-const { Permissions } = require("discord.js");
+import { GuildChannelResolvable, Message, Permissions } from "discord.js";
+import { Logger } from "./Logger";
 
-function permissionChecker(message, logger){
+export function permissionChecker(message: Message, logger: Logger){
   const roleChecker = [
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.ATTACH_FILES
   ];
 
-  if(message.channel.guild){
-    const hasPermission = message.guild.me.permissionsIn(message.channel).has(roleChecker);
+  if(message.guild){
+    const hasPermission = message.guild.me.permissionsIn(message.channel as GuildChannelResolvable).has(roleChecker);
     
     if( !hasPermission ) {
       logger.serverLog(`No permission : ${ message.channel.id }`);
@@ -21,5 +22,3 @@ function permissionChecker(message, logger){
     return true;
   }
 }
-
-module.exports = permissionChecker;

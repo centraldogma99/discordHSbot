@@ -1,10 +1,10 @@
 require("dotenv").config()
-const axios = require("axios");
-const CONSTANTS = require('../constants')
+import axios from "axios";
+import CONSTANTS from '../constants';
 
-class BlizzardToken{
-  static token;
-  static refreshTime;
+export class BlizzardToken{
+  static token: string;
+  static refreshTime: number;
   static async getToken(){
     if(!this.token || Math.floor(Date.now()/1000) - this.refreshTime > 80000){
       const blizzardID = process.env.BLIZZARD_ID;
@@ -23,6 +23,7 @@ class BlizzardToken{
         })
         .catch((e) =>{
           console.log(e);
+          throw e;
         })
         this.token = res.data.access_token;
         this.refreshTime = Math.floor(Date.now()/1000);
@@ -36,5 +37,3 @@ class BlizzardToken{
     }
   }
 }
-
-module.exports = BlizzardToken;

@@ -1,12 +1,18 @@
-const translateClass = require('./jsons/class.json');
+import { cardClass } from '../types/cardClass';
+import translateClass from './jsons/class.json';
 
-function tokenizer(msgContent){
+export function tokenizer(msgContent: string){
     const prefix = '!';
     
     if( !msgContent ) throw Error("NoContent");
-    let ret = {}
+    let ret: {
+      mention?: string,
+      class_?: cardClass,
+      command?: string,
+      args?: string
+    } = {};
     let msgContentSplit = msgContent.trim().split(/ +|\t+/);
-    let mention;
+    let mention: string;
 
     if (msgContentSplit[0].startsWith('<@') && msgContentSplit[0].endsWith('>')){
       mention = msgContentSplit[0].slice(2, -1)
@@ -16,9 +22,9 @@ function tokenizer(msgContent){
     ret["mention"] = mention;
   
     msgContentSplit = msgContentSplit.slice(1);
-    let resClass;
-    let command;
-    let args;
+    let resClass: cardClass;
+    let command: string;
+    let args: string;
     
     if ( msgContentSplit.length == 0 ){
       return ret;
@@ -49,5 +55,3 @@ function tokenizer(msgContent){
     ret['args'] = args
     return ret;
   }
-
-  module.exports = tokenizer;
