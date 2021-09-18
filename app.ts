@@ -24,8 +24,16 @@ const koreanBotToken = process.env.KOREANBOT_SECRET;
 let logChannel, logger;
 
 
+
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./built/commands').filter(file => file.endsWith('.js'));
+// FIXME 하드코딩
+let commandFiles;
+if(process.argv[2] == '--ts-node'){
+  commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
+} else {
+  commandFiles = fs.readdirSync('./built/commands').filter(file => file.endsWith('.js'));
+}
+
  
 for (const file of commandFiles){
   const command = require(`./commands/${file}`);
@@ -110,14 +118,19 @@ client.on("messageCreate", async message => {
 
 
 try {
+  (async () => {
+    const token = await BlizzardToken.getToken()
+    if(process.argv[2] == '--downloadDB') {
+      await downloadDB(token);
+      console.log("DB load complete");
+    }
+    postDownload();
+    await client.login(discordToken)
+    
+    // setInterval(() => console.log(RequestScheduler.reqRate[0]), 10000)
+    // setInterval(() => console.log(RequestScheduler.reqRate[1]), 1000)
+  })()
   //개발시 주석처리할것
-  BlizzardToken.getToken()
-  // .then(token => downloadDB(token))
-  .then(() => postDownload())
-  .then(() => client.login(discordToken))
-  .then(() => console.log("DB load complete"))
-  // setInterval(() => console.log(RequestScheduler.reqRate[0]), 10000)
-  // setInterval(() => console.log(RequestScheduler.reqRate[1]), 1000)
 } catch(e){
   console.log("로그인 실패")
   console.log(e);

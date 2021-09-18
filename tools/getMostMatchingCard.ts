@@ -10,6 +10,7 @@ import { card } from "../types/card";
 
 function callBackBuilder(args: string, class_?: cardClass){
   return (cards: card[]) => {
+    if(cards.length == 0) return null;
     let res = cards;
     if(class_) res = res.filter(card => card.classId == class_.id)
     let resNames = res.map(res => res.name);

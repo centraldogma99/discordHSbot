@@ -8,7 +8,7 @@ export function postDownload(){
   mongo.cardAliasModel.updateOne({"name":"가시가 돋친 탈것"}, {$set: {"image":"https://imgur.com/WpA3ScQ.png"}}).exec();
 }
 
-export async function downloadDB(blizzardToken: number){
+export async function downloadDB(blizzardToken: number | string){
   const pageSize = 100;
   let promises = [];
   let cards;
