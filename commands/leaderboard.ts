@@ -1,20 +1,22 @@
 import { MessageEmbed } from "discord.js";
 import mongo from "../db";
 
+const numOfRanks = 20;
+
 async function leaderboard(message){
   let users = await mongo.userModel.find({}).exec();
   users = users.sort((f, s) => s.stats.point - f.stats.point);
   let embed = new MessageEmbed()
     .setColor('#0099ff')
-    .setTitle(`**리더보드(KR)**`)
-    .setDescription('퀴즈를 풀거나 하트를 눌러 기여도를 획득할 수 있어요.');
+    .setTitle(`**여관주인 리더보드(KR)**`)
+    .setDescription('퀴즈를 풀거나 아래 링크에서 하트를 눌러 기여도를 획득할 수 있어요.\n[🔗 한국 디스코드봇 리스트!](https://koreanbots.dev/bots/868188628709425162)');
   
   let i = 0;
   let str = "";
   for(const user of users){
     i++;
-    if(i > 25) break;
-    str += `${i}.  **${user.tag === "" ? "이름모를돌붕이" : user.tag}**  \`${user.stats.point}\`\n`
+    if(i > numOfRanks) break;
+    str += `${i}.  **${user.tag === "" ? "돌붕이" : user.tag}**  \`${user.stats.point}\`\n`
   }
   embed = embed.addFields(
     {name: '\u200B', value: str},
