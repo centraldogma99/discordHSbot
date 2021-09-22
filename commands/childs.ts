@@ -14,7 +14,7 @@ async function childs(message: Message, args: string, info: searchInfo){
     return;
   }
   let resCard: Card, searchingMessage: Message;
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
   if ( !info?.fromDefault ){
     // fromDefault가 false일 경우, 카드 찾기
     searchingMessage = await message.channel.send("🔍 검색 중입니다...");

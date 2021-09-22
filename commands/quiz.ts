@@ -49,7 +49,7 @@ async function quiz(message: Message){
   (message.channel as any).doingQuiz = true;
   let hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
   let chances = userConfig.quizConfig.chances;
   let db;
@@ -129,7 +129,7 @@ async function quiz(message: Message){
     await message.channel.sendTyping();
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
-      const user = await loadUserConfig(m.last().author.id);
+      const user = await loadUserConfig(m.last().author);
       await giveUserPoint(message.author.id, Math.ceil(quizAnswerPoint))
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)

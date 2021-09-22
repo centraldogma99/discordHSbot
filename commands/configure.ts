@@ -16,7 +16,7 @@ async function addConfig(messageAuthorId: string | number, fieldName: string, va
 }
 
 async function configure(message: Message){
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
   
   if(true) {
     // 게임모드 설정 시작

@@ -73,7 +73,7 @@ async function quizConfig(message){
   let gameModeMsg = await message.channel.send({ content: `**⚙️ 퀴즈 게임 모드**`, components: [row1] });
   const gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   gameModeMsgCollector.on('collect', async i => {
-    userConfig = await loadUserConfig(message.author.id);
+    userConfig = await loadUserConfig(message.author);
     if (i.user.id != message.author.id) return;
     if(i.component.customId == 'standard')
       if (userConfig.quizConfig.rarity == 2) {

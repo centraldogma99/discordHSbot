@@ -13,7 +13,7 @@ async function name(message: Message, args: string, info: searchInfo){
   let class_ = info.class_;
   let searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   await message.channel.sendTyping();
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
 
   let resCards = await cardNameInfer(args, userConfig.gameMode);
   

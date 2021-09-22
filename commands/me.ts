@@ -6,11 +6,11 @@ import { loadUserConfig } from "../tools/loadUserConfig";
 const heartPoint = 5000;
 
 async function me(message: Message){
-  let userConfig = await loadUserConfig(message.author.id);
+  let userConfig = await loadUserConfig(message.author);
   const voted = await checkUserVote(message.author.id);
   if(voted) {
     await giveUserPoint(message.author.id, heartPoint);
-    userConfig = await loadUserConfig(message.author.id);
+    userConfig = await loadUserConfig(message.author);
   }
   const embed = new MessageEmbed()
     .setColor('#0099ff')

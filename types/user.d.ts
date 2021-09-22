@@ -2,6 +2,7 @@ import { gameMode, quizGameMode } from "./gameMode";
 
 export interface User {
   id: number | string,
+  tag: string,
   gameMode: gameMode,
   paginateStep: number,
   languageMode: string,

@@ -8,7 +8,6 @@ import { Logger } from "./tools/Logger";
 import { downloadDB, postDownload } from "./tools/downloadDB";
 import { BlizzardToken } from "./tools/BlizzardToken";
 import { updateKoreanBot } from "./tools/koreanbot/updateKoreanBot";
-import mongo from "./db";
 import { permissionChecker } from "./tools/permissionChecker";
 import { requestScheduler as RequestScheduler } from "./tools/helpers/RequestScheduler";
 import { updateVotePoint } from "./tools/updateVotePoint";

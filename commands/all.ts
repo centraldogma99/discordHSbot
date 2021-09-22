@@ -20,7 +20,7 @@ async function all(message: Message, args: string, info: searchInfo){
   }
 
   const blizzardToken = await BlizzardToken.getToken();
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
 
   function axiosShort(page: number){
     return () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 

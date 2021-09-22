@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema<User>({
   id: { type: Number, required: true },
+  tag: { type: String, default: "" },
   gameMode: { type: String, default: "wild" },
   paginateStep: { type: Number, default: 3 },
   languageMode: { type: String, default: "ko_KR" },

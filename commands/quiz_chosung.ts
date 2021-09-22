@@ -132,7 +132,7 @@ async function quiz_chosung(message){
   message.channel.doingQuiz = true;
   let quizAnswerPoint = 1000;
   await message.channel.sendTyping();
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
   let chances = userConfig.quizConfig.chances;
   let db;
 
@@ -207,7 +207,7 @@ async function quiz_chosung(message){
     if ( reason == "answered" ){
       await message.channel.send(`⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`);
 
-      const user = await loadUserConfig(m.last().author.id);
+      const user = await loadUserConfig(m.last().author);
       await giveUserPoint(message.author.id, Math.ceil(quizAnswerPoint))
       .then(() => message.channel.send(`💰 퀴즈 정답으로 ${Math.ceil(quizAnswerPoint)}포인트 획득!`))
       .catch(console.log)

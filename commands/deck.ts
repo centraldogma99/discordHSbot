@@ -14,7 +14,7 @@ async function deck(message: Message, args: string){
     return;
   }
   let code = args.split('\n').filter(line => line != '').filter(line => !line.startsWith('#'))[0];
-  const userConfig = await loadUserConfig(message.author.id);
+  const userConfig = await loadUserConfig(message.author);
   const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
   
   const blizzardToken = await BlizzardToken.getToken();
