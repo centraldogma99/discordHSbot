@@ -1,4 +1,4 @@
-import { Client, Intents, Collection } from "discord.js";
+import { Client, Intents, Collection, Message } from "discord.js";
 
 const client = <any>new Client({ partials: ['CHANNEL'], intents : [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES ] });
 
@@ -8,10 +8,10 @@ import { Logger } from "./tools/Logger";
 import { downloadDB, postDownload } from "./tools/downloadDB";
 import { BlizzardToken } from "./tools/BlizzardToken";
 import { updateKoreanBot } from "./tools/koreanbot/updateKoreanBot";
-import { checkUserVote } from "./tools/koreanbot/checkUserVote";
 import mongo from "./db";
 import { permissionChecker } from "./tools/permissionChecker";
 import { requestScheduler as RequestScheduler } from "./tools/helpers/RequestScheduler";
+import { updateVotePoint } from "./tools/updateVotePoint";
 
 require("dotenv").config()
 
@@ -23,12 +23,12 @@ const logChannelId = process.env.LOG_CHANNEL;
 const koreanBotToken = process.env.KOREANBOT_SECRET;
 let logChannel, logger;
 
-
+const argv = process.argv.slice(2);
 
 client.commands = new Collection();
 // FIXME 하드코딩
 let commandFiles;
-if(process.argv[2] == '--ts-node'){
+if(process.argv.includes('--ts-node')){
   commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
 } else {
   commandFiles = fs.readdirSync('./built/commands').filter(file => file.endsWith('.js'));
@@ -50,11 +50,13 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  // updateKoreanBot(client.guilds.cache.size)()
-  // setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
+  if(!process.argv.includes('--ts-node') && process.argv.includes('--develop')){
+    updateKoreanBot(client.guilds.cache.size)()
+    setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
+  }
 })
 
-client.on("messageCreate", async message => {
+client.on("messageCreate", async (message: Message) => {
   if( message.author.bot ) return;
   if( !message.mentions.has(client.user.id) ) return;
   if( message.mentions.everyone ) return;
@@ -120,17 +122,17 @@ client.on("messageCreate", async message => {
 try {
   (async () => {
     const token = await BlizzardToken.getToken()
-    if(process.argv[2] == '--downloadDB') {
+    if(process.argv.includes('--downloadDB')){
       await downloadDB(token);
       console.log("DB load complete");
     }
     postDownload();
     await client.login(discordToken)
+    updateVotePoint();
     
     // setInterval(() => console.log(RequestScheduler.reqRate[0]), 10000)
     // setInterval(() => console.log(RequestScheduler.reqRate[1]), 1000)
-  })()
-  //개발시 주석처리할것
+  })();
 } catch(e){
   console.log("로그인 실패")
   console.log(e);

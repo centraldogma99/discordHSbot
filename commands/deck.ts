@@ -6,7 +6,7 @@ import { loadUserConfig } from "../tools/loadUserConfig";
 import { Message, MessageEmbed } from "discord.js";
 import { requestScheduler as RequestScheduler } from "../tools/helpers/RequestScheduler";
 import { uniqueArray } from "../tools/helpers/uniqueArray";
-import { card } from "../types/card";
+import { Card } from "../types/card";
 
 async function deck(message: Message, args: string){
   if(!args) {
@@ -40,7 +40,7 @@ async function deck(message: Message, args: string){
       message.channel.send("‼️ 오류가 발생했습니다. 다시 시도해 주세요! 문제가 지속되면 개발자에게 문의해 주세요!");
     return;
   }
-  let cards: card[] = deckInfo.cards.sort((a: card, b: card) => a.manaCost - b.manaCost);
+  let cards: Card[] = deckInfo.cards.sort((a: Card, b: Card) => a.manaCost - b.manaCost);
   let names = cards.map(card => card.name)
   let costsAndRarities = Object.fromEntries(cards.map(card => [card.name, {cost: card.manaCost, isLegendary: card.rarityId == 5? '⭐' : ''}]))
   let obj = {};
@@ -62,7 +62,7 @@ async function deck(message: Message, args: string){
   await message.channel.sendTyping();
   // remove redundant cards
   cards = uniqueArray(cards, 'name');
-  const pagi = new Paginator(message, { value: cards.map((card: card) => card.image), isPromise: false }, userConfig.paginateStep)  // #FIXME maybe
+  const pagi = new Paginator(message, { value: cards.map((card: Card) => card.image), isPromise: false }, userConfig.paginateStep)  // #FIXME maybe
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 

@@ -117,7 +117,7 @@ async function quizConfig(message){
   let userRarity = userConfig.quizConfig.rarity;
   if (userRarity){
     for (const button of rarityButtons){
-      if (button.customId == userRarity){
+      if (parseInt(button.customId) === userRarity){
         button.setStyle("PRIMARY");
         break;
       }
@@ -179,7 +179,7 @@ async function quizConfig(message){
   let userDifficulty = userConfig.quizConfig.difficulty;
   if (userDifficulty){
     for (const button of difficultyButtons){
-      if (button.customId == userDifficulty){
+      if (parseInt(button.customId) === userDifficulty){
         button.setStyle("PRIMARY");
         break;
       }

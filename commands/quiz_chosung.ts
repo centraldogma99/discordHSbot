@@ -11,7 +11,7 @@ import cardType from "../tools/jsons/cardType.json";
 import class_ from "../tools/jsons/class.json";
 import minionType from "../tools/jsons/minionType.json";
 import spellSchool from "../tools/jsons/spellSchool.json";
-import { card } from "../types/card";
+import { Card } from "../types/card";
 
 const quizParticipatePoint = 50;
 const quizTimeLimit = 120000;
@@ -27,10 +27,10 @@ function translateToKor(json: any[], id: number | string){
 
 class Hint {
   message: Message;
-  card: card;
+  card: Card;
   level: number;
   hints: any[][];
-  constructor(message: Message, card: card){
+  constructor(message: Message, card: Card){
     this.message = message;
     this.card = card;
     this.level = 0;

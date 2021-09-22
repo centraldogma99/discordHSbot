@@ -4,7 +4,7 @@ import { generateQuiz } from "../tools/generateQuiz";
 import { Message, MessageActionRow, MessageButton } from 'discord.js';
 import { cho_hangul } from "../tools/helpers/cho_Hangul";
 import { giveUserPoint } from "../tools/giveUserPoint";
-import { card } from "../types/card";
+import { Card } from "../types/card";
 
 const quizParticipatePoint = 50;
 const quizMultiplier = 2;
@@ -13,7 +13,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function getRandomHint(message: Message, card: card, hintUsed: boolean[]){
+function getRandomHint(message: Message, card: Card, hintUsed: boolean[]){
   // 글자수, 처음/마지막 몇 글자, 텍스트의 절반
   if(hintUsed.reduce((f,s) => f && s)) return;
   let a = getRandomInt(4);
@@ -67,7 +67,7 @@ async function quiz(message: Message){
     db = mongo.cardRealWildModel;
   }
 
-  let targetCard: card;
+  let targetCard: Card;
   if ( userConfig.quizConfig.rarity != 0 ){
     targetCard = (await db
       .aggregate([

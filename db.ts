@@ -1,6 +1,9 @@
+import { User } from './types/user';
+import { Card } from './types/card';
+import { battlegroundsCard } from './types/battlegroundsCard'
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<User>({
   id: { type: Number, required: true },
   gameMode: { type: String, default: "wild" },
   paginateStep: { type: Number, default: 3 },
@@ -23,7 +26,7 @@ const userSchema = new mongoose.Schema({
   gotPointFromVoteRecently: { type: Boolean, default: false }
 });
 
-const cardAliasSchema = new mongoose.Schema({
+const cardAliasSchema = new mongoose.Schema<Card>({
   alias: { type: String, required: true, unique: true, dropDups: true },
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -43,7 +46,7 @@ const cardAliasSchema = new mongoose.Schema({
   multiClassIds: { type: [Number] }
 });
 
-const battlegroundCardSchema = new mongoose.Schema({
+const battlegroundCardSchema = new mongoose.Schema<battlegroundsCard>({
   alias: { type: String, required: true, unique: true, dropDups: true },
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -62,11 +65,11 @@ class Mongo{
   constructor(){
     this.connectDB();
   }
-  userModel: mongoose.Model<any, {}, {}>;
-  cardAliasModel: mongoose.Model<any, {}, {}>;
-  cardAliasStandardModel: mongoose.Model<any, {}, {}>;
-  cardRealWildModel: mongoose.Model<any, {}, {}>;
-  battlegroundsCardModel: mongoose.Model<any, {}, {}>;
+  userModel: mongoose.Model<User>;
+  cardAliasModel: mongoose.Model<Card>;
+  cardAliasStandardModel: mongoose.Model<Card>;
+  cardRealWildModel: mongoose.Model<Card>;
+  battlegroundsCardModel: mongoose.Model<battlegroundsCard>;
 
   connectDB(){
     mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});

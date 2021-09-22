@@ -2,12 +2,12 @@
   카드이름의 일부분 또는 전부를 받아 해당하는 카드들의 이름/정보 반환
 */
 import mongo from '../db';
-import { card } from "../types/card"
+import { Card } from "../types/card"
 
 export async function cardNameInfer(
   cardName: string,
   gameMode='wild'
-): Promise<card[]> {
+): Promise<Card[]> {
   let db;
   if ( gameMode == 'standard' ) db = mongo.cardAliasStandardModel;
   else if ( gameMode == 'wild' ) db = mongo.cardAliasModel;

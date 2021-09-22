@@ -10,7 +10,7 @@ import CONSTANTS from '../constants';
 import { BlizzardToken } from "../tools/BlizzardToken";
 import { safeAxiosGet } from "../tools/helpers/safeAxiosGet";
 import { Message } from "discord.js";
-import { card } from "../types/card";
+import { Card } from "../types/card";
 import { searchInfo } from "../types/searchInfo"
 
 async function all(message: Message, args: string, info: searchInfo){
@@ -37,7 +37,7 @@ async function all(message: Message, args: string, info: searchInfo){
     }})
     .then(res => res.data.cards)
     .then(cards => uniqueArray(cards, "name"))
-    .then((cards: card[]) => cards.map(card => card.image))
+    .then((cards: Card[]) => cards.map(card => card.image))
     .catch(e => {throw e})
   }
   
@@ -71,7 +71,7 @@ async function all(message: Message, args: string, info: searchInfo){
     message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
     return;
   }
-  let firstCards = uniqueArray(temp.data.cards as card[], "name");
+  let firstCards = uniqueArray(temp.data.cards as Card[], "name");
 
   let promises: (() => Promise<string[]>)[];
   if( Math.ceil(cardCount / CONSTANTS.pageSize) > 1 ){

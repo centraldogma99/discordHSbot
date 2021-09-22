@@ -1,4 +1,4 @@
-export interface card {
+export interface Card {
   alias: string,
   name: string,
   image: string,

@@ -6,14 +6,14 @@ import { BlizzardToken } from "../tools/BlizzardToken";
 import CONSTANTS from "../constants";
 import { Message } from "discord.js";
 import { searchInfo } from "../types/searchInfo";
-import { card } from "../types/card";
+import { Card } from "../types/card";
 
 async function childs(message: Message, args: string, info: searchInfo){
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
     return;
   }
-  let resCard: card, searchingMessage: Message;
+  let resCard: Card, searchingMessage: Message;
   const userConfig = await loadUserConfig(message.author.id);
   if ( !info?.fromDefault ){
     // fromDefault가 false일 경우, 카드 찾기

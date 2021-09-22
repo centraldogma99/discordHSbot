@@ -6,10 +6,10 @@ const stringSimilarity = require("string-similarity");
 import { cardNameInfer } from "./cardNameInfer";
 import { cardClass } from "../types/cardClass";
 import { gameMode } from "../types/gameMode";
-import { card } from "../types/card";
+import { Card } from "../types/card";
 
 function callBackBuilder(args: string, class_?: cardClass){
-  return (cards: card[]) => {
+  return (cards: Card[]) => {
     if(cards.length == 0) return null;
     let res = cards;
     if(class_) res = res.filter(card => card.classId == class_.id)

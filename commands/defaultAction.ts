@@ -15,8 +15,7 @@ async function defaultAction(message: Message, args: string, info: searchInfo){
     return;
   }
 
-  const targetImage = userConfig.goldenCardMode ?
-    (resCard.imageGold ? resCard.imageGold : resCard.image) : resCard.image;
+  const targetImage = resCard.image;
   
   let msgObj: { files: string[], components?: MessageActionRow[]} = {files: [targetImage]}
   searchingMessage.delete().catch(console.log);
