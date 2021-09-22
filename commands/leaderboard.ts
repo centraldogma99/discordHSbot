@@ -14,7 +14,7 @@ async function leaderboard(message){
     i++;
     if(i > 25) break;
     embed = embed.addFields(
-      { name: '\u200B', value: `${i}.  **${user.tag}**  \`${user.stats.point}\``},
+      { name: '\u200B', value: `${i}.  **${user.tag ?? "이름모를돌붕이"}**  \`${user.stats.point}\``},
     )
   }
   await message.channel.send({embeds: [embed]});
