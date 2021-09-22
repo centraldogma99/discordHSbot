@@ -10,13 +10,15 @@ async function leaderboard(message){
     .setDescription('퀴즈를 풀거나 하트를 눌러 기여도를 획득할 수 있어요.');
   
   let i = 0;
+  let str = "";
   for(const user of users){
     i++;
     if(i > 25) break;
-    embed = embed.addFields(
-      { name: '\u200B', value: `${i}.  **${user.tag ?? "이름모를돌붕이"}**  \`${user.stats.point}\``},
-    )
+    str += `${i}.  **${user.tag === "" ? "이름모를돌붕이" : user.tag}**  \`${user.stats.point}\`\n`
   }
+  embed = embed.addFields(
+    {name: '\u200B', value: str},
+  )
   await message.channel.send({embeds: [embed]});
 }
 
