@@ -3,7 +3,7 @@ import mongo from "../db";
 
 async function leaderboard(message){
   let users = await mongo.userModel.find({}).exec();
-  users = users.sort((f, s) => f.stats.point - s.stats.point);
+  users = users.sort((f, s) => s.stats.point - f.stats.point);
   let embed = new MessageEmbed()
     .setColor('#0099ff')
     .setTitle(`**리더보드(KR)**`)
