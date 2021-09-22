@@ -12,6 +12,7 @@ async function leaderboard(message){
   let i = 0;
   for(const user of users){
     i++;
+    if(i > 25) break;
     embed = embed.addFields(
       { name: '\u200B', value: `${i}.  **${user.tag}**  \`${user.stats.point}\``},
     )
