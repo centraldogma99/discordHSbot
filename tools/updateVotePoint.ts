@@ -3,7 +3,13 @@ import mongo from "../db";
 import { giveUserPoint } from "./giveUserPoint";
 
 async function checkAndGivePoint(userId: number){
-  if(await checkUserVote(userId)){
+  let voted: boolean;
+  try{
+    voted = await checkUserVote(userId);
+  } catch(e) {
+    console.log(e);
+  }
+  if(voted){
     try {
       giveUserPoint(userId, 5000);
     } catch(e) {
