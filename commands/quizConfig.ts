@@ -1,10 +1,11 @@
-import { MessageActionRow, MessageButton } from 'discord.js';
+import { MessageActionRow, MessageButton, User } from 'discord.js';
 import mongo from "../db";
 import { loadUserConfig } from '../tools/loadUserConfig';
 
-async function addQuizConfig(messageAuthorId, fieldName, value){
+// #TODO duplicate code
+async function addQuizConfig(messageAuthor: User, fieldName, value){
   // @value should be typechecked before given as parameter
-  let query = mongo.userModel.findOne({ id : messageAuthorId });
+  let query = mongo.userModel.findOne({ id : messageAuthor.id });
   try {
     const user = await query.exec();
     if (!user.quizConfig.gameMode && !user.quizConfig.rarity && !user.quizConfig.difficulty && !user.quizConfig.chances) {
@@ -14,7 +15,8 @@ async function addQuizConfig(messageAuthorId, fieldName, value){
     }
   } catch (e) {
     return await mongo.userModel.insertMany([{
-      id: messageAuthorId,
+      id: messageAuthor.id,
+      tag: messageAuthor.tag,
       quizConfig: { [fieldName]: value }
     }]);
   }
@@ -28,7 +30,7 @@ async function quizConfig(message){
         messageCollector.stop("wrongValue");
         return;
       } else {
-        await addQuizConfig(message.author.id, "chances", parseInt(m.content))
+        await addQuizConfig(message.author, "chances", parseInt(m.content))
         messageCollector.stop("answered");
         return;
       }
@@ -44,7 +46,7 @@ async function quizConfig(message){
     })
   }
 
-  let userConfig = await loadUserConfig(message.author.id);
+  let userConfig = await loadUserConfig(message.author);
   let stdBtn = new MessageButton()
     .setCustomId('standard')
     .setLabel('정규')
@@ -81,7 +83,7 @@ async function quizConfig(message){
         gameModeMsgCollector.stop("error")
         return;
       }
-    await addQuizConfig(message.author.id, "gameMode", i.component.customId);
+    await addQuizConfig(message.author, "gameMode", i.component.customId);
     
     let val = i.component.label;
     await i.update({ content : `☑️ 퀴즈 게임 모드가 \`${val}\`(으)로 설정되었습니다.`, components: [] })
@@ -138,7 +140,7 @@ async function quizConfig(message){
           rarityMsgCollector.stop("error")
           return;
         }
-      await addQuizConfig(message.author.id, "rarity", parseInt(i.component.customId));
+      await addQuizConfig(message.author, "rarity", parseInt(i.component.customId));
       await i.update({ content: `☑️ 퀴즈 카드등급 필터링이 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
       rarityMsgCollector.stop("done");
       return;
@@ -190,7 +192,7 @@ async function quizConfig(message){
   const difficultyMsgCollector = difficultyMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   difficultyMsgCollector.on('collect', async i => {
     if (i.user.id != message.author.id) return;
-    await addQuizConfig(message.author.id, "difficulty", parseInt(i.component.customId))
+    await addQuizConfig(message.author, "difficulty", parseInt(i.component.customId))
     
     await i.update({ content: `☑️ \`난이도\`가 \`${i.component.label}\`(으)로 설정되었습니다.`, components: [] });
     difficultyMsgCollector.stop("done");

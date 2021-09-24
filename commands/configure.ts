@@ -1,15 +1,16 @@
-import { Message, MessageActionRow, MessageActionRowComponent, MessageButton } from 'discord.js';
+import { Message, MessageActionRow, MessageActionRowComponent, MessageButton, User } from 'discord.js';
 import mongo from '../db';
 import { loadUserConfig } from '../tools/loadUserConfig';
 
-async function addConfig(messageAuthorId: string | number, fieldName: string, value: any){
-  let query = mongo.userModel.findOne({ id : messageAuthorId });
+async function addConfig(messageAuthor: User, fieldName: string, value: any){
+  let query = mongo.userModel.findOne({ id : messageAuthor.id });
   try {
     const user = await query.exec();
     return user.updateOne({ [fieldName]: value }).exec();
   } catch (e) {
     return await mongo.userModel.insertMany([{
-      id: messageAuthorId,
+      id: messageAuthor.id,
+      tag: messageAuthor.tag,
       [fieldName]: value
     }]);
   }
@@ -50,7 +51,7 @@ async function configure(message: Message){
     let gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
     gameModeMsgCollector.on('collect', async i  => {
       if ( i.user.id != message.author.id ) return;
-      await addConfig(message.author.id, "gameMode", (i.component as MessageActionRowComponent).customId);
+      await addConfig(message.author, "gameMode", (i.component as MessageActionRowComponent).customId);
       await i.update({ content: `☑️ ${message.author.username}#${message.author.discriminator}님의 게임모드가 "${(i.component as any).label}"(으)로 설정되었습니다.`, components: [] })
       gameModeMsgCollector.stop("done");
     })
@@ -115,7 +116,7 @@ async function configure(message: Message){
           messageCollector.stop("wrongValue");
           return;
         } else {
-          await addConfig(message.author.id, "paginateStep", parseInt(m.content))
+          await addConfig(message.author, "paginateStep", parseInt(m.content))
           messageCollector.stop("answered");
           return;
         }
