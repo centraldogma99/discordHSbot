@@ -225,7 +225,7 @@ async function quizConfig(message){
 }
 
 module.exports = {
-  name : ['퀴즈설정'],
+  name : ['quizconf', 'quizconfigure', 'quizconfig'],
   description : 'quizConfig',
   execute : quizConfig
 }

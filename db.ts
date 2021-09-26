@@ -3,12 +3,14 @@ import { Card } from './types/card';
 import { battlegroundsCard } from './types/battlegroundsCard'
 import mongoose from 'mongoose';
 
+const cardLanguage = process.env.CARD_LANGUAGE;
+
 const userSchema = new mongoose.Schema<User>({
   id: { type: Number, required: true },
   tag: { type: String, default: "" },
   gameMode: { type: String, default: "wild" },
   paginateStep: { type: Number, default: 3 },
-  languageMode: { type: String, default: "ko_KR" },
+  languageMode: { type: String, default: cardLanguage },
   quizConfig: {
     gameMode: { type: String, default: "standard" },
     rarity: { type: Number, default: 0 },

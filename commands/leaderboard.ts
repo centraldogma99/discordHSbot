@@ -38,7 +38,7 @@ async function leaderboard(message){
 }
 
 module.exports = {
-  name : ['리더보드', '점수표', '순위', '순위표', '랭킹'],
+  name : ['leaderboard', 'scoreboard', 'rank', 'ranking'],
   description : 'leaderboard',
   execute : leaderboard
 }

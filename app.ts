@@ -14,7 +14,7 @@ import { updateVotePoint } from "./tools/updateVotePoint";
 
 require("dotenv").config()
 
-const prefix = '!';
+const prefix = 'h';
 const exclamationMark = '‼️';
 const discordToken = process.env.DISCORD_TOKEN;
 const logServerId = process.env.LOG_SERVER;
@@ -58,9 +58,8 @@ client.on("ready", () => {
 
 client.on("messageCreate", async (message: Message) => {
   if( message.author.bot ) return;
-  if( !message.mentions.has(client.user.id) ) return;
-  if( message.mentions.everyone ) return;
   if( message.type == 'REPLY') return;
+  if( !message.content.startsWith(prefix) ) return;
 
   if( (message.channel as any).doingQuiz ) {
     message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
@@ -79,15 +78,8 @@ client.on("messageCreate", async (message: Message) => {
   let tokens;
   try{
     tokens = tokenizer(message.content);
-
-    if (tokens.mention != client.user.id) {
-      throw Error("MentionShouldGoFirst");
-    }
   } catch(e){
-    if (e.message === "MentionShouldGoFirst"){
-      message.channel.send("‼️ 멘션이 가장 앞에 있어야 합니다.\n\n**ex)** `@여관주인 !모든 SI:7`");
-      return;
-    } else if (e.message === "WrongClass"){
+    if (e.message === "WrongClass"){
       message.channel.send("‼️ 존재하지 않는 직업입니다.\n\n**ex)** 술사, 주술사, 도적, 돚거, 흑마, 흑마법사 등");
       return;
     } else {
@@ -101,12 +93,10 @@ client.on("messageCreate", async (message: Message) => {
       if( !tokens.args ){
         await client.commands.get("사용법").execute(message, null);
         return;
-      } else {
-        await client.commands.get("defaultAction").execute(message, tokens.args, {class_: tokens.class_});
       }
     } else {
       if( !client.commands.has(tokens.command) ) {
-        await message.channel.send("‼️ 없는 명령어입니다! `!명령어`로 도움말을 확인할 수 있습니다.");
+        await client.commands.get("defaultAction").execute(message, tokens.command, {class_: tokens.class_});
         return;
       } else {
         await client.commands.get(tokens.command).execute(message, tokens.args, {class_ :tokens.class_});

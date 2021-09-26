@@ -139,7 +139,7 @@ async function configure(message: Message){
   }
 }
 module.exports = {
-  name: ["설정"],
+  name: ["config", "configure"],
   description: "configure",
   execute: configure
 }

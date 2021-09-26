@@ -242,7 +242,7 @@ async function quiz_chosung(message){
 }
 
 module.exports = {
-  name : ['초성퀴즈', '초성문제', '초성'],
+  name : [],
   description : 'quiz_chosung',
   execute : quiz_chosung
 }

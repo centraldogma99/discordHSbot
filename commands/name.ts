@@ -47,7 +47,7 @@ async function name(message: Message, args: string, info: searchInfo){
 }
 
 module.exports = {
-  name : ['이름', '카드명'],
+  name : ['name', 'cardname'],
   description : 'name',
   execute : name
 }

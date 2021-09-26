@@ -8,6 +8,8 @@ import { requestScheduler as RequestScheduler } from "../tools/helpers/RequestSc
 import { uniqueArray } from "../tools/helpers/uniqueArray";
 import { Card } from "../types/card";
 
+const cardLanguage = process.env.CARD_LANGUAGE;
+
 async function deck(message: Message, args: string){
   if(!args) {
     await message.channel.send("❌ 검색어를 입력해 주세요.")
@@ -20,7 +22,7 @@ async function deck(message: Message, args: string){
   const blizzardToken = await BlizzardToken.getToken();
   let deckInfoPromise = () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/deck`,
     { params : {
-      locale: userConfig.languageMode,
+      locale: cardLanguage,
       code: code,
       access_token: blizzardToken
     }})
@@ -85,7 +87,7 @@ async function deck(message: Message, args: string){
 }
 
 module.exports = {
-  name: ["덱", "덱리스트", "덱리"],
+  name: ["deck", "decklist"],
   description: "decklist",
   execute: deck
 };

@@ -33,7 +33,7 @@ function howto(message: Message){
 }
 
 module.exports = {
-    name : ['사용법', '도움말', '도움', '?', '명령어'],
+    name : ['help', 'howto', 'commands', '?'],
     description : 'howto',
     execute : howto
 }

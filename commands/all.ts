@@ -13,6 +13,8 @@ import { Message } from "discord.js";
 import { Card } from "../types/card";
 import { searchInfo } from "../types/searchInfo"
 
+const cardLanguage = process.env.CARD_LANGUAGE;
+
 async function all(message: Message, args: string, info: searchInfo){
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
@@ -25,7 +27,7 @@ async function all(message: Message, args: string, info: searchInfo){
   function axiosShort(page: number){
     return () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
-      locale: userConfig.languageMode,
+      locale: cardLanguage,
       textFilter: encodeURI(args),
       gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
       tier: info?.tier ?? null,
@@ -49,7 +51,7 @@ async function all(message: Message, args: string, info: searchInfo){
   try{
     temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
-      locale: userConfig.languageMode,
+      locale: cardLanguage,
       textFilter: encodeURI(args),
       gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
       tier: info?.tier ?? null,
@@ -108,7 +110,7 @@ async function all(message: Message, args: string, info: searchInfo){
 }
 
 module.exports = {
-  name : ['모든'],
+  name : ['all', 'every'],
   description : 'all',
   execute : all
 }

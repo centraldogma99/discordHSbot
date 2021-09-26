@@ -8,6 +8,8 @@ import { Message } from "discord.js";
 import { searchInfo } from "../types/searchInfo";
 import { Card } from "../types/card";
 
+const cardLanguage = process.env.CARD_LANGUAGE;
+
 async function childs(message: Message, args: string, info: searchInfo){
   if(!args){
     await message.channel.send("❌ 검색어를 입력해 주세요.")
@@ -38,7 +40,7 @@ async function childs(message: Message, args: string, info: searchInfo){
   if( resCard.childIds.length > 0 ){
     promises = resCard.childIds.map(id => () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards/${ id }`,
       { params : {
-        locale: userConfig.languageMode,
+        locale: cardLanguage,
         access_token: blizzardToken
       }}
     )
@@ -72,7 +74,7 @@ async function childs(message: Message, args: string, info: searchInfo){
 }
 
 module.exports = {
-  name : ['관련', '토큰'],
+  name : ['child', 'token', 'related'],
   description : 'childs',
   execute : childs
 };

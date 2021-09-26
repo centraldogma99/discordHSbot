@@ -3,6 +3,8 @@ import CONSTANTS from '../constants';
 import { uniqueArray } from './helpers/uniqueArray';
 import { safeAxiosGet } from './helpers/safeAxiosGet';
 
+const cardLanguage = process.env.CARD_LANGUAGE;
+
 export function postDownload(){
   // after download ended
   mongo.cardAliasModel.updateOne({"name":"가시가 돋친 탈것"}, {$set: {"image":"https://imgur.com/WpA3ScQ.png"}}).exec();
@@ -15,7 +17,7 @@ export async function downloadDB(blizzardToken: number | string){
   let doc = [];
   const wildCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
-    locale: "ko_KR",
+    locale: cardLanguage,
     pageSize: 1,
     page : 1,
     access_token: blizzardToken
@@ -25,7 +27,7 @@ export async function downloadDB(blizzardToken: number | string){
   for(let i = 1;i<=Math.ceil(wildCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
-      locale: "ko_KR",
+      locale: cardLanguage,
       pageSize: pageSize,
       page : i,
       access_token: blizzardToken
@@ -65,7 +67,7 @@ export async function downloadDB(blizzardToken: number | string){
   promises = []
   const stdCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
-    locale: "ko_KR",
+    locale: cardLanguage,
     pageSize: 1,
     page : 1,
     set: 'standard',
@@ -77,7 +79,7 @@ export async function downloadDB(blizzardToken: number | string){
   for(let i = 1;i<=Math.ceil(stdCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
-      locale: "ko_KR",
+      locale: cardLanguage,
       pageSize: pageSize,
       page : i,
       set: 'standard',
@@ -125,7 +127,7 @@ export async function downloadDB(blizzardToken: number | string){
   promises = []
   const battlegroundsCardCount = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
   { params: {
-    locale: "ko_KR",
+    locale: cardLanguage,
     gameMode: "battlegrounds",
     pageSize: 1,
     page : 1,
@@ -136,7 +138,7 @@ export async function downloadDB(blizzardToken: number | string){
   for(let i = 1;i<=Math.ceil(battlegroundsCardCount/pageSize);i++){
     promises[i-1] = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
     { params: {
-      locale: "ko_KR",
+      locale: cardLanguage,
       gameMode: "battlegrounds",
       pageSize: pageSize,
       page : i,
