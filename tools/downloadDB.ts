@@ -6,6 +6,14 @@ import { safeAxiosGet } from './helpers/safeAxiosGet';
 export function postDownload(){
   // after download ended
   mongo.cardAliasModel.updateOne({"name":"가시가 돋친 탈것"}, {$set: {"image":"https://imgur.com/WpA3ScQ.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"긴급 소집"}, {$set: {"image":"https://imgur.com/9D1Zoun.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"신의 은총"}, {$set: {"image":"https://imgur.com/L5sKKHC.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"에메랄드 하늘발톱"}, {$set: {"image":"https://imgur.com/CE2Yjdd.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"정신 분열"}, {$set: {"image":"https://imgur.com/0C9dblX.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"책상 임프"}, {$set: {"image":"https://imgur.com/8W1fDQ8.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"천상의 정신"}, {$set: {"image":"https://imgur.com/TgGvDDE.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"사령술사 스랄"}, {$set: {"image":"https://imgur.com/FXgROec.png"}}).exec();
+  mongo.cardAliasModel.updateOne({"name":"리치 여왕 제이나"}, {$set: {"image":"https://imgur.com/AqHdNDe.png"}}).exec();
 }
 
 export async function downloadDB(blizzardToken: number | string){
