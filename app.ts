@@ -21,6 +21,7 @@ const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
 const koreanBotToken = process.env.KOREANBOT_SECRET;
 let logChannel, logger;
+const masterId = '232098431684837376'
 
 const argv = process.argv.slice(2);
 
@@ -98,22 +99,24 @@ client.on("messageCreate", async (message: Message) => {
     // @여관주인
     if( !tokens.command ) {
       if( !tokens.args ){
-        client.commands.get("사용법").execute(message, null);
+        await client.commands.get("사용법").execute(message, null);
         return;
       } else {
-        client.commands.get("defaultAction").execute(message, tokens.args, {class_: tokens.class_});
+        await client.commands.get("defaultAction").execute(message, tokens.args, {class_: tokens.class_});
       }
     } else {
       if( !client.commands.has(tokens.command) ) {
-        message.channel.send("‼️ 없는 명령어입니다! `!명령어`로 도움말을 확인할 수 있습니다.");
+        await message.channel.send("‼️ 없는 명령어입니다! `!명령어`로 도움말을 확인할 수 있습니다.");
         return;
       } else {
-        client.commands.get(tokens.command).execute(message, tokens.args, {class_ :tokens.class_});
+        await client.commands.get(tokens.command).execute(message, tokens.args, {class_ :tokens.class_});
       }
     }
   } catch(err){
     console.log(err);
-    message.channel.send("‼️ 서버 내부 오류! 개발자에게 알려주세요!");
+    message.channel.send("‼️ 봇 내부 오류! 개발자 일해라!(개발자에게 알림이 전송되었습니다.)");
+    client.users.cache.get(masterId).send("서버 내부 오류 발생");
+    client.users.cache.get(masterId).send(err.stack);
   }
 })
 
