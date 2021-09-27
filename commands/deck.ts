@@ -37,7 +37,7 @@ async function deck(message: Message, args: string){
     if(e.response.status === 400)
       message.channel.send("‼️ 잘못된 덱 코드입니다.");
     else
-      message.channel.send("‼️ 오류가 발생했습니다. 다시 시도해 주세요! 문제가 지속되면 개발자에게 문의해 주세요!");
+      throw e;
     return;
   }
   let cards: Card[] = deckInfo.cards.sort((a: Card, b: Card) => a.manaCost - b.manaCost);
