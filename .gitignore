@@ -4,3 +4,5 @@ node_modules/*
 log.txt
 built
 built/*
+.vscode
+.vscode/*

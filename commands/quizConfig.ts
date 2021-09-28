@@ -45,6 +45,28 @@ async function quizConfig(message){
       }
     })
   }
+  async function timeConfig(message){
+    const messageCollector = message.channel.createMessageCollector({ time: 30000 });
+    messageCollector.on('collect', async m => {
+      if(isNaN(m.content) || parseInt(m.content) <= 0 || parseInt(m.content) > 6000) {
+        messageCollector.stop("wrongValue");
+        return;
+      } else {
+        await addQuizConfig(message.author, "time", parseInt(m.content))
+        messageCollector.stop("answered");
+        return;
+      }
+    })
+    messageCollector.on('end', async (m, r) => {
+      if(r == 'answered') {
+        await message.channel.send(`☑️ \`퀴즈 제한시간\`이 \`${m.first().content}\` (으)로 설정되었습니다.`)
+      } else if(r == 'time'){
+        message.channel.send(`？ 입력 시간이 초과되었습니다.`)
+      } else if(r == 'wrongValue'){
+        message.channel.send("‼️ 잘못된 값이 입력되었습니다.");
+      }
+    })
+  }
 
   let userConfig = await loadUserConfig(message.author);
   let stdBtn = new MessageButton()
@@ -210,17 +232,37 @@ async function quizConfig(message){
   const chancesMsgCollector = chancesMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
   chancesMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
-    await i.update({content: `⚙️ 설정할 \`기회 횟수\`를 채팅으로 입력해 주세요(3 ~ 9). 현재 설정 : \`${userConfig.quizConfig.chances}\``, components: []})
+    await i.update({content: `⚙️ 설정할 \`기회 횟수\`를 채팅으로 입력해 주세요(1 ~ 9). 현재 설정 : \`${userConfig.quizConfig.chances}\``, components: []})
     
     chanceConfig(message);
   })
   chancesMsgCollector.on('end', async (_, r) => {
     if(r === 'time') {
       chancesMsg.delete().catch(console.log);
-      firstMsg.delete().catch(console.log);
+      firstMsg.delete().catch(console.log);  //TODO
     }
   })
 
+  const timeMenuButton = new MessageButton()
+    .setCustomId('timeMenu')
+    .setStyle('PRIMARY')
+    .setLabel('퀴즈 제한시간 설정')
+  const row5 = new MessageActionRow().addComponents(timeMenuButton);
+  let timeMsg = await message.channel.send({ content: `**⚙️ 퀴즈 제한시간⏰ 설정**  현재 설정 : \`${userConfig.quizConfig.time?? "30(기본값)"}\``, components: [row5] });
+  const timeMsgCollector = timeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
+  timeMsgCollector.on('collect', async (i) => {
+    if (i.user.id != message.author.id) return;
+    await i.update({content: `⚙️ 설정할 \`퀴즈 제한시간\`를 채팅으로 입력해 주세요(1 ~ 6000). 현재 설정 : \`${userConfig.quizConfig.time?? "30(기본값)"}\``, components: []})
+    
+    timeConfig(message);
+  })
+  timeMsgCollector.on('end', async (_, r) => {
+    if(r === 'time') {
+      timeMsg.delete().catch(console.log);
+      //firstMsg.delete().catch(console.log);   // TODO
+    }
+  })
+  
   return;
 }
 

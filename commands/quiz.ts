@@ -84,14 +84,14 @@ async function quiz(message: Message){
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({files: [quizImages.croppedImage]});
-  await message.channel.send(`ℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 30초**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
+  await message.channel.send(`ℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : ${userConfig.quizConfig.time?? 30}초, 기회: ${userConfig.quizConfig.chances}번**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`)
   
   const answerChecker = (content: string) => {
     return targetCard.alias == content.replace(/\s/g, '')
   }
   const filter = m => !m.author.bot;
 
-  const messageCollector = message.channel.createMessageCollector( { filter, time: 30000 })
+  const messageCollector = message.channel.createMessageCollector( { filter, time: userConfig.quizConfig.time*1000?? 30000 })
   messageCollector.on('collect', async m => {
     if(!m.content.startsWith('-')) return;
     const content = m.content.slice(1);

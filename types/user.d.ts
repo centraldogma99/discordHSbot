@@ -10,7 +10,8 @@ export interface User {
     gameMode: quizGameMode,
     rarity: number,
     chances: number,
-    difficulty: number
+    difficulty: number,
+    time: number
   },
   stats: {
     point: number,
