@@ -1,5 +1,5 @@
 /*
-  로컬 DB화 미루기 - 서치 성능 이슈(확인 안됨), 한글 검색 불가
+  로컬  DB화 미루기 - 서치 성능 이슈(확인 안됨), 한글 검색 불가
 */
 
 import { Paginator } from "../tools/Paginator";
