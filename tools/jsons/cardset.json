@@ -1,132 +1,132 @@
 [
   {
     "name": "legacy",
-    "nameKor": "고전",
+    "nameKor": "Legacy",
     "id": 1635
   },
   {
     "name": "legacy",
-    "nameKor": "고전",
+    "nameKor": "Legacy",
     "id": 3
   },
   {
     "name": "legacy",
-    "nameKor": "고전",
+    "nameKor": "Legacy",
     "id": 4
   },
   {
     "name": "core",
-    "nameKor": "핵심",
+    "nameKor": "Core",
     "id": 1637
   },
   {
     "name": "united-in-stormwind",
-    "nameKor": "스톰윈드",
+    "nameKor": "United in Stormwind",
     "id": 1578
   },
   {
     "name": "forged-in-the-barrens",
-    "nameKor": "불모의 땅",
+    "nameKor": "Forged in the Barrens",
     "id": 1525
   },
   {
     "name": "madness-at-the-darkmoon-faire",
-    "nameKor": "광기의 다크문 축제",
+    "nameKor": "Madness at the Darkmoon Faire",
     "id": 1466
   },
   {
     "name": "scholomance-academy",
-    "nameKor": "스칼로맨스 아카데미",
+    "nameKor": "Scholomance Academy",
     "id": 1443
   },
   {
     "name": "ashes-of-outland",
-    "nameKor": "황폐한 아웃랜드",
+    "nameKor": "Ashes of Outland",
     "id": 1414
   },
   {
     "name": "decent-of-dragons",
-    "nameKor": "용의 강림",
+    "nameKor": "Decent of Dragons",
     "id": 1347
   },
   {
     "name": "saviors-of-uldum",
-    "nameKor": "울둠의 구원자",
+    "nameKor": "Saviors of Uldum",
     "id": 1158
   },
   {
     "name": "rise-of-shadows",
-    "nameKor": "어둠의 반격",
+    "nameKor": "Rise of Shadows",
     "id": 1130
   },
   {
     "name": "the-witchwood",
-    "nameKor": "마녀숲",
+    "nameKor": "The Witchwood",
     "id": 1125
   },
   {
     "name": "the-boomsday-project",
-    "nameKor": "박사 붐의 폭심만만 프로젝트",
+    "nameKor": "The Boomsday Project",
     "id": 1127
   },
   {
     "name": "rastakhans-rumble",
-    "nameKor": "라스타칸의 대난투",
+    "nameKor": "Rastakhans Rumble",
     "id": 1129
   },
   {
     "name": "journey-to-ungoro",
-    "nameKor": "운고로를 향한 여정",
+    "nameKor": "Journey to Ungoro",
     "id": 27
   },
   {
     "name": "knights-of-the-frozen-throne",
-    "nameKor": "얼어붙은 왕좌의 기사들",
+    "nameKor": "Knights of the Frozen Throne",
     "id": 1001
   },
   {
     "name": "kobolds-and-catacombs",
-    "nameKor": "코볼트와 지하 미궁",
+    "nameKor": "Kobolds and Catacombs",
     "id": 1004
   },
   {
     "name": "whispers-of-the-old-gods",
-    "nameKor": "고대 신의 속삭임",
+    "nameKor": "Whispers of the Old Gods",
     "id": 21
   },
   {
     "name": "one-night-in-karazhan",
-    "nameKor": "한여름 밤의 카라잔",
+    "nameKor": "One night in Karazhan",
     "id": 23
   },
   {
     "name": "mean-streets-of-gadgetzan",
-    "nameKor": "비열한 거리의 가젯잔",
+    "nameKor": "Mean streets of Gadgetzan",
     "id": 25
   },
   {
     "name": "goblins-vs-gnomes",
-    "nameKor": "고블린 대 노움",
+    "nameKor": "Goblins vs Gnomes",
     "id": 13
   },
   {
     "name": "the-grand-tournament",
-    "nameKor": "대 마상 시합",
+    "nameKor": "The Grand Tournament",
     "id": 15
   },
   {
     "name": "league-of-explorers",
-    "nameKor": "탐험가 연맹",
+    "nameKor": "League of Explorers",
     "id": 20
   },
   {
     "name": "blackrock-mountain",
-    "nameKor": "검은바위 산",
+    "nameKor": "Blackrock Mountain",
     "id": 14
   },
   {
     "name": "curse-of-naxxramas",
-    "nameKor": "낙스라마스의 저주",
+    "nameKor": "Curse of Naxxramas",
     "id": 12
   }
 ]
