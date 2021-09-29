@@ -35,7 +35,7 @@ async function leaderboard(message) {
     str += `${i}. **${user.tag === "" ? "돌붕이" : user.tag}** \`${
       user.stats.point
     }\`\n`;
-    if (i === 15) break;
+    if (i === numOfRanks) break;
   }
   embed = embed.addFields({ name: "\u200B", value: str });
   await message.channel.send({ embeds: [embed] });

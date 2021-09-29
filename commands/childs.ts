@@ -39,7 +39,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
 
   await message.channel.sendTyping();
   let promises = [];
-  let blizzardToken = await BlizzardToken.getToken();
+  const blizzardToken = await BlizzardToken.getToken();
 
   if (resCard.childIds.length > 0) {
     promises = resCard.childIds.map(

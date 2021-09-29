@@ -136,7 +136,7 @@ class Hint {
 
     let currentHint = this.hints[this.level];
     if (this.level == 1) {
-      for (let [k, v] of currentHint) {
+      for (const [k, v] of currentHint) {
         if (k == this.card.cardTypeId) {
           currentHint = v;
         }
@@ -277,7 +277,7 @@ async function quiz_chosung(message) {
       .setLabel("새로운 퀴즈!")
       .setStyle("PRIMARY");
     const row = new MessageActionRow().addComponents(btn);
-    let lastMsg = await message.channel.send({
+    const lastMsg = await message.channel.send({
       content: `💡 정답은 \`${targetCard.name}\` 입니다!`,
       components: [row],
       files: [targetCard.image],

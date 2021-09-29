@@ -5,7 +5,7 @@ export function tokenizer(msgContent: string) {
   const prefix = "!";
 
   if (!msgContent) throw Error("NoContent");
-  let ret: {
+  const ret: {
     mention?: string;
     class_?: cardClass;
     command?: string;
@@ -26,8 +26,6 @@ export function tokenizer(msgContent: string) {
   msgContentSplit = msgContentSplit.slice(1);
   let resClass: cardClass;
   let command: string;
-  let args: string;
-
   if (msgContentSplit.length == 0) {
     return ret;
   }
@@ -40,7 +38,7 @@ export function tokenizer(msgContent: string) {
     msgContentSplit[0].endsWith("”") ||
     msgContentSplit[0].endsWith("'")
   ) {
-    let korClass = msgContentSplit[0].substring(
+    const korClass = msgContentSplit[0].substring(
       1,
       msgContentSplit[0].length - 1
     );
@@ -63,7 +61,7 @@ export function tokenizer(msgContent: string) {
   if (msgContentSplit.length == 0) {
     return ret;
   }
-  args = msgContentSplit.join(" ");
+  const args = msgContentSplit.join(" ");
   ret["args"] = args;
   return ret;
 }

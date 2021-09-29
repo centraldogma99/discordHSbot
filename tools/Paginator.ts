@@ -29,7 +29,7 @@ export class Paginator {
       | { value: imageAddr[]; isPromise: false },
     paginateStep: number,
     promiseResSize?: number,
-    lengthEnabled: boolean = false,
+    lengthEnabled = false,
     length?: number
   ) {
     /*
@@ -74,7 +74,7 @@ export class Paginator {
   }
 
   prev() {
-    let targetImages = this.images.slice(
+    const targetImages = this.images.slice(
       this.cursor - this.paginateStep,
       this.cursor
     );
@@ -102,7 +102,7 @@ export class Paginator {
         let images: (imageAddr | imageAddr[] | Error)[];
         if (!this.nextPagePromise) {
           // 처음 next() 가 실행됐을 때만 실행된다.
-          let numOfPromisesNeedToResolved = promiseUnitSize;
+          const numOfPromisesNeedToResolved = promiseUnitSize;
 
           let reqIdsCurrent: number[] = Array(numOfPromisesNeedToResolved).fill(
             null
@@ -172,7 +172,7 @@ export class Paginator {
         this.promises.value = [];
       }
     }
-    let targetImages = this.images.slice(
+    const targetImages = this.images.slice(
       this.cursor,
       this.cursor + this.paginateStep
     );
@@ -180,7 +180,7 @@ export class Paginator {
   }
 
   async showMessages(targetImages: imageAddr[]) {
-    let isLongResult = this.numberOfCards
+    const isLongResult = this.numberOfCards
       ? this.numberOfCards > this.paginateStep
       : this.images.length > this.paginateStep ||
         this.promises.value.length > 0;
@@ -191,14 +191,14 @@ export class Paginator {
     );
 
     this.prevMessage?.delete().catch(console.log);
-    let targetMessage = await this.message.channel.send({
+    const targetMessage = await this.message.channel.send({
       files: [mergeImage],
     });
     this.prevMessage = targetMessage;
     if (isLongResult) {
       const waitingTime = 30000;
 
-      let moveButtons = [
+      const moveButtons = [
         new MessageButton()
           .setCustomId("prev")
           .setLabel("이전")
@@ -227,11 +227,11 @@ export class Paginator {
           }/${Math.ceil(this.numberOfCards / this.paginateStep)}`
         : `🔍 ${this.cursor / this.paginateStep + 1} 페이지`;
 
-      let infoMessage = await this.message.channel.send({
+      const infoMessage = await this.message.channel.send({
         content: infoStr,
         components: [new MessageActionRow().addComponents(moveButtons)],
       });
-      let infoPromise = infoMessage
+      const infoPromise = infoMessage
         .awaitMessageComponent({ componentType: "BUTTON", time: waitingTime })
         .then((i) => [
           i.update({

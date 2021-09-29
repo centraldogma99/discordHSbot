@@ -22,8 +22,8 @@ function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
     a = getRandomInt(4);
   }
   if (a == 0) {
-    let len = card.alias.length;
-    let reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
+    const len = card.alias.length;
+    const reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
     promise = message.channel.send(
       `💡 이 카드의 이름은 ${
         card.alias.length
@@ -33,8 +33,8 @@ function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
       )}\`입니다.(띄어쓰기 무시)`
     );
   } else if (a == 1) {
-    let len = card.alias.length;
-    let reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
+    const len = card.alias.length;
+    const reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
     promise = message.channel.send(
       `💡 이 카드의 이름은 ${
         card.alias.length
@@ -46,7 +46,7 @@ function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
     if (!card.text || card.text.length == 0)
       promise = message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
     else {
-      let len = Math.floor(card.text.length / 2);
+      const len = Math.floor(card.text.length / 2);
       promise = message.channel.send(
         `💡 **카드 텍스트 힌트**  _${card.text
           .replace(/<\/?[^>]+(>|$)/g, "")
@@ -67,7 +67,7 @@ function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
 async function quiz(message: Message) {
   let quizAnswerPoint = 400;
   (message.channel as any).doingQuiz = true;
-  let hintUsed = new Array(4).fill(false, 0);
+  const hintUsed = new Array(4).fill(false, 0);
   await message.channel.sendTyping();
   const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
@@ -136,7 +136,7 @@ async function quiz(message: Message) {
         return;
       }
       quizAnswerPoint /= quizMultiplier;
-      let k = getRandomHint(message, targetCard, hintUsed);
+      const k = getRandomHint(message, targetCard, hintUsed);
       hintUsed[k.hint] = true;
       k.promise;
       await message.channel.send(
@@ -186,7 +186,7 @@ async function quiz(message: Message) {
       .setLabel("새로운 퀴즈!")
       .setStyle("PRIMARY");
     const row = new MessageActionRow().addComponents(btn);
-    let lastMsg = await message.channel.send({
+    const lastMsg = await message.channel.send({
       content: `💡 정답은 \`${targetCard.name}\` 입니다!`,
       components: [row],
       files: [quizImages.originalImage],

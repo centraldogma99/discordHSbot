@@ -32,8 +32,6 @@ const koreanBotToken = process.env.KOREANBOT_SECRET;
 let logChannel, logger;
 const masterId = "232098431684837376";
 
-const argv = process.argv.slice(2);
-
 client.commands = new Collection();
 // FIXME 하드코딩
 let commandFiles;

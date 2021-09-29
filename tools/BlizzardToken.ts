@@ -13,7 +13,7 @@ export class BlizzardToken {
       const blizzardID = process.env.BLIZZARD_ID;
       const blizzardSecret = process.env.BLIZZARD_SECRET;
       try {
-        let res = await axios({
+        const res = await axios({
           url: `https://${CONSTANTS.apiRequestRegion}.battle.net/oauth/token`,
           method: "post",
           auth: {

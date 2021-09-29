@@ -3,10 +3,10 @@ import mongo from "../../db";
 
 const koreanBotToken = process.env.KOREANBOT_SECRET;
 
-export async function checkUserVote(userId: number | string) {
+export async function checkUserVote(userId: number | string): Promise<boolean> {
   // userID is guaranteed to exist
   const user = mongo.userModel.findOne({ id: userId });
-  let data = await axios
+  const data = await axios
     .get(`https://koreanbots.dev/api/v2/bots/868188628709425162/vote`, {
       params: {
         userID: userId,

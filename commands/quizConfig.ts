@@ -5,7 +5,7 @@ import { loadUserConfig } from "../tools/loadUserConfig";
 // #TODO duplicate code
 async function addQuizConfig(messageAuthor: User, fieldName, value) {
   // @value should be typechecked before given as parameter
-  let query = mongo.userModel.findOne({ id: messageAuthor.id });
+  const query = mongo.userModel.findOne({ id: messageAuthor.id });
   try {
     const user = await query.exec();
     if (
@@ -96,15 +96,15 @@ async function quizConfig(message) {
   }
 
   let userConfig = await loadUserConfig(message.author);
-  let stdBtn = new MessageButton()
+  const stdBtn = new MessageButton()
     .setCustomId("standard")
     .setLabel("정규")
     .setStyle("SECONDARY");
-  let wildBtn = new MessageButton()
+  const wildBtn = new MessageButton()
     .setCustomId("wild")
     .setLabel("야생")
     .setStyle("SECONDARY");
-  let realWildBtn = new MessageButton()
+  const realWildBtn = new MessageButton()
     .setCustomId("realwild")
     .setLabel("야생(정규 제외)")
     .setStyle("SECONDARY");
@@ -127,7 +127,7 @@ async function quizConfig(message) {
   const firstMsg = await message.channel.send(
     `**${message.author.username}#${message.author.discriminator}가 퀴즈 설정 중...**`
   );
-  let gameModeMsg = await message.channel.send({
+  const gameModeMsg = await message.channel.send({
     content: `**⚙️ 퀴즈 게임 모드**`,
     components: [row1],
   });
@@ -150,7 +150,7 @@ async function quizConfig(message) {
       }
     await addQuizConfig(message.author, "gameMode", i.component.customId);
 
-    let val = i.component.label;
+    const val = i.component.label;
     await i.update({
       content: `☑️ 퀴즈 게임 모드가 \`${val}\`(으)로 설정되었습니다.`,
       components: [],
@@ -161,14 +161,14 @@ async function quizConfig(message) {
     if (r == "time") await gameModeMsg.delete().catch(console.log);
   });
 
-  let rarityButtons = [
+  const rarityButtons = [
     new MessageButton().setCustomId("5").setLabel("전설").setStyle("SECONDARY"),
     new MessageButton().setCustomId("4").setLabel("특급").setStyle("SECONDARY"),
     new MessageButton().setCustomId("3").setLabel("희귀").setStyle("SECONDARY"),
     new MessageButton().setCustomId("1").setLabel("일반").setStyle("SECONDARY"),
     new MessageButton().setCustomId("2").setLabel("기본").setStyle("SECONDARY"),
   ];
-  let userRarity = userConfig.quizConfig.rarity;
+  const userRarity = userConfig.quizConfig.rarity;
   if (userRarity) {
     for (const button of rarityButtons) {
       if (parseInt(button.customId) === userRarity) {
@@ -179,7 +179,7 @@ async function quizConfig(message) {
   }
 
   const row2 = new MessageActionRow().addComponents(rarityButtons);
-  let rarityMsg = await message.channel.send({
+  const rarityMsg = await message.channel.send({
     content:
       "**⚙️ 퀴즈 카드 등급**   *파란 버튼을 누르면 카드등급 필터링을 해제할 수 있습니다.*",
     components: [row2],
@@ -234,7 +234,7 @@ async function quizConfig(message) {
     if (r == "time") await rarityMsg.delete().catch(console.log);
   });
 
-  let difficultyButtons = [
+  const difficultyButtons = [
     new MessageButton()
       .setCustomId("1")
       .setLabel("1단계")
@@ -256,7 +256,7 @@ async function quizConfig(message) {
       .setLabel("5단계")
       .setStyle("SECONDARY"),
   ];
-  let userDifficulty = userConfig.quizConfig.difficulty;
+  const userDifficulty = userConfig.quizConfig.difficulty;
   if (userDifficulty) {
     for (const button of difficultyButtons) {
       if (parseInt(button.customId) === userDifficulty) {
@@ -266,7 +266,7 @@ async function quizConfig(message) {
     }
   }
   const row3 = new MessageActionRow().addComponents(difficultyButtons);
-  let difficultyMsg = await message.channel.send({
+  const difficultyMsg = await message.channel.send({
     content: "**⚙️ 퀴즈 난이도**   *숫자가 클수록 난이도가 높습니다.*",
     components: [row3],
   });
@@ -297,7 +297,7 @@ async function quizConfig(message) {
     .setStyle("PRIMARY")
     .setLabel("퀴즈 기회 횟수 설정");
   const row4 = new MessageActionRow().addComponents(chancesMenuButton);
-  let chancesMsg = await message.channel.send({
+  const chancesMsg = await message.channel.send({
     content: `**⚙️ 퀴즈 기회 횟수 설정**  현재 설정 : \`${userConfig.quizConfig.chances}\``,
     components: [row4],
   });
@@ -326,7 +326,7 @@ async function quizConfig(message) {
     .setStyle("PRIMARY")
     .setLabel("퀴즈 제한시간 설정");
   const row5 = new MessageActionRow().addComponents(timeMenuButton);
-  let timeMsg = await message.channel.send({
+  const timeMsg = await message.channel.send({
     content: `**⚙️ 퀴즈 제한시간⏰ 설정**  현재 설정 : \`${
       userConfig.quizConfig.time ?? "30(기본값)"
     }\``,
