@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 
-function howto(message: Message){
-    const str =
+function howto(message: Message) {
+  const str =
     'ℹ️ 하스스톤 카드검색 및 퀴즈 기능을 제공하는 여관주인 봇입니다.\n\
 개발자 : Osol2#7777\n\
 \n\
@@ -28,12 +28,12 @@ function howto(message: Message){
 **ex)** `@여관주인 "술사" !모든 전투의 함성`    `@여관주인 "전사" 갈라크론드`\n\
 \n\
 💡 `@여관주인`과 `!<명령어>` 사이에는 대부분 자동으로 띄어쓰기가 들어가지만 오류가 날 경우 확인해주시면 좋습니다.\n\
-**ex)** `@여관주인!관련 이세라` (❌)    `@여관주인 !관련 이세라` (⭕️)'
-    message.channel.send(str);
+**ex)** `@여관주인!관련 이세라` (❌)    `@여관주인 !관련 이세라` (⭕️)';
+  message.channel.send(str);
 }
 
 module.exports = {
-    name : ['사용법', '도움말', '도움', '?', '명령어'],
-    description : 'howto',
-    execute : howto
-}
+  name: ["사용법", "도움말", "도움", "?", "명령어"],
+  description: "howto",
+  execute: howto,
+};

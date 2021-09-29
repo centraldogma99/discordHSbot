@@ -8,9 +8,5 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "./commands/**/*",
-    "./tools/**/*",
-    "./*"
-  ]
+  "include": ["./commands/**/*", "./tools/**/*", "./*"]
 }

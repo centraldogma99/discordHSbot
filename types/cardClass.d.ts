@@ -1,5 +1,5 @@
-export interface cardClass{
-  name: string,
-  nameKor?: string[],
-  id: number
+export interface cardClass {
+  name: string;
+  nameKor?: string[];
+  id: number;
 }

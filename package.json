@@ -19,5 +19,12 @@
     "string-similarity": "^4.0.4",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "2.4.1"
   }
 }

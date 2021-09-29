@@ -1,7 +1,7 @@
-import { User } from './types/user';
-import { Card } from './types/card';
-import { battlegroundsCard } from './types/battlegroundsCard'
-import mongoose from 'mongoose';
+import { User } from "./types/user";
+import { Card } from "./types/card";
+import { battlegroundsCard } from "./types/battlegroundsCard";
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema<User>({
   id: { type: Number, required: true },
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema<User>({
     rarity: { type: Number, default: 0 },
     chances: { type: Number, default: 5 },
     difficulty: { type: Number, default: 1 },
-    time: {type: Number, default: 30 }
+    time: { type: Number, default: 30 },
   },
   stats: {
     point: { type: Number, default: 0 },
@@ -23,9 +23,9 @@ const userSchema = new mongoose.Schema<User>({
     quiz3: { type: Number, default: 0 },
     quiz4: { type: Number, default: 0 },
     quiz5: { type: Number, default: 0 },
-    vote: { type: Number, default: 0 }
+    vote: { type: Number, default: 0 },
   },
-  gotPointFromVoteRecently: { type: Boolean, default: false }
+  gotPointFromVoteRecently: { type: Boolean, default: false },
 });
 
 const cardAliasSchema = new mongoose.Schema<Card>({
@@ -45,7 +45,7 @@ const cardAliasSchema = new mongoose.Schema<Card>({
   text: { type: String },
   minionTypeId: { type: Number },
   spellSchoolId: { type: Number },
-  multiClassIds: { type: [Number] }
+  multiClassIds: { type: [Number] },
 });
 
 const battlegroundCardSchema = new mongoose.Schema<battlegroundsCard>({
@@ -60,11 +60,11 @@ const battlegroundCardSchema = new mongoose.Schema<battlegroundsCard>({
   text: { type: String },
   health: { type: Number },
   attack: { type: Number },
-  minionTypeId: { type: Number }
+  minionTypeId: { type: Number },
 });
 
-class Mongo{
-  constructor(){
+class Mongo {
+  constructor() {
     this.connectDB();
   }
   userModel: mongoose.Model<User>;
@@ -73,23 +73,32 @@ class Mongo{
   cardRealWildModel: mongoose.Model<Card>;
   battlegroundsCardModel: mongoose.Model<battlegroundsCard>;
 
-  connectDB(){
-    mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
-    mongoose.set('useFindAndModify', false);
+  connectDB() {
+    mongoose.connect("mongodb://localhost:27017/test", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    mongoose.set("useFindAndModify", false);
     const db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error: '));
-    db.once('open', () => {
-      console.log('데이터베이스 연결 성공')
+    db.on("error", console.error.bind(console, "connection error: "));
+    db.once("open", () => {
+      console.log("데이터베이스 연결 성공");
       this.userModel = mongoose.model("users", userSchema);
-      this.cardAliasModel = mongoose.model('cardAliases', cardAliasSchema);
-      this.cardAliasStandardModel = mongoose.model('cardAliasStandards', cardAliasSchema);
-      this.cardRealWildModel = mongoose.model('cardRealWilds', cardAliasSchema);
-      this.battlegroundsCardModel = mongoose.model('battlegroundsCards', battlegroundCardSchema);
-    })
-    db.on('disconnected', () => {
-      console.log('데이터베이스와 연결 끊어짐, 5초 후 연결 재시도')
+      this.cardAliasModel = mongoose.model("cardAliases", cardAliasSchema);
+      this.cardAliasStandardModel = mongoose.model(
+        "cardAliasStandards",
+        cardAliasSchema
+      );
+      this.cardRealWildModel = mongoose.model("cardRealWilds", cardAliasSchema);
+      this.battlegroundsCardModel = mongoose.model(
+        "battlegroundsCards",
+        battlegroundCardSchema
+      );
+    });
+    db.on("disconnected", () => {
+      console.log("데이터베이스와 연결 끊어짐, 5초 후 연결 재시도");
       setTimeout(this.connectDB, 5000);
-    })
+    });
   }
 }
 
