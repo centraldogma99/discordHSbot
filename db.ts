@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema<User>({
     rarity: { type: Number, default: 0 },
     chances: { type: Number, default: 5 },
     difficulty: { type: Number, default: 1 },
-    time: {type: Number, default: 30 }
+    time: { type: Number, default: 30 }
   },
   stats: {
     point: { type: Number, default: 0 },
@@ -65,8 +65,8 @@ const battlegroundCardSchema = new mongoose.Schema<battlegroundsCard>({
   minionTypeId: { type: Number }
 });
 
-class Mongo{
-  constructor(){
+class Mongo {
+  constructor() {
     this.connectDB();
   }
   userModel: mongoose.Model<User>;
@@ -75,8 +75,8 @@ class Mongo{
   cardRealWildModel: mongoose.Model<Card>;
   battlegroundsCardModel: mongoose.Model<battlegroundsCard>;
 
-  connectDB(){
-    mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
+  connectDB() {
+    mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
     mongoose.set('useFindAndModify', false);
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error: '));

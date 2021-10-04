@@ -4,10 +4,10 @@ import { getImage } from './getImage';
 export async function cropImage(
   imageURL: string,
   width: number,
-  height:number,
-  left:number,
-  top:number
-){
+  height: number,
+  left: number,
+  top: number
+) {
   let image = await getImage(imageURL);
   const croppedImage = await sharp(image).extract({
     width: width,

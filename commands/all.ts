@@ -15,92 +15,96 @@ import { searchInfo } from "../types/searchInfo"
 
 const cardLanguage = process.env.CARD_LANGUAGE;
 
-async function all(message: Message, args: string, info: searchInfo){
-  if(!args){
-    await message.channel.send("❌ 검색어를 입력해 주세요.")
+async function all(message: Message, args: string, info: searchInfo) {
+  if (!args) {
+    await message.channel.send("❌ Please enter a keyword to search.")
     return;
   }
 
   const blizzardToken = await BlizzardToken.getToken();
   const userConfig = await loadUserConfig(message.author);
 
-  function axiosShort(page: number){
-    return () => safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-    { params: {
-      locale: cardLanguage,
-      textFilter: encodeURI(args),
-      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
-      tier: info?.tier ?? null,
-      class: info?.class_?.name,
-      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
-      pageSize: CONSTANTS.pageSize,
-      page: page,
-      access_token: blizzardToken
-    }})
-    .then(res => res.data.cards)
-    .then(cards => uniqueArray(cards, "name"))
-    .then((cards: Card[]) => cards.map(card => card.image))
-    .catch(e => {throw e})
+  function axiosShort(page: number) {
+    return () => safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+      {
+        params: {
+          locale: cardLanguage,
+          textFilter: encodeURI(args),
+          gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
+          tier: info?.tier ?? null,
+          class: info?.class_?.name,
+          set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
+          pageSize: CONSTANTS.pageSize,
+          page: page,
+          access_token: blizzardToken
+        }
+      })
+      .then(res => res.data.cards)
+      .then(cards => uniqueArray(cards, "name"))
+      .then((cards: Card[]) => cards.map(card => card.image))
+      .catch(e => { throw e })
   }
-  
-  const searchingMessage = await message.channel.send("🔍 검색 중입니다...")
+
+  const searchingMessage = await message.channel.send("🔍 Searching...")
   await message.channel.sendTyping();
 
   let cardCount: number;
   let temp;
-  try{
-    temp = await safeAxiosGet(`https://${ CONSTANTS.apiRequestRegion }.api.blizzard.com/hearthstone/cards`, 
-    { params: {
-      locale: cardLanguage,
-      textFilter: encodeURI(args),
-      gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
-      tier: info?.tier ?? null,
-      class: info?.class_?.name,
-      set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
-      pageSize: CONSTANTS.pageSize,
-      page: 1,
-      access_token: blizzardToken
-    }})
-    .catch(e => {throw e})
-  } catch(e) {
+  try {
+    temp = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+      {
+        params: {
+          locale: cardLanguage,
+          textFilter: encodeURI(args),
+          gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
+          tier: info?.tier ?? null,
+          class: info?.class_?.name,
+          set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
+          pageSize: CONSTANTS.pageSize,
+          page: 1,
+          access_token: blizzardToken
+        }
+      })
+      .catch(e => { throw e })
+  } catch (e) {
     console.log(e);
-    message.channel.send("‼️ 카드 정보를 가져오던 중 오류가 발생했습니다. 다시 시도해 주세요!");
+    message.channel.send("‼️ An error occurred while starting the quiz. Try again later!");
     return;
   }
 
   cardCount = temp.data.cardCount;
-  if ( cardCount == 0 ){
-    message.channel.send("‼️ 검색 결과가 없습니다! 오타, 띄어쓰기를 다시 확인해 주세요.");
+  if (cardCount == 0) {
+    message.channel.send("‼️ No results found! Make sure there are no spaces between letters.");
     return;
   }
   let firstCards = uniqueArray(temp.data.cards as Card[], "name");
 
   let promises: (() => Promise<string[]>)[];
-  if( Math.ceil(cardCount / CONSTANTS.pageSize) > 1 ){
-    promises = range( Math.ceil(cardCount / CONSTANTS.pageSize), 2).map(i => 
+  if (Math.ceil(cardCount / CONSTANTS.pageSize) > 1) {
+    promises = range(Math.ceil(cardCount / CONSTANTS.pageSize), 2).map(i =>
       axiosShort(i)
     )
     promises = [() => Promise.resolve(firstCards.map(card => card.image)), ...promises]
   } else {
     promises = [() => Promise.resolve(firstCards.map(card => card.image))]
   }
-  
+
   const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, CONSTANTS.pageSize, true, cardCount)
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 
-  while(msgs){
+  while (msgs) {
     const [m, reaction] = await msgs.infoPromise;
     await m;
-    if( reaction === "next" ){
+    if (reaction === "next") {
       await message.channel.sendTyping();
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.next();
-    } else if( reaction === "prev" ){
+    } else if (reaction === "prev") {
       await message.channel.sendTyping();
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.prev();
-    } else if( reaction === "timeout" ){
+    } else if (reaction === "timeout") {
       msgs.infoMessage.delete().catch(console.log);
       break;
     }
@@ -110,7 +114,7 @@ async function all(message: Message, args: string, info: searchInfo){
 }
 
 module.exports = {
-  name : ['all', 'every'],
-  description : 'all',
-  execute : all
+  name: ['all', 'every'],
+  description: 'all',
+  execute: all
 }

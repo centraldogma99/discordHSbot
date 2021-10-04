@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
 
-function howto(message: Message){
+function howto(message: Message) {
     const str =
-    'ℹ️ 하스스톤 카드검색 및 퀴즈 기능을 제공하는 여관주인 봇입니다.\n\
-개발자 : Osol2#7777\n\
+        'ℹ️ Innkeeper is a discord bot that provides card search and quiz function.\n\
+Developer : Osol2#7777\n\
 \n\
 🔍 **`@여관주인` 을 호출하고 뒤에 아래의 명령어를 입력하면 됩니다.**\n\
 \n\
@@ -33,7 +33,7 @@ function howto(message: Message){
 }
 
 module.exports = {
-    name : ['help', 'howto', 'commands', '?'],
-    description : 'howto',
-    execute : howto
+    name: ['help', 'howto', 'commands', '?'],
+    description: 'howto',
+    execute: howto
 }
