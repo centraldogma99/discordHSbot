@@ -25,8 +25,7 @@ function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
     const len = card.alias.length;
     const reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
     promise = message.channel.send(
-      `💡 이 카드의 이름은 ${
-        card.alias.length
+      `💡 이 카드의 이름은 ${card.alias.length
       }글자이며, 처음 ${reslen}글자는 \`${card.alias.slice(
         0,
         reslen
@@ -36,8 +35,7 @@ function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
     const len = card.alias.length;
     const reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
     promise = message.channel.send(
-      `💡 이 카드의 이름은 ${
-        card.alias.length
+      `💡 이 카드의 이름은 ${card.alias.length
       }글자이며, 마지막 ${reslen}글자는 \`${card.alias.slice(
         card.alias.length - reslen
       )}\`입니다.(띄어쓰기 무시)`
@@ -68,7 +66,7 @@ async function quiz(message: Message) {
   let quizAnswerPoint = 400;
   (message.channel as any).doingQuiz = true;
   const hintUsed = new Array(4).fill(false, 0);
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
   let chances = userConfig.quizConfig.chances;
@@ -104,10 +102,8 @@ async function quiz(message: Message) {
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({ files: [quizImages.croppedImage] });
   await message.channel.send(
-    `ℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : ${
-      userConfig.quizConfig.time ?? 30
-    }초, 기회: ${
-      userConfig.quizConfig.chances
+    `ℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : ${userConfig.quizConfig.time ?? 30
+    }초, 기회: ${userConfig.quizConfig.chances
     }번**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`
   );
 
@@ -156,7 +152,7 @@ async function quiz(message: Message) {
 
   messageCollector.on("end", async (m, reason) => {
     (message.channel as any).doingQuiz = false;
-    await message.channel.sendTyping();
+    await message.channel.sendTyping().catch(console.log);
     if (reason == "answered") {
       await message.channel.send(
         `⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`

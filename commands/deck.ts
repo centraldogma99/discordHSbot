@@ -78,7 +78,7 @@ async function deck(message: Message, args: string) {
     .setThumbnail(deckInfo.hero.image);
   await message.channel.send({ embeds: [embed] });
 
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   // remove redundant cards
   cards = uniqueArray(cards, "name");
   const pagi = new Paginator(
@@ -93,11 +93,11 @@ async function deck(message: Message, args: string) {
     const [m, reaction] = await msgs.infoPromise;
     await m;
     if (reaction === "next") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.next();
     } else if (reaction === "prev") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.prev();
     } else if (reaction === "timeout") {

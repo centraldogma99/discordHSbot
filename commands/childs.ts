@@ -18,7 +18,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
   if (!info?.fromDefault) {
     // fromDefault가 false일 경우, 카드 찾기
     searchingMessage = await message.channel.send("🔍 검색 중입니다...");
-    await message.channel.sendTyping();
+    await message.channel.sendTyping().catch(console.log);
 
     resCard = await getMostMatchingCard(
       args,
@@ -37,7 +37,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
     resCard = info?.card;
   }
 
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   let promises = [];
   const blizzardToken = await BlizzardToken.getToken();
 
@@ -71,11 +71,11 @@ async function childs(message: Message, args: string, info: searchInfo) {
       const [m, reaction] = await msgs.infoPromise;
       await m;
       if (reaction === "next") {
-        await message.channel.sendTyping();
+        await message.channel.sendTyping().catch(console.log);
         await msgs.infoMessage.delete().catch(console.log);
         msgs = await pagi.next();
       } else if (reaction === "prev") {
-        await message.channel.sendTyping();
+        await message.channel.sendTyping().catch(console.log);
         await msgs.infoMessage.delete().catch(console.log);
         msgs = await pagi.prev();
       } else if (reaction === "timeout") {

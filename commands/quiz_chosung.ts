@@ -69,9 +69,8 @@ class Hint {
             if (card.classId == 12) {
               return `💡 이 카드는 **중립** 카드입니다.`;
             }
-            return `💡 이 카드는 **${
-              translateToKor(class_, card.classId)[0]
-            }** 카드입니다.`;
+            return `💡 이 카드는 **${translateToKor(class_, card.classId)[0]
+              }** 카드입니다.`;
           }
         })(),
         `💡 이 카드는 **${translateToKor(cardType, card.cardTypeId)}** 입니다.`, // 주문/하수인/영웅변신/무기
@@ -93,8 +92,7 @@ class Hint {
           ];
         else if (card.cardTypeId == 5)
           return [
-            `💡 이 카드의 주문 속성은 **${
-              translateToKor(spellSchool, card.spellSchoolId) ?? "무속성"
+            `💡 이 카드의 주문 속성은 **${translateToKor(spellSchool, card.spellSchoolId) ?? "무속성"
             }** 입니다.`,
           ];
         else if (card.cardTypeId == 7)
@@ -113,8 +111,8 @@ class Hint {
         card.text == ""
           ? `💡 이 카드는 카드 텍스트가 없습니다.`
           : `💡 **카드 텍스트 힌트**  _${card.text
-              .replace(/<\/?[^>]+(>|$)/g, "")
-              .slice(0, Math.floor(card.text.length / 2))}..._ (후략)`,
+            .replace(/<\/?[^>]+(>|$)/g, "")
+            .slice(0, Math.floor(card.text.length / 2))}..._ (후략)`,
         {
           content: `💡 이 카드의 일러스트의 일부분입니다.`,
           files: croppedImage,
@@ -160,7 +158,7 @@ class Hint {
 async function quiz_chosung(message) {
   message.channel.doingQuiz = true;
   let quizAnswerPoint = 1000;
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   const userConfig = await loadUserConfig(message.author);
   let chances = userConfig.quizConfig.chances;
   let db;
@@ -243,7 +241,7 @@ async function quiz_chosung(message) {
 
   messageCollector.on("end", async (m, reason) => {
     message.channel.doingQuiz = false;
-    await message.channel.sendTyping();
+    await message.channel.sendTyping().catch(console.log);
     if (reason == "answered") {
       await message.channel.send(
         `⭕️  <@!${m.last().author.id}>이(가) 정답을 맞췄습니다!`

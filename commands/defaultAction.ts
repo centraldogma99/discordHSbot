@@ -6,7 +6,7 @@ import { searchInfo } from "../types/searchInfo";
 
 async function defaultAction(message: Message, args: string, info: searchInfo) {
   const searchingMessage = await message.channel.send("🔍 검색 중입니다...");
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   const userConfig = await loadUserConfig(message.author);
 
   const resCard = await getMostMatchingCard(
