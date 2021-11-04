@@ -8,11 +8,10 @@ import { Message } from "discord.js";
 import { searchInfo } from "../types/searchInfo";
 import { Card } from "../types/card";
 
-const cardLanguage = process.env.CARD_LANGUAGE;
-
 async function childs(message: Message, args: string, info: searchInfo) {
+  const cardLanguage = process.env.CARD_LANGUAGE;
   if (!args) {
-    await message.channel.send("❌ Please enter a keyword to search..")
+    await message.channel.send("❌ Please enter a keyword to search.")
     return;
   }
   let resCard: Card, searchingMessage: Message;
@@ -20,9 +19,9 @@ async function childs(message: Message, args: string, info: searchInfo) {
   if (!info?.fromDefault) {
     // fromDefault가 false일 경우, 카드 찾기
     searchingMessage = await message.channel.send("🔍 Searching...");
-    await message.channel.sendTyping();
+    await message.channel.sendTyping().catch(console.log);
 
-    resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.class_);
+    resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.conditions?.class_);
     if (!resCard) {
       message.channel.send("‼️ No results found! Make sure there are no spaces between letters.");
       return;
@@ -33,7 +32,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
     resCard = info?.card;
   }
 
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   let promises = [];
   let blizzardToken = await BlizzardToken.getToken();
 
@@ -56,11 +55,11 @@ async function childs(message: Message, args: string, info: searchInfo) {
       const [m, reaction] = await msgs.infoPromise;
       await m;
       if (reaction === "next") {
-        await message.channel.sendTyping();
+        await message.channel.sendTyping().catch(console.log);
         await msgs.infoMessage.delete().catch(console.log);
         msgs = await pagi.next();
       } else if (reaction === "prev") {
-        await message.channel.sendTyping();
+        await message.channel.sendTyping().catch(console.log);
         await msgs.infoMessage.delete().catch(console.log);
         msgs = await pagi.prev();
       } else if (reaction === "timeout") {

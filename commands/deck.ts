@@ -8,9 +8,8 @@ import { requestScheduler as RequestScheduler } from "../tools/helpers/RequestSc
 import { uniqueArray } from "../tools/helpers/uniqueArray";
 import { Card } from "../types/card";
 
-const cardLanguage = process.env.CARD_LANGUAGE;
-
 async function deck(message: Message, args: string) {
+  const cardLanguage = process.env.CARD_LANGUAGE;
   if (!args) {
     await message.channel.send("❌ Please enter a keyword to search.")
     return;
@@ -63,7 +62,7 @@ async function deck(message: Message, args: string) {
     .setThumbnail(deckInfo.hero.image)
   await message.channel.send({ embeds: [embed] });
 
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   // remove redundant cards
   cards = uniqueArray(cards, 'name');
   const pagi = new Paginator(message, { value: cards.map((card: Card) => card.image), isPromise: false }, userConfig.paginateStep)  // #FIXME maybe
@@ -74,11 +73,11 @@ async function deck(message: Message, args: string) {
     const [m, reaction] = await msgs.infoPromise;
     await m;
     if (reaction === "next") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.next();
     } else if (reaction === "prev") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.prev();
     } else if (reaction === "timeout") {

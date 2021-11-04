@@ -14,7 +14,7 @@ function callBackBuilder(args: string, class_?: cardClass) {
     let res = cards;
     if (class_) res = res.filter(card => card.classId == class_.id)
     let resNames = res.map(res => res.name);
-    let ratings = stringSimilarity.findBestMatch(args, resNames);
+    let ratings = stringSimilarity.findBestMatch(args.toLowerCase(), resNames);
     return res[ratings.bestMatchIndex];
   }
 }

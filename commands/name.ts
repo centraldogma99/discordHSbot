@@ -10,9 +10,9 @@ async function name(message: Message, args: string, info: searchInfo) {
     await message.channel.send("❌ Please enter a keyword to search.")
     return;
   }
-  let class_ = info.class_;
+  let class_ = info.conditions?.class_;
   let searchingMessage = await message.channel.send("🔍 Searching...")
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   const userConfig = await loadUserConfig(message.author);
 
   let resCards = await cardNameInfer(args, userConfig.gameMode);
@@ -31,11 +31,11 @@ async function name(message: Message, args: string, info: searchInfo) {
     const [m, reaction] = await msgs.infoPromise;
     await m;
     if (reaction === "next") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.next();
     } else if (reaction === "prev") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.prev();
     } else if (reaction === "timeout") {

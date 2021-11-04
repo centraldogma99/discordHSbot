@@ -51,7 +51,7 @@ export async function downloadDB(blizzardToken: number | string) {
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
   let wilddoc = cards.map(card => {
     return {
-      alias: card.name.replace(/\s/g, ''),
+      alias: card.name.replace(/\s/g, '').toLowerCase(),
       name: card.name,
       image: card.image,
       imageGold: card.imageGold,
@@ -110,7 +110,7 @@ export async function downloadDB(blizzardToken: number | string) {
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
   let stddoc = cards.map(card => {
     return {
-      alias: card.name.replace(/\s/g, ''),
+      alias: card.name.replace(/\s/g, '').toLowerCase(),
       name: card.name,
       image: card.image,
       imageGold: card.imageGold,
@@ -173,7 +173,7 @@ export async function downloadDB(blizzardToken: number | string) {
   cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
   doc = cards.map(card => {
     return {
-      alias: card.name.replace(/\s/g, ''),
+      alias: card.name.replace(/\s/g, '').toLowerCase(),
       name: card.name,
       image: card.image,
       imageGold: card.imageGold,

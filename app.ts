@@ -50,7 +50,7 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  if (!argv.includes('--ts-node') && argv.includes('--develop')) {
+  if (!argv.includes('--ts-node') && !argv.includes('--develop')) {
     updateKoreanBot(client.guilds.cache.size)()
     setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
   }
@@ -90,16 +90,16 @@ client.on("messageCreate", async (message: Message) => {
   try {
     // @여관주인
     if (!tokens.command) {
-      if (!tokens.args) {
+      if (!tokens.arg) {
         await client.commands.get("howto").execute(message, null);
         return;
       }
     } else {
       if (!client.commands.has(tokens.command)) {
-        await client.commands.get("defaultAction").execute(message, tokens.command, { class_: tokens.class_ });
+        await client.commands.get("defaultAction").execute(message, tokens.command, { conditions: tokens.conditions });
         return;
       } else {
-        await client.commands.get(tokens.command).execute(message, tokens.args, { class_: tokens.class_ });
+        await client.commands.get(tokens.command).execute(message, tokens.arg, { conditions: tokens.conditions });
       }
     }
   } catch (err) {

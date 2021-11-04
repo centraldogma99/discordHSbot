@@ -13,9 +13,8 @@ import { Message } from "discord.js";
 import { Card } from "../types/card";
 import { searchInfo } from "../types/searchInfo"
 
-const cardLanguage = process.env.CARD_LANGUAGE;
-
 async function all(message: Message, args: string, info: searchInfo) {
+  const cardLanguage = process.env.CARD_LANGUAGE;
   if (!args) {
     await message.channel.send("❌ Please enter a keyword to search.")
     return;
@@ -31,8 +30,8 @@ async function all(message: Message, args: string, info: searchInfo) {
           locale: cardLanguage,
           textFilter: encodeURI(args),
           gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
-          tier: info?.tier ?? null,
-          class: info?.class_?.name,
+          tier: info?.conditions?.tier ?? null,
+          class: info?.conditions?.class_?.name,
           set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
           pageSize: CONSTANTS.pageSize,
           page: page,
@@ -46,7 +45,7 @@ async function all(message: Message, args: string, info: searchInfo) {
   }
 
   const searchingMessage = await message.channel.send("🔍 Searching...")
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
 
   let cardCount: number;
   let temp;
@@ -57,8 +56,8 @@ async function all(message: Message, args: string, info: searchInfo) {
           locale: cardLanguage,
           textFilter: encodeURI(args),
           gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
-          tier: info?.tier ?? null,
-          class: info?.class_?.name,
+          tier: info?.conditions?.tier ?? null,
+          class: info?.conditions?.class_?.name,
           set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
           pageSize: CONSTANTS.pageSize,
           page: 1,
@@ -97,11 +96,11 @@ async function all(message: Message, args: string, info: searchInfo) {
     const [m, reaction] = await msgs.infoPromise;
     await m;
     if (reaction === "next") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.next();
     } else if (reaction === "prev") {
-      await message.channel.sendTyping();
+      await message.channel.sendTyping().catch(console.log);
       await msgs.infoMessage.delete().catch(console.log);
       msgs = await pagi.prev();
     } else if (reaction === "timeout") {

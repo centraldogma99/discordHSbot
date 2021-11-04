@@ -1,52 +1,81 @@
 [
     {
-        "name" : "priest",
-        "nameKor" : ["사제", "좆제"],
-        "id" : 6
+        "name": "priest",
+        "nameKor": [
+            "사제",
+            "좆제"
+        ],
+        "id": 6
     },
     {
-        "name" : "warrior",
-        "nameKor" : ["전사"],
-        "id" : 10
+        "name": "warrior",
+        "nameKor": [
+            "전사"
+        ],
+        "id": 10
     },
     {
-        "name" : "rogue",
-        "nameKor" : ["도적", "돚거"],
-        "id" : 7
+        "name": "rogue",
+        "nameKor": [
+            "도적",
+            "돚거"
+        ],
+        "id": 7
     },
     {
-        "name" : "warlock",
-        "nameKor" : ["흑마법사", "흑마"],
-        "id" : 9
+        "name": "warlock",
+        "nameKor": [
+            "흑마법사",
+            "흑마"
+        ],
+        "id": 9
     },
     {
-        "name" : "demonhunter",
-        "nameKor" : ["악마사냥꾼", "악사"],
-        "id" : 14
+        "name": "demonhunter",
+        "nameKor": [
+            "악마사냥꾼",
+            "악사"
+        ],
+        "id": 14
     },
     {
-        "name" : "druid",
-        "nameKor" : ["드루이드", "드루"],
-        "id" : 2
+        "name": "druid",
+        "nameKor": [
+            "드루이드",
+            "드루"
+        ],
+        "id": 2
     },
     {
-        "name" : "mage",
-        "nameKor" : ["마법사", "법사"],
-        "id" : 4
+        "name": "mage",
+        "nameKor": [
+            "마법사",
+            "법사"
+        ],
+        "id": 4
     },
     {
-        "name" : "paladin",
-        "nameKor" : ["성기사", "기사"],
-        "id" : 5
+        "name": "paladin",
+        "nameKor": [
+            "성기사",
+            "기사"
+        ],
+        "id": 5
     },
     {
-        "name" : "shaman",
-        "nameKor" : ["주술사", "술사"],
-        "id" : 8
+        "name": "shaman",
+        "nameKor": [
+            "주술사",
+            "술사"
+        ],
+        "id": 8
     },
     {
-        "name" : "hunter",
-        "nameKor" : ["사냥꾼", "냥꾼"],
-        "id" : 3
+        "name": "hunter",
+        "nameKor": [
+            "사냥꾼",
+            "냥꾼"
+        ],
+        "id": 3
     }
 ]

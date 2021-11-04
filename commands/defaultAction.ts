@@ -6,10 +6,10 @@ import { searchInfo } from "../types/searchInfo";
 
 async function defaultAction(message: Message, args: string, info: searchInfo) {
   let searchingMessage = await message.channel.send("🔍 Searching...")
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   const userConfig = await loadUserConfig(message.author);
 
-  const resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.class_);
+  const resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.conditions?.class_);
   if (!resCard) {
     message.channel.send("‼️ No results found! Make sure there are no spaces between letters.");
     return;

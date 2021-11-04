@@ -1,39 +1,38 @@
 import { Message } from "discord.js";
 
 function howto(message: Message) {
-    const str =
-        'ℹ️ Innkeeper is a discord bot that provides card search and quiz function.\n\
+  const str =
+    'ℹ️ Innkeeper is a discord bot that provides card search and quiz function.\n\
 Developer : Osol2#7777\n\
 \n\
-🔍 **`@여관주인` 을 호출하고 뒤에 아래의 명령어를 입력하면 됩니다.**\n\
+🔍 **You can use commands after our prefix .(dot)**\n\
 \n\
-🔍 검색 관련 명령어\n\
-`[검색어]`              가장 일치하는 한 장의 카드를 검색합니다. 명령어 없이 검색어만 입력합니다.\n\
-`!이름 [검색어]`     [검색어]가 이름에 들어간 모든 카드를 검색합니다(카드 텍스트 제외).\n\
-`!관련 [카드명]`     토큰 카드들(예로, 이세라의 꿈 카드들)을 검색합니다.\n\
-`!모든 [검색어]`     [검색어]가 들어간 모든 카드를 검색합니다(카드 텍스트 포함).\n\
-`!덱 [덱코드]`       [덱코드]에 해당하는 덱의 카드 목록을 검색합니다.\n\
+🔍 Search commands\n\
+`.[keyword]`              Search a card with a name that most matches with the keyword.\n\
+`name [keyword]`     Search all cards that have [keyword] in its **name**.\n\
+`token [keyword]`     Search token cards of a card that matches [keyword].\n\
+`all [keyword]`     Search all cards [검색어]가 들어간 모든 카드를 검색합니다(카드 텍스트 포함).\n\
+`deck [deck code]`       Search card list of [deck code].\n\
 \n\
-⏳ 퀴즈 관련 명령어\n\
-`!퀴즈`                퀴즈를 풉니다.\n\
-`!초성퀴즈`            초성퀴즈를 풉니다.\n\
-`!퀴즈설정`          퀴즈에 나오는 카드의 범위, 난이도를 설정합니다(정규/야생, 전설/특급/희귀 등).\n\
+⏳ Quiz commands\n\
+`quiz`                Take quiz(with card image).\n\
+`quizconfig`          Config pool(e.g. standard/wild, legendary/epic/rare)/difficulty of cards in quiz.\n\
 \n\
-⚙️ 개인 설정 명령어\n\
-`!나`                내 기여도(포인트)를 확인합니다.\n\
-`!설정`                현재 내 설정들(게임모드/페이지)을 확인 및 수정합니다.\n\
-`!랭킹`                기여도 순위를 확인합니다.\n\
+⚙️ Personal config commands\n\
+`me`                Check my contribution points.\n\
+`config`                Confirm and change my configs(game mode/page).\n\
+`ranking`                Check contribution point leaderboard.\n\
 \n\
-💡 명령어 앞에는 다음과 같이 **직업 조건**을 추가할 수 있습니다.\n\
-**ex)** `@여관주인 "술사" !모든 전투의 함성`    `@여관주인 "전사" 갈라크론드`\n\
+💡 You can add **class** condition right after prefix, like below.\n\
+**ex)** `."priest" all battlecry`    `."전사" 갈라크론드`\n\
 \n\
 💡 `@여관주인`과 `!<명령어>` 사이에는 대부분 자동으로 띄어쓰기가 들어가지만 오류가 날 경우 확인해주시면 좋습니다.\n\
 **ex)** `@여관주인!관련 이세라` (❌)    `@여관주인 !관련 이세라` (⭕️)'
-    message.channel.send(str);
+  message.channel.send(str);
 }
 
 module.exports = {
-    name: ['help', 'howto', 'commands', '?'],
-    description: 'howto',
-    execute: howto
+  name: ['help', 'howto', 'commands', '?'],
+  description: 'howto',
+  execute: howto
 }

@@ -8,6 +8,7 @@ import { Card } from "../types/card";
 
 const quizParticipatePoint = 50;
 const quizMultiplier = 2;
+const quizPrefix = '.';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -48,7 +49,7 @@ async function quiz(message: Message) {
   let quizAnswerPoint = 400;
   (message.channel as any).doingQuiz = true;
   let hintUsed = new Array(4).fill(false, 0);
-  await message.channel.sendTyping();
+  await message.channel.sendTyping().catch(console.log);
   const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
   let chances = userConfig.quizConfig.chances;
@@ -56,7 +57,7 @@ async function quiz(message: Message) {
 
   // 퀴즈를 풀기 시작하면 포인트 지급
   await giveUserPoint(message.author.id, quizParticipatePoint)
-    .then(() => message.channel.send(`💰 You received ${quizParticipatePoint} points for completing the quiz!`))
+    .then(() => message.channel.send(`💰 You received ${quizParticipatePoint} points for taking quiz!`))
     .catch(console.log)
 
   if (userConfig.quizConfig.gameMode == 'standard') {
@@ -84,17 +85,17 @@ async function quiz(message: Message) {
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
   await message.channel.send({ files: [quizImages.croppedImage] });
-  await message.channel.send(`ℹ️  Type \`-quit\` to cancel the quiz.\nℹ️  Type \`-hint\` to receive a hint.\nGuess the card's name! **${userConfig.quizConfig.time ?? 30} seconds left, ${userConfig.quizConfig.chances} attempts remaining**\nUsing the prefix '-' while typing commands and answers. (e.g.) -soulboundashtongue\n💰 **Points earned : ${quizAnswerPoint}**`)
+  await message.channel.send(`ℹ️  Type \`-quit\` to cancel the quiz.\nℹ️  Type \`-hint\` to receive a hint.\nGuess the card's name! **${userConfig.quizConfig.time ?? 30} seconds left, ${userConfig.quizConfig.chances} attempts remaining**\nUsing the prefix '.' while typing commands and answers. (e.g.) -soulboundashtongue\n💰 **Points earned : ${quizAnswerPoint}**`)
 
   const answerChecker = (content: string) => {
-    return targetCard.alias == content.replace(/\s/g, '')
+    return targetCard.alias == content.replace(/\s/g, '');
   }
   const filter = m => !m.author.bot;
 
   const messageCollector = message.channel.createMessageCollector({ filter, time: userConfig.quizConfig.time * 1000 ?? 30000 })
   messageCollector.on('collect', async m => {
-    if (!m.content.startsWith('-')) return;
-    const content = m.content.slice(1);
+    if (!m.content.startsWith('.')) return;
+    const content = m.content.slice(quizPrefix.length).toLowerCase();
     if (content == 'quit') {
       messageCollector.stop("userAbort");
       return;
@@ -126,7 +127,7 @@ async function quiz(message: Message) {
 
   messageCollector.on('end', async (m, reason) => {
     (message.channel as any).doingQuiz = false;
-    await message.channel.sendTyping();
+    await message.channel.sendTyping().catch(console.log);
     if (reason == "answered") {
       await message.channel.send(`⭕️  <@!${m.last().author.id}> guessed it right!`);
       const user = await loadUserConfig(m.last().author);

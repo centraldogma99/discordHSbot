@@ -14,7 +14,7 @@ export async function cardNameInfer(
   else if (gameMode == 'battlegrounds') db = mongo.battlegroundsCardModel;
   else return;
 
-  let temp = cardName.replace(/\s/g, '');
+  let temp = cardName.replace(/\s/g, '').toLowerCase();
 
   let res = await db.find({ alias: { $regex: temp } });
   if (res.length > 0) {
