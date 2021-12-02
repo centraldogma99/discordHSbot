@@ -1,10 +1,10 @@
-import { uniqueArray } from "../tools/helpers/uniqueArray";
-import { mergeImages } from "../tools/helpers/mergeImages";
+import uniqueArray from "../tools/helpers/uniqueArray";
+import mergeImages from "../tools/helpers/mergeImages";
 import { Message, MessageButton, MessageActionRow } from "discord.js";
-import { requestScheduler as RequestScheduler } from "../tools/helpers/RequestScheduler";
+import RequestScheduler from "../tools/helpers/RequestScheduler";
 type imageAddr = string;
 
-export class Paginator {
+export default class Paginator {
   message: Message;
   paginateStep: number;
   // @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
@@ -104,16 +104,14 @@ export class Paginator {
           // 처음 next() 가 실행됐을 때만 실행된다.
           const numOfPromisesNeedToResolved = promiseUnitSize;
 
-          let reqIdsCurrent: number[] = Array(numOfPromisesNeedToResolved).fill(
-            null
-          );
+          let reqIdsCurrent: number[] = Array(numOfPromisesNeedToResolved).fill(null);
           reqIdsCurrent = reqIdsCurrent.map(
             (_, index) =>
               RequestScheduler.addReq(
                 (
                   this.promises.value as
-                    | (() => Promise<imageAddr>)[]
-                    | (() => Promise<imageAddr[]>)[]
+                  | (() => Promise<imageAddr>)[]
+                  | (() => Promise<imageAddr[]>)[]
                 )[index]
               ) // FIXME ts 문제?
           );
@@ -183,7 +181,7 @@ export class Paginator {
     const isLongResult = this.numberOfCards
       ? this.numberOfCards > this.paginateStep
       : this.images.length > this.paginateStep ||
-        this.promises.value.length > 0;
+      this.promises.value.length > 0;
 
     const mergeImage = await mergeImages(
       targetImages,
@@ -222,9 +220,8 @@ export class Paginator {
       }
 
       const infoStr = this.lengthEnabled
-        ? `🔍 총 ${this.numberOfCards}개의 결과 : ${
-            this.cursor / this.paginateStep + 1
-          }/${Math.ceil(this.numberOfCards / this.paginateStep)}`
+        ? `🔍 총 ${this.numberOfCards}개의 결과 : ${this.cursor / this.paginateStep + 1
+        }/${Math.ceil(this.numberOfCards / this.paginateStep)}`
         : `🔍 ${this.cursor / this.paginateStep + 1} 페이지`;
 
       const infoMessage = await this.message.channel.send({

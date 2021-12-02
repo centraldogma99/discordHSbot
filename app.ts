@@ -1,40 +1,36 @@
 import { Client, Intents, Collection, Message } from "discord.js";
 
-const client = <any>(
-  new Client({
-    partials: ["CHANNEL"],
-    intents: [
-      Intents.FLAGS.GUILD_MESSAGES,
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.DIRECT_MESSAGES,
-    ],
-  })
-);
+// Collection: 이름 : 명령어
+const client: Client & { commands?: Collection<string, any> } = new Client({
+  partials: ["CHANNEL"],
+  intents: [
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.DIRECT_MESSAGES,
+  ],
+});
 
-import { tokenizer } from "./tools/tokenizer";
+import tokenizer, { Tokens } from "./tools/tokenizer";
 import fs from "fs";
-import { Logger } from "./tools/Logger";
-import { downloadDB, postDownload } from "./tools/downloadDB";
-import { BlizzardToken } from "./tools/BlizzardToken";
-import { updateKoreanBot } from "./tools/koreanbot/updateKoreanBot";
-import { permissionChecker } from "./tools/permissionChecker";
-import { requestScheduler as RequestScheduler } from "./tools/helpers/RequestScheduler";
-import { updateVotePoint } from "./tools/updateVotePoint";
+import Logger from "./tools/Logger";
+import downloadDB, { postDownload } from "./tools/downloadDB";
+import BlizzardToken from "./tools/BlizzardToken";
+import updateKoreanBot from "./tools/koreanbot/updateKoreanBot";
+import permissionChecker from "./tools/permissionChecker";
+import updateVotePoint from "./tools/updateVotePoint";
 
 require("dotenv").config();
 
-const prefix = "!";
-const exclamationMark = "‼️";
 const discordToken = process.env.DISCORD_TOKEN;
 const logServerId = process.env.LOG_SERVER;
 const logChannelId = process.env.LOG_CHANNEL;
-const koreanBotToken = process.env.KOREANBOT_SECRET;
 let logChannel, logger;
-const masterId = "232098431684837376";
+const masterId = process.env.MASTER_ID;
 
 client.commands = new Collection();
-// FIXME 하드코딩
-let commandFiles;
+
+let commandFiles: string[];
+// ts-node로 서버 시작시 별도 처리
 if (process.argv.includes("--ts-node")) {
   commandFiles = fs
     .readdirSync("./commands")
@@ -45,6 +41,7 @@ if (process.argv.includes("--ts-node")) {
     .filter((file) => file.endsWith(".js"));
 }
 
+// 커맨드 등록
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   for (const name of command.name) {
@@ -62,9 +59,11 @@ client.on("ready", () => {
     .get(logServerId)
     .channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
+
+  // koreanbot 스탯 업데이트, 개발 모드 아닐 때만
   if (
     !process.argv.includes("--ts-node") &&
-    process.argv.includes("--develop")
+    !process.argv.includes("--develop")
   ) {
     updateKoreanBot(client.guilds.cache.size)();
     setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
@@ -72,10 +71,10 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (message: Message) => {
-  if (message.author.bot) return;
-  if (!message.mentions.has(client.user.id)) return;
-  if (message.mentions.everyone) return;
-  if (message.type == "REPLY") return;
+  if (message.author.bot) return; // 봇이면 처리 안함, 자기 자신의 메시지도 처리 안함
+  if (!message.mentions.has(client.user.id)) return; // 멘션이 없으면 처리 안함
+  if (message.mentions.everyone) return; // 모든 유저 멘션이면 처리 안함
+  if (message.type === "REPLY") return; // 답장이면 처리 안함
 
   if ((message.channel as any).doingQuiz) {
     message.channel.send("❌  이 채널에서 퀴즈가 실행 중입니다.");
@@ -83,7 +82,7 @@ client.on("messageCreate", async (message: Message) => {
   }
 
   // 현재 채널에 permission가지고 있는지 확인
-  // 스레드에서는 권한 설정을 따로 안 하기 때문에 ㄱㅊ
+  // 스레드에서는 권한 설정을 따로 안 하기 때문에 상관없음
   if (!message.channel.isThread()) {
     if (!permissionChecker(message, logger)) return;
   }
@@ -91,7 +90,7 @@ client.on("messageCreate", async (message: Message) => {
   // 메시지 받은것 로깅
   logger.messageLog(message);
 
-  let tokens;
+  let tokens: Tokens;
   try {
     tokens = tokenizer(message.content);
 
@@ -151,6 +150,7 @@ try {
   (async () => {
     const token = await BlizzardToken.getToken();
     if (process.argv.includes("--downloadDB")) {
+      console.log('Downloading DB...');
       await downloadDB(token);
       console.log("DB load complete");
     }

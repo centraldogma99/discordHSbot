@@ -1,7 +1,7 @@
-import mongo from "../db";
+import { userModel } from "../db";
 // id is guaranteed to exist
-export async function giveUserPoint(id: number | string, point: number) {
-  const userQuery = mongo.userModel.findOne({ id: id });
+export default async function giveUserPoint(id: number | string, point: number) {
+  const userQuery = userModel.findOne({ id: id });
   const user = await userQuery.exec();
   if (!user) return;
   return await user

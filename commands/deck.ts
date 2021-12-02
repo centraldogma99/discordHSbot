@@ -1,12 +1,13 @@
-import { BlizzardToken } from "../tools/BlizzardToken";
-import { Paginator } from "../tools/Paginator";
-import { safeAxiosGet } from "../tools/helpers/safeAxiosGet";
+import BlizzardToken from "../tools/BlizzardToken";
+import Paginator from "../tools/Paginator";
+import safeAxiosGet from "../tools/helpers/safeAxiosGet";
 import CONSTANTS from "../constants";
-import { loadUserConfig } from "../tools/loadUserConfig";
+import loadUserConfig from "../tools/loadUserConfig";
 import { Message, MessageEmbed } from "discord.js";
-import { requestScheduler as RequestScheduler } from "../tools/helpers/RequestScheduler";
-import { uniqueArray } from "../tools/helpers/uniqueArray";
+import RequestScheduler from "../tools/helpers/RequestScheduler";
+import uniqueArray from "../tools/helpers/uniqueArray";
 import { Card } from "../types/card";
+import { BattlenetAPIDeckListRes } from "../types/CardAPI";
 
 async function deck(message: Message, args: string) {
   if (!args) {
@@ -22,7 +23,7 @@ async function deck(message: Message, args: string) {
 
   const blizzardToken = await BlizzardToken.getToken();
   let deckInfoPromise = () =>
-    safeAxiosGet(
+    safeAxiosGet<BattlenetAPIDeckListRes>(
       `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/deck`,
       {
         params: {
@@ -33,9 +34,8 @@ async function deck(message: Message, args: string) {
       }
     )
       .then((res) => res.data)
-      .catch((e) => {
-        throw e;
-      });
+      .catch((e) => { throw e; });
+
   let deckInfo;
   try {
     deckInfo = await RequestScheduler.getRes(
@@ -107,7 +107,7 @@ async function deck(message: Message, args: string) {
   }
 }
 
-module.exports = {
+export = {
   name: ["덱", "덱리스트", "덱리"],
   description: "decklist",
   execute: deck,

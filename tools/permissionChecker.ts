@@ -1,7 +1,7 @@
 import { GuildChannelResolvable, Message, Permissions } from "discord.js";
-import { Logger } from "./Logger";
+import Logger from "./Logger";
 
-export function permissionChecker(message: Message, logger: Logger) {
+export default function permissionChecker(message: Message, logger: Logger) {
   const roleChecker = [
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.ATTACH_FILES,

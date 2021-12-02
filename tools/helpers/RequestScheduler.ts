@@ -87,5 +87,6 @@ class RequestScheduler<T> {
   }
 }
 
-const requestScheduler = new RequestScheduler<string>(10);
-export { requestScheduler };
+// generic이 필요한가?
+const requestScheduler = new RequestScheduler<any>(10);
+export default requestScheduler;

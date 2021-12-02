@@ -32,7 +32,7 @@ function howto(message: Message) {
   message.channel.send(str);
 }
 
-module.exports = {
+export = {
   name: ["사용법", "도움말", "도움", "?", "명령어"],
   description: "howto",
   execute: howto,

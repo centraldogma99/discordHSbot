@@ -1,7 +1,7 @@
-import { loadUserConfig } from "../tools/loadUserConfig";
-import { cardNameInfer } from "../tools/cardNameInfer";
+import loadUserConfig from "../tools/loadUserConfig";
+import cardNameInfer from "../tools/cardNameInfer";
 import { Message } from "discord.js";
-import { Paginator } from "../tools/Paginator";
+import Paginator from "../tools/Paginator";
 import { searchInfo } from "../types/searchInfo";
 
 async function name(message: Message, args: string, info: searchInfo) {
@@ -53,7 +53,7 @@ async function name(message: Message, args: string, info: searchInfo) {
   return;
 }
 
-module.exports = {
+export = {
   name: ["이름", "카드명"],
   description: "name",
   execute: name,

@@ -1,15 +1,15 @@
-import { loadUserConfig } from "../tools/loadUserConfig";
-import mongo from "../db";
-import { generateQuiz } from "../tools/generateQuiz";
+import loadUserConfig from "../tools/loadUserConfig";
+import { cardRealWildModel, cardAliasStandardModel, cardAliasModel } from "../db";
+import generateQuiz from "../tools/generateQuiz";
 import { Message, MessageActionRow, MessageButton } from "discord.js";
-import { cho_hangul } from "../tools/helpers/cho_Hangul";
-import { giveUserPoint } from "../tools/giveUserPoint";
+import cho_hangul from "../tools/helpers/cho_Hangul";
+import giveUserPoint from "../tools/giveUserPoint";
 import { Card } from "../types/card";
 
 const quizParticipatePoint = 50;
 const quizMultiplier = 2;
 
-function getRandomInt(max) {
+function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
 
@@ -80,11 +80,11 @@ async function quiz(message: Message) {
     .catch(console.log);
 
   if (userConfig.quizConfig.gameMode == "standard") {
-    db = mongo.cardAliasStandardModel;
+    db = cardAliasStandardModel;
   } else if (userConfig.quizConfig.gameMode == "wild") {
-    db = mongo.cardAliasModel;
+    db = cardAliasModel;
   } else if (userConfig.quizConfig.gameMode == "realwild") {
-    db = mongo.cardRealWildModel;
+    db = cardRealWildModel;
   }
 
   let targetCard: Card;
@@ -209,7 +209,7 @@ async function quiz(message: Message) {
   });
 }
 
-module.exports = {
+export = {
   name: ["퀴즈", "문제"],
   description: "quiz",
   execute: quiz,

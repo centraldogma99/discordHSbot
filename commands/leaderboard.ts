@@ -1,10 +1,10 @@
 import { MessageEmbed } from "discord.js";
-import mongo from "../db";
+import { userModel } from "../db";
 
 const numOfRanks = 15;
 
 async function leaderboard(message) {
-  let users = await mongo.userModel.find({}).exec();
+  let users = await userModel.find({}).exec();
   users = users.sort((f, s) => s.stats.point - f.stats.point);
   let embed = new MessageEmbed()
     .setColor("#0099ff")
@@ -14,34 +14,18 @@ async function leaderboard(message) {
     );
 
   let i = 0;
-  // let str1 = "";
-  // let str2 = "";
-  // let str3 = "";
-  // for(const user of users){
-  //   i++;
-  //   if(i > numOfRanks) break;
-  //   str1 += `${i}. \n`
-  //   str2 += `**${user.tag === "" ? "돌붕이" : user.tag}**  \n`
-  //   str3 += `\`${user.stats.point}\`\n`
-  // }
-  // embed = embed.addFields(
-  //   {name: '순위', value: str1, inline: true},
-  //   {name: '태그', value: str2, inline: true},
-  //   {name: '기여도', value: str3, inline: true},
-  // )
   let str = "";
   for (const user of users) {
     i++;
-    str += `${i}. **${user.tag === "" ? "돌붕이" : user.tag}** \`${
-      user.stats.point
-    }\`\n`;
+    str += `${i}. **${user.tag === "" ? "돌붕이" : user.tag}** \`${user.stats.point
+      }\`\n`;
     if (i === numOfRanks) break;
   }
   embed = embed.addFields({ name: "\u200B", value: str });
   await message.channel.send({ embeds: [embed] });
 }
 
-module.exports = {
+export = {
   name: ["리더보드", "점수표", "순위", "순위표", "랭킹"],
   description: "leaderboard",
   execute: leaderboard,

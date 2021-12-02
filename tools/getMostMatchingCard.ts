@@ -3,7 +3,7 @@
   TODO cardNameInfer과 통합 가능성 있음
 */
 const stringSimilarity = require("string-similarity");
-import { cardNameInfer } from "./cardNameInfer";
+import cardNameInfer from "./cardNameInfer";
 import { cardClass } from "../types/cardClass";
 import { gameMode } from "../types/gameMode";
 import { Card } from "../types/card";
@@ -19,7 +19,7 @@ function callBackBuilder(args: string, class_?: cardClass) {
   };
 }
 
-export async function getMostMatchingCard(
+export default async function getMostMatchingCard(
   args: string,
   gameMode: gameMode,
   class_: cardClass

@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
-import { giveUserPoint } from "../tools/giveUserPoint";
-import { checkUserVote } from "../tools/koreanbot/checkUserVote";
-import { loadUserConfig } from "../tools/loadUserConfig";
+import giveUserPoint from "../tools/giveUserPoint";
+import checkUserVote from "../tools/koreanbot/checkUserVote";
+import loadUserConfig from "../tools/loadUserConfig";
 
 const heartPoint = 5000;
 
@@ -39,7 +39,7 @@ async function me(message: Message) {
   return;
 }
 
-module.exports = {
+export = {
   name: ["나", "내정보", "마이페이지", "기여도", "포인트"],
   description: "me",
   execute: me,

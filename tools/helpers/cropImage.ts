@@ -1,7 +1,7 @@
 import sharp from "sharp";
-import { getImage } from "./getImage";
+import getImage from "./getImage";
 
-export async function cropImage(
+export default async function cropImage(
   imageURL: string,
   width: number,
   height: number,

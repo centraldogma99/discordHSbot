@@ -5,16 +5,16 @@ import {
   MessageButton,
   User,
 } from "discord.js";
-import mongo from "../db";
-import { loadUserConfig } from "../tools/loadUserConfig";
+import { userModel } from "../db";
+import loadUserConfig from "../tools/loadUserConfig";
 
 async function addConfig(messageAuthor: User, fieldName: string, value: any) {
-  const query = mongo.userModel.findOne({ id: messageAuthor.id });
+  const query = userModel.findOne({ id: messageAuthor.id });
   try {
     const user = await query.exec();
     return user.updateOne({ [fieldName]: value }).exec();
   } catch (e) {
-    return await mongo.userModel.insertMany([
+    return await userModel.insertMany([
       {
         id: messageAuthor.id,
         tag: messageAuthor.tag,
@@ -69,9 +69,8 @@ async function configure(message: Message) {
       (i.component as MessageActionRowComponent).customId
     );
     await i.update({
-      content: `☑️ ${message.author.username}#${
-        message.author.discriminator
-      }님의 게임모드가 "${(i.component as any).label}"(으)로 설정되었습니다.`,
+      content: `☑️ ${message.author.username}#${message.author.discriminator
+        }님의 게임모드가 "${(i.component as any).label}"(으)로 설정되었습니다.`,
       components: [],
     });
     gameModeMsgCollector.stop("done");
@@ -160,8 +159,7 @@ async function configure(message: Message) {
     messageCollector.on("end", async (m, r) => {
       if (r == "answered") {
         await message.channel.send(
-          `☑️ ${message.author.username}#${
-            message.author.discriminator
+          `☑️ ${message.author.username}#${message.author.discriminator
           }님의 \`페이지\`가 \`${m.first().content}\` (으)로 설정되었습니다.`
         );
         pageMsg.delete().catch(console.log);
@@ -177,7 +175,7 @@ async function configure(message: Message) {
   });
   // 페이지 설정 끝
 }
-module.exports = {
+export = {
   name: ["설정"],
   description: "configure",
   execute: configure,

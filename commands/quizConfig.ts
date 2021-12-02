@@ -1,11 +1,11 @@
 import { MessageActionRow, MessageButton, User } from "discord.js";
-import mongo from "../db";
-import { loadUserConfig } from "../tools/loadUserConfig";
+import { userModel } from "../db";
+import loadUserConfig from "../tools/loadUserConfig";
 
 // #TODO duplicate code
 async function addQuizConfig(messageAuthor: User, fieldName, value) {
   // @value should be typechecked before given as parameter
-  const query = mongo.userModel.findOne({ id: messageAuthor.id });
+  const query = userModel.findOne({ id: messageAuthor.id });
   try {
     const user = await query.exec();
     if (
@@ -21,7 +21,7 @@ async function addQuizConfig(messageAuthor: User, fieldName, value) {
         .exec();
     }
   } catch (e) {
-    return await mongo.userModel.insertMany([
+    return await userModel.insertMany([
       {
         id: messageAuthor.id,
         tag: messageAuthor.tag,
@@ -83,8 +83,7 @@ async function quizConfig(message) {
     messageCollector.on("end", async (m, r) => {
       if (r == "answered") {
         await message.channel.send(
-          `☑️ \`퀴즈 제한시간\`이 \`${
-            m.first().content
+          `☑️ \`퀴즈 제한시간\`이 \`${m.first().content
           }\` (으)로 설정되었습니다.`
         );
       } else if (r == "time") {
@@ -216,12 +215,10 @@ async function quizConfig(message) {
       return;
     } else {
       // It's guaranteed there is user config data, don't have to call addQuizConfig()
-      await mongo.userModel
-        .updateOne(
-          { id: message.author.id },
-          { $set: { "quizConfig.rarity": 0 } }
-        )
-        .exec();
+      await userModel.updateOne(
+        { id: message.author.id },
+        { $set: { "quizConfig.rarity": 0 } }
+      ).exec();
       await i.update({
         content: `☑️ 퀴즈 카드등급 필터링을 해제했습니다.`,
         components: [],
@@ -327,9 +324,8 @@ async function quizConfig(message) {
     .setLabel("퀴즈 제한시간 설정");
   const row5 = new MessageActionRow().addComponents(timeMenuButton);
   const timeMsg = await message.channel.send({
-    content: `**⚙️ 퀴즈 제한시간⏰ 설정**  현재 설정 : \`${
-      userConfig.quizConfig.time ?? "30(기본값)"
-    }\``,
+    content: `**⚙️ 퀴즈 제한시간⏰ 설정**  현재 설정 : \`${userConfig.quizConfig.time ?? "30(기본값)"
+      }\``,
     components: [row5],
   });
   const timeMsgCollector = timeMsg.createMessageComponentCollector({
@@ -339,9 +335,8 @@ async function quizConfig(message) {
   timeMsgCollector.on("collect", async (i) => {
     if (i.user.id != message.author.id) return;
     await i.update({
-      content: `⚙️ 설정할 \`퀴즈 제한시간\`를 채팅으로 입력해 주세요(1 ~ 6000). 현재 설정 : \`${
-        userConfig.quizConfig.time ?? "30(기본값)"
-      }\``,
+      content: `⚙️ 설정할 \`퀴즈 제한시간\`를 채팅으로 입력해 주세요(1 ~ 6000). 현재 설정 : \`${userConfig.quizConfig.time ?? "30(기본값)"
+        }\``,
       components: [],
     });
 
@@ -357,7 +352,7 @@ async function quizConfig(message) {
   return;
 }
 
-module.exports = {
+export = {
   name: ["퀴즈설정"],
   description: "quizConfig",
   execute: quizConfig,

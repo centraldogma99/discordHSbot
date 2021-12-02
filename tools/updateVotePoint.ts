@@ -1,6 +1,6 @@
-import { checkUserVote } from "./koreanbot/checkUserVote";
-import mongo from "../db";
-import { giveUserPoint } from "./giveUserPoint";
+import checkUserVote from "./koreanbot/checkUserVote";
+import { userModel } from "../db";
+import giveUserPoint from "./giveUserPoint";
 
 async function checkAndGivePoint(userId: number) {
   let voted: boolean;
@@ -18,8 +18,8 @@ async function checkAndGivePoint(userId: number) {
   }
 }
 
-export async function updateVotePoint() {
-  const users = await mongo.userModel.find({}).exec();
+export default async function updateVotePoint() {
+  const users = await userModel.find({}).exec();
   for (const user of users) {
     checkAndGivePoint(user.id);
     setInterval(() => {

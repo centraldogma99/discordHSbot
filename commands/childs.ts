@@ -1,12 +1,13 @@
-import { Paginator } from "../tools/Paginator";
-import { getMostMatchingCard } from "../tools/getMostMatchingCard";
-import { loadUserConfig } from "../tools/loadUserConfig";
-import { safeAxiosGet } from "../tools/helpers/safeAxiosGet";
-import { BlizzardToken } from "../tools/BlizzardToken";
+import Paginator from "../tools/Paginator";
+import getMostMatchingCard from "../tools/getMostMatchingCard";
+import loadUserConfig from "../tools/loadUserConfig";
+import safeAxiosGet from "../tools/helpers/safeAxiosGet";
+import BlizzardToken from "../tools/BlizzardToken";
 import CONSTANTS from "../constants";
 import { Message } from "discord.js";
 import { searchInfo } from "../types/searchInfo";
 import { Card } from "../types/card";
+import { BattlenetAPICard } from "../types/CardAPI";
 
 async function childs(message: Message, args: string, info: searchInfo) {
   if (!args) {
@@ -44,7 +45,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
   if (resCard.childIds.length > 0) {
     promises = resCard.childIds.map(
       (id) => () =>
-        safeAxiosGet(
+        safeAxiosGet<BattlenetAPICard>(
           `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards/${id}`,
           {
             params: {
@@ -90,7 +91,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
   }
 }
 
-module.exports = {
+export = {
   name: ["관련", "토큰"],
   description: "childs",
   execute: childs,

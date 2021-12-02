@@ -1,7 +1,7 @@
 import axios from "axios";
 const koreanBotToken = process.env.KOREANBOT_SECRET;
 
-export function updateKoreanBot(num: number) {
+export default function updateKoreanBot(num: number) {
   return () =>
     axios
       .post(

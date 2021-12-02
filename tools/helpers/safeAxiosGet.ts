@@ -4,7 +4,7 @@
 */
 // FIXME legacy code
 
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 // 주어진 시간 이후에 주어진 이유로 reject하는 promise를 만들어 준다.
 function rejectDelay(reason: string) {
@@ -14,11 +14,11 @@ function rejectDelay(reason: string) {
   });
 }
 
-export function safeAxiosGet(
+export default function safeAxiosGet<T>(
   address: string,
   params: { params: {} }
-): Promise<any> {
-  const attempt = axios.get(address, params);
+): Promise<AxiosResponse<T>> {
+  const attempt = axios.get<T>(address, params);
   const maxTrial = 5;
   let p = Promise.reject();
 

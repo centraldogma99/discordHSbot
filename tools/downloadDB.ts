@@ -1,72 +1,57 @@
-import mongo from "../db";
+import { cardAliasModel, cardRealWildModel, cardAliasStandardModel, battlegroundsCardModel } from "../db";
 import CONSTANTS from "../constants";
-import { uniqueArray } from "./helpers/uniqueArray";
-import { safeAxiosGet } from "./helpers/safeAxiosGet";
+import uniqueArray from "./helpers/uniqueArray";
+import safeAxiosGet from "./helpers/safeAxiosGet";
+import { Card } from "../types/card";
+import { BattlenetAPIRes, BattlenetAPICard } from "../types/CardAPI";
+import { battlegroundsCard } from "../types/battlegroundsCard";
 
 export function postDownload(): void {
   // after download ended
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "가시가 돋친 탈것" },
-      { $set: { image: "https://imgur.com/WpA3ScQ.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "긴급 소집" },
-      { $set: { image: "https://imgur.com/9D1Zoun.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "신의 은총" },
-      { $set: { image: "https://imgur.com/L5sKKHC.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "에메랄드 하늘발톱" },
-      { $set: { image: "https://imgur.com/CE2Yjdd.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "정신 분열" },
-      { $set: { image: "https://imgur.com/0C9dblX.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "책상 임프" },
-      { $set: { image: "https://imgur.com/8W1fDQ8.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "천상의 정신" },
-      { $set: { image: "https://imgur.com/TgGvDDE.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "사령술사 스랄" },
-      { $set: { image: "https://imgur.com/FXgROec.png" } }
-    )
-    .exec();
-  mongo.cardAliasModel
-    .updateOne(
-      { name: "리치 여왕 제이나" },
-      { $set: { image: "https://imgur.com/AqHdNDe.png" } }
-    )
-    .exec();
+  cardAliasModel.updateOne(
+    { name: "가시가 돋친 탈것" },
+    { $set: { image: "https://imgur.com/WpA3ScQ.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "긴급 소집" },
+    { $set: { image: "https://imgur.com/9D1Zoun.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "신의 은총" },
+    { $set: { image: "https://imgur.com/L5sKKHC.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "에메랄드 하늘발톱" },
+    { $set: { image: "https://imgur.com/CE2Yjdd.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "정신 분열" },
+    { $set: { image: "https://imgur.com/0C9dblX.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "책상 임프" },
+    { $set: { image: "https://imgur.com/8W1fDQ8.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "천상의 정신" },
+    { $set: { image: "https://imgur.com/TgGvDDE.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "사령술사 스랄" },
+    { $set: { image: "https://imgur.com/FXgROec.png" } }
+  )
+  cardAliasModel.updateOne(
+    { name: "리치 여왕 제이나" },
+    { $set: { image: "https://imgur.com/AqHdNDe.png" } }
+  )
 }
 
-export async function downloadDB(blizzardToken: number | string): Promise<void> {
+export default async function downloadDB(blizzardToken: number | string): Promise<void> {
+  // battle.net API 한번에 가져오는 사이즈
   const pageSize = 100;
-  let promises = [];
-  let cards;
-  let doc = [];
-  const wildCardCount = await safeAxiosGet(
+  // 처리할 promise들을 저장하는 변수
+  let promises: Promise<BattlenetAPICard[]>[] = [];
+  const wildCardCount = await safeAxiosGet<BattlenetAPIRes>(
     `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
     {
       params: {
@@ -78,9 +63,10 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
     }
   )
     .then((res) => res.data.cardCount)
-    .catch(console.log);
+    .catch(e => { throw e; });
+
   for (let i = 1; i <= Math.ceil(wildCardCount / pageSize); i++) {
-    promises[i - 1] = await safeAxiosGet(
+    promises[i - 1] = safeAxiosGet<BattlenetAPIRes>(
       `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
@@ -92,43 +78,43 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
       }
     )
       .then((res) => res.data.cards)
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => { throw e; });
   }
-  cards = (await Promise.all(promises)).reduce((first, second) =>
+
+  let cards = (await Promise.all(promises)).reduce((first, second) =>
     first.concat(second)
   );
-  let wilddoc = cards.map((card) => {
-    return {
-      alias: card.name.replace(/\s/g, ""),
-      name: card.name,
-      image: card.image,
-      imageGold: card.imageGold,
-      childIds: card.childIds,
-      rarityId: card.rarityId,
-      manaCost: card.manaCost,
-      cardSetId: card.cardSetId,
-      classId: card.classId,
-      text: card.text,
-      cardTypeId: card.cardTypeId,
-      health: card.health,
-      attack: card.attack,
-      durability: card.durability,
-      minionTypeId: card.minionTypeId,
-      spellSchoolId: card.spellSchoolId,
-      multiClassIds: card.multiClassIds,
-    };
-  });
-  wilddoc = uniqueArray(wilddoc, "alias");
+
+  const wilddoc = uniqueArray<Card>(
+    cards.map((card) => {
+      return {
+        alias: card.name.replace(/\s/g, ""),
+        name: card.name,
+        image: card.image,
+        imageGold: card.imageGold,
+        childIds: card.childIds,
+        rarityId: card.rarityId,
+        manaCost: card.manaCost,
+        cardSetId: card.cardSetId,
+        classId: card.classId,
+        text: card.text,
+        cardTypeId: card.cardTypeId,
+        health: card.health,
+        attack: card.attack,
+        durability: card.durability,
+        minionTypeId: card.minionTypeId,
+        spellSchoolId: card.spellSchoolId,
+        multiClassIds: card.multiClassIds
+      }
+    }), "alias");
   try {
-    await mongo.cardAliasModel.insertMany(wilddoc);
+    await cardAliasModel.insertMany(wilddoc);
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 
   promises = [];
-  const stdCardCount = await safeAxiosGet(
+  const stdCardCount = await safeAxiosGet<BattlenetAPIRes>(
     `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
     {
       params: {
@@ -141,10 +127,10 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
     }
   )
     .then((res) => res.data.cardCount)
-    .catch(console.log);
+    .catch(e => { throw e; });
 
   for (let i = 1; i <= Math.ceil(stdCardCount / pageSize); i++) {
-    promises[i - 1] = await safeAxiosGet(
+    promises[i - 1] = safeAxiosGet<BattlenetAPIRes>(
       `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
@@ -157,14 +143,14 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
       }
     )
       .then((res) => res.data.cards)
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => { throw e; });
   }
+
   cards = (await Promise.all(promises)).reduce((first, second) =>
     first.concat(second)
   );
-  let stddoc = cards.map((card) => {
+
+  const stddoc = uniqueArray<Card>(cards.map((card) => {
     return {
       alias: card.name.replace(/\s/g, ""),
       name: card.name,
@@ -184,25 +170,24 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
       spellSchoolId: card.spellSchoolId,
       multiClassIds: card.multiClassIds,
     };
-  });
-  stddoc = uniqueArray(stddoc, "alias");
+  }), "alias");
   try {
-    await mongo.cardAliasStandardModel.insertMany(stddoc);
+    await cardAliasStandardModel.insertMany(stddoc);
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 
   const realwilddoc = wilddoc.filter(
     (card) => !stddoc.map((card) => card.name).includes(card.name)
   );
   try {
-    await mongo.cardRealWildModel.insertMany(realwilddoc);
+    await cardRealWildModel.insertMany(realwilddoc);
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 
   promises = [];
-  const battlegroundsCardCount = await safeAxiosGet(
+  const battlegroundsCardCount = await safeAxiosGet<BattlenetAPIRes>(
     `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
     {
       params: {
@@ -215,9 +200,10 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
     }
   )
     .then((res) => res.data.cardCount)
-    .catch(console.log);
+    .catch(e => { throw e; });
+
   for (let i = 1; i <= Math.ceil(battlegroundsCardCount / pageSize); i++) {
-    promises[i - 1] = await safeAxiosGet(
+    promises[i - 1] = safeAxiosGet<BattlenetAPIRes>(
       `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
@@ -230,12 +216,12 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
       }
     )
       .then((res) => res.data.cards)
-      .catch(console.log);
+      .catch(e => { throw e; });
   }
   cards = (await Promise.all(promises)).reduce((first, second) =>
     first.concat(second)
   );
-  doc = cards.map((card) => {
+  const doc: battlegroundsCard[] = uniqueArray(cards.map((card) => {
     return {
       alias: card.name.replace(/\s/g, ""),
       name: card.name,
@@ -250,13 +236,11 @@ export async function downloadDB(blizzardToken: number | string): Promise<void> 
       attack: card.attack,
       minionTypeId: card.minionTypeId,
     };
-  });
-  doc = uniqueArray(doc, "alias");
+  }), "alias");
+
   try {
-    await mongo.battlegroundsCardModel.insertMany(doc);
+    await battlegroundsCardModel.insertMany(doc);
   } catch (e) {
-    console.log(e);
+    throw e;
   }
-  // mongo.cardAliasModel.find().then(console.log)
-  // mongo.cardAliasStandardModel.find().then(console.log)
 }

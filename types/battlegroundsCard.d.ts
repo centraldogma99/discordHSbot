@@ -5,7 +5,7 @@ export interface battlegroundsCard {
   imageGold: string;
   childIds: number[];
   rarityId: number;
-  tier: string;
+  tier: number | string;
   classId: number;
   text: string;
   health: number;

@@ -2,7 +2,7 @@ require("dotenv").config();
 import axios from "axios";
 import CONSTANTS from "../constants";
 
-export class BlizzardToken {
+export default class BlizzardToken {
   static token: string;
   static refreshTime: number;
   static async getToken() {

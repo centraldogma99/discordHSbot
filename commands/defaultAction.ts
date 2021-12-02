@@ -1,6 +1,6 @@
-const childs = require("./childs");
-import { getMostMatchingCard } from "../tools/getMostMatchingCard";
-import { loadUserConfig } from "../tools/loadUserConfig";
+import childs from "./childs";
+import getMostMatchingCard from "../tools/getMostMatchingCard";
+import loadUserConfig from "../tools/loadUserConfig";
 import { Message, MessageActionRow, MessageButton } from "discord.js";
 import { searchInfo } from "../types/searchInfo";
 
@@ -56,7 +56,7 @@ async function defaultAction(message: Message, args: string, info: searchInfo) {
   }
 }
 
-module.exports = {
+export = {
   name: ["defaultAction"],
   description: "defaultAction",
   execute: defaultAction,

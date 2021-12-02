@@ -1,9 +1,9 @@
-import { loadUserConfig } from "../tools/loadUserConfig";
-import mongo from "../db";
-import { Message, MessageActionRow, MessageButton } from "discord.js";
-import { cho_hangul } from "../tools/helpers/cho_Hangul";
-import { giveUserPoint } from "../tools/giveUserPoint";
-import { generateQuiz } from "../tools/generateQuiz";
+import loadUserConfig from "../tools/loadUserConfig";
+import { cardAliasModel, cardAliasStandardModel, cardRealWildModel } from "../db";
+import { ButtonInteraction, Message, MessageActionRow, MessageButton } from "discord.js";
+import cho_hangul from "../tools/helpers/cho_Hangul";
+import giveUserPoint from "../tools/giveUserPoint";
+import generateQuiz from "../tools/generateQuiz";
 
 import rarity from "../tools/jsons/rarity.json";
 import cardSet from "../tools/jsons/cardset.json";
@@ -53,7 +53,6 @@ class Hint {
           return r;
         })()}** 입니다.`,
         (() => {
-          // cardSet json에 고전이 없음.
           const r = translateToKor(cardSet, card.cardSetId);
           if (r) {
             return `💡 이 카드는 **${r}** 카드입니다.`;
@@ -173,11 +172,11 @@ async function quiz_chosung(message) {
     .catch(console.log);
 
   if (userConfig.quizConfig.gameMode == "standard") {
-    db = mongo.cardAliasStandardModel;
+    db = cardAliasStandardModel;
   } else if (userConfig.quizConfig.gameMode == "wild") {
-    db = mongo.cardAliasModel;
+    db = cardAliasModel;
   } else if (userConfig.quizConfig.gameMode == "realwild") {
-    db = mongo.cardRealWildModel;
+    db = cardRealWildModel;
   }
 
   let targetCard;
@@ -201,7 +200,7 @@ async function quiz_chosung(message) {
     )}**\n\nℹ️  \`-포기\` 를 입력하면 퀴즈를 취소할 수 있습니다.\nℹ️  \`-힌트\` 를 입력하면 힌트를 볼 수 있습니다.\n채팅으로 카드의 이름을 맞혀보세요! **시간제한 : 120초**\n채팅 앞에 '-'(빼기)를 붙여야 명령어/답으로 인식됩니다.(예) -영혼이결속된잿빛혓바닥\n💰 **획득 포인트 : ${quizAnswerPoint}**`
   );
 
-  const answerChecker = (content) => {
+  const answerChecker = (content: string) => {
     return targetCard.alias == content.replace(/\s/g, "");
   };
   const filter = (m) => !m.author.bot;
@@ -286,7 +285,7 @@ async function quiz_chosung(message) {
       time: 15000,
       max: 1,
     });
-    buttonCollector.on("collect", (i) => {
+    buttonCollector.on("collect", (i: ButtonInteraction) => {
       i.update({ content: "☑️  새로운 퀴즈를 가져옵니다...", components: [] })
         .then(() => quiz_chosung(message))
         .catch((e) => {
@@ -296,13 +295,13 @@ async function quiz_chosung(message) {
           );
         });
     });
-    buttonCollector.on("end", async (_, r) => {
+    buttonCollector.on("end", async (_: any, r: string) => {
       if (r == "time") await lastMsg.delete().catch(console.log);
     });
   });
 }
 
-module.exports = {
+export = {
   name: ["초성퀴즈", "초성문제", "초성"],
   description: "quiz_chosung",
   execute: quiz_chosung,

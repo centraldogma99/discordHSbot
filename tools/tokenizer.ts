@@ -1,7 +1,14 @@
 import { cardClass } from "../types/cardClass";
 import translateClass from "./jsons/class.json";
 
-export function tokenizer(msgContent: string) {
+export interface Tokens {
+  mention?: string;
+  class_?: cardClass;
+  command?: string;
+  args?: string;
+}
+
+export default function tokenizer(msgContent: string): Tokens {
   const prefix = "!";
 
   if (!msgContent) throw Error("NoContent");
@@ -21,7 +28,7 @@ export function tokenizer(msgContent: string) {
     }
   }
 
-  ret["mention"] = mention;
+  ret.mention = mention;
 
   msgContentSplit = msgContentSplit.slice(1);
   let resClass: cardClass;
@@ -47,21 +54,23 @@ export function tokenizer(msgContent: string) {
       if (cls.nameKor.includes(korClass)) resClass = cls;
     }
     if (!resClass) throw Error("WrongClass");
-    ret["class_"] = resClass;
+    ret.class_ = resClass;
     msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
   }
   if (msgContentSplit.length == 0) {
     return ret;
   }
+
   if (msgContentSplit[0].startsWith(prefix)) {
     command = msgContentSplit[0].substring(1);
     msgContentSplit = msgContentSplit.slice(1, msgContentSplit.length);
   }
-  ret["command"] = command;
+  ret.command = command;
+
   if (msgContentSplit.length == 0) {
     return ret;
   }
-  const args = msgContentSplit.join(" ");
-  ret["args"] = args;
+
+  ret.args = msgContentSplit.join(" ");
   return ret;
 }

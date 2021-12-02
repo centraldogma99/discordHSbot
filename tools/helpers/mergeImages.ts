@@ -2,7 +2,7 @@ type imageAddr = string;
 import axios from "axios";
 import sharp from "sharp";
 
-export async function mergeImages(
+export default async function mergeImages(
   imageURLs: imageAddr[],
   cardsPerLine = 3
 ): Promise<Buffer> {

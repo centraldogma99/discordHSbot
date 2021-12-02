@@ -1,14 +1,23 @@
 "use strict";
-export function uniqueArray(array: any[], element?: string): any[] {
-  let seen = {};
+
+export default function uniqueArray<T>(array: T[], element?: string): T[] {
+  let filter: (value: T, index: number, self: T[]) => boolean;
+
   if (!element) {
-    return array.filter((item) => {
-      return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-    });
+    filter = (value: T, index: number, self: T[]) => {
+      return self.indexOf(value) === index;
+    };
+    return array.filter(filter);
   }
-  return array.filter((item) => {
-    return seen.hasOwnProperty(item[element])
-      ? false
-      : (seen[item[element]] = true);
-  });
+  else {
+    const seen: any[] = [];
+    const res: T[] = [];
+    for (const item of array) {
+      if (item[element] && seen.indexOf(item[element]) === -1) {
+        seen.push(item[element]);
+        res.push(item);
+      }
+    }
+    return res;
+  }
 }
