@@ -2,65 +2,13 @@ import loadUserConfig from "../tools/loadUserConfig";
 import { cardRealWildModel, cardAliasStandardModel, cardAliasModel } from "../db";
 import generateQuiz from "../tools/generateQuiz";
 import { Message, MessageActionRow, MessageButton } from "discord.js";
-import cho_hangul from "../tools/helpers/cho_Hangul";
+import getRandomHint from "../tools/image_hint";
 import giveUserPoint from "../tools/giveUserPoint";
 import { Card } from "../types/card";
+import mongoose from "mongoose"
 
 const quizParticipatePoint = 50;
 const quizMultiplier = 2;
-
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
-}
-
-function getRandomHint(message: Message, card: Card, hintUsed: boolean[]) {
-  // 글자수, 처음/마지막 몇 글자, 텍스트의 절반
-  if (hintUsed.reduce((f, s) => f && s)) return;
-  let a = getRandomInt(4);
-  let promise;
-  while (hintUsed[a]) {
-    a = getRandomInt(4);
-  }
-  if (a == 0) {
-    const len = card.alias.length;
-    const reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
-    promise = message.channel.send(
-      `💡 이 카드의 이름은 ${card.alias.length
-      }글자이며, 처음 ${reslen}글자는 \`${card.alias.slice(
-        0,
-        reslen
-      )}\`입니다.(띄어쓰기 무시)`
-    );
-  } else if (a == 1) {
-    const len = card.alias.length;
-    const reslen = Math.floor(len / 3) == 0 ? 1 : Math.floor(len / 2.5);
-    promise = message.channel.send(
-      `💡 이 카드의 이름은 ${card.alias.length
-      }글자이며, 마지막 ${reslen}글자는 \`${card.alias.slice(
-        card.alias.length - reslen
-      )}\`입니다.(띄어쓰기 무시)`
-    );
-  } else if (a == 2) {
-    if (!card.text || card.text.length == 0)
-      promise = message.channel.send(`💡 이 카드는 카드 텍스트가 없습니다.`);
-    else {
-      const len = Math.floor(card.text.length / 2);
-      promise = message.channel.send(
-        `💡 **카드 텍스트 힌트**  _${card.text
-          .replace(/<\/?[^>]+(>|$)/g, "")
-          .slice(0, len)}..._ (후략)`
-      );
-    }
-  } else if (a == 3) {
-    promise = message.channel.send(
-      `💡 이 카드의 초성은 \`${cho_hangul(card.alias)}\` 입니다.`
-    );
-  }
-  return {
-    promise: promise,
-    hint: a,
-  };
-}
 
 async function quiz(message: Message) {
   let quizAnswerPoint = 400;
@@ -70,7 +18,6 @@ async function quiz(message: Message) {
   const userConfig = await loadUserConfig(message.author);
   const difficulty = userConfig.quizConfig.difficulty;
   let chances = userConfig.quizConfig.chances;
-  let db;
 
   // 퀴즈를 풀기 시작하면 포인트 지급
   await giveUserPoint(message.author.id, quizParticipatePoint)
@@ -79,6 +26,7 @@ async function quiz(message: Message) {
     )
     .catch(console.log);
 
+  let db: mongoose.Model<Card, any, any>;
   if (userConfig.quizConfig.gameMode == "standard") {
     db = cardAliasStandardModel;
   } else if (userConfig.quizConfig.gameMode == "wild") {
@@ -90,13 +38,13 @@ async function quiz(message: Message) {
   let targetCard: Card;
   if (userConfig.quizConfig.rarity != 0) {
     targetCard = (
-      await db.aggregate([
+      await db.aggregate<Card>([
         { $match: { rarityId: userConfig.quizConfig.rarity } },
         { $sample: { size: 1 } },
       ])
     )[0];
   } else {
-    targetCard = (await db.aggregate([{ $sample: { size: 1 } }]))[0];
+    targetCard = (await db.aggregate<Card>([{ $sample: { size: 1 } }]))[0];
   }
 
   const quizImages = await generateQuiz(targetCard.image, difficulty);
@@ -108,9 +56,9 @@ async function quiz(message: Message) {
   );
 
   const answerChecker = (content: string) => {
-    return targetCard.alias == content.replace(/\s/g, "");
+    return targetCard.alias === content.replace(/\s/g, "");
   };
-  const filter = (m) => !m.author.bot;
+  const filter = (m: Message) => !m.author.bot;
 
   const messageCollector = message.channel.createMessageCollector({
     filter,

@@ -129,20 +129,12 @@ export default class Paginator {
 
         // images가 imageAddr[][] 일 경우 imageAddr[] 로 만들어 주기 위하여.
         let processedImages: imageAddr[] = [];
-        try {
-          for (const image of images) {
-            if (!(image instanceof Error) && image != null) {
-              processedImages = processedImages.concat(image);
-            } else if (image instanceof Error) {
-              throw image;
-            }
+        for (const image of images) {
+          if (!(image instanceof Error) && image != null) {
+            processedImages = processedImages.concat(image);
+          } else if (image instanceof Error) {
+            throw image;
           }
-        } catch (e) {
-          console.log(e);
-          this.message.channel.send(
-            "‼️ 서버 오류로 인해 결과를 출력할 수 없습니다. 잠시 후 다시 시도해 보세요.\n문제가 지속되면 개발자에게 알려주세요!"
-          );
-          return;
         }
 
         // TODO 더 나은 알고리즘 찾기
@@ -185,7 +177,7 @@ export default class Paginator {
 
     const mergeImage = await mergeImages(
       targetImages,
-      this.paginateStep % 3 == 0 ? 3 : 2
+      this.paginateStep % 3 === 0 ? 3 : 2
     );
 
     this.prevMessage?.delete().catch(console.log);
