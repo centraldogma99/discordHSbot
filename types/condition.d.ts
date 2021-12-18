@@ -4,7 +4,7 @@ type condition = cardClass | cardMana;
 // could be expanded like
 // type condition = cardClass | cardMana | ...
 
-interface conditionObj {
+export default interface Condition {
   class_?: cardClass,
   mana?: cardMana,
   tier?: cardTier

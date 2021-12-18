@@ -1,6 +1,8 @@
 import { Client, Intents, Collection, Message } from "discord.js";
+import Command from "./types/Command"
 
-const client = <any>new Client({ partials: ['CHANNEL'], intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES] });
+const client: Client<boolean> & { commands?: Collection<string, Command> } =
+  new Client({ partials: ['CHANNEL'], intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES] });
 
 import { tokenizer } from "./tools/tokenizer";
 import fs from 'fs';
@@ -11,6 +13,7 @@ import { updateKoreanBot } from "./tools/koreanbot/updateKoreanBot";
 import { permissionChecker } from "./tools/permissionChecker";
 import { requestScheduler as RequestScheduler } from "./tools/helpers/RequestScheduler";
 import { updateVotePoint } from "./tools/updateVotePoint";
+import Tokens from "./types/Tokens";
 
 require("dotenv").config()
 
@@ -36,7 +39,7 @@ if (argv.includes('--ts-node')) {
 
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
+  const command: Command = require(`./commands/${file}`);
   for (const name of command.name) {
     client.commands.set(name, command);
   }
@@ -58,7 +61,7 @@ client.on("ready", () => {
 
 client.on("messageCreate", async (message: Message) => {
   if (message.author.bot) return;
-  if (message.type == 'REPLY') return;
+  if (message.type === 'REPLY') return;
   if (!message.content.startsWith(prefix)) return;
 
   if ((message.channel as any).doingQuiz) {
@@ -75,12 +78,15 @@ client.on("messageCreate", async (message: Message) => {
   // 메시지 받은것 로깅
   logger.messageLog(message);
 
-  let tokens;
+  let tokens: Tokens;
   try {
     tokens = tokenizer(message.content);
   } catch (e) {
     if (e.message === "WrongClass") {
       message.channel.send("‼️ Invalid class.");
+      return;
+    } else if (e.message === 'WrongUsage') {
+      message.channel.send("‼️ Wrong Usage. See .help");
       return;
     } else {
       console.log(e);
@@ -89,18 +95,17 @@ client.on("messageCreate", async (message: Message) => {
 
   try {
     // @여관주인
-    if (!tokens.command) {
-      if (!tokens.arg) {
+    if (!tokens.command || tokens.command?.length === 0) {
+      if (!tokens.args || tokens.args?.length === 0) {
         await client.commands.get("howto").execute(message, null);
+        return;
+      } else {
+        await client.commands.get("defaultAction").execute(message, tokens.args.join(' '), { conditions: tokens.condition });
         return;
       }
     } else {
-      if (!client.commands.has(tokens.command)) {
-        await client.commands.get("defaultAction").execute(message, tokens.command, { conditions: tokens.conditions });
-        return;
-      } else {
-        await client.commands.get(tokens.command).execute(message, tokens.arg, { conditions: tokens.conditions });
-      }
+      // tokenizer에서 이미 커맨드 존재 유무를 검증하기 때문에 필요 없을것
+      await client.commands.get(tokens.command).execute(message, tokens.args?.join(' '), { conditions: tokens.condition });
     }
   } catch (err) {
     console.log(err);
@@ -130,3 +135,4 @@ try {
   console.log(e);
 }
 
+export default client;

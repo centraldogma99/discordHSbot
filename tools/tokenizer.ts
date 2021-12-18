@@ -1,16 +1,21 @@
-import { conditionObj } from '../types/condition';
+import Condition from '../types/condition';
 import translateClass from './jsons/class.json';
+import client from '../app';
+import Tokens from "../types/Tokens"
 
 
-
+// 따옴표로 둘러싸여 있는가?
 function isCondition(contentSplit: string) {
   if (!contentSplit) return false;
   return ((contentSplit.startsWith('"') || contentSplit.startsWith('“') || contentSplit.startsWith('”') || contentSplit.startsWith("'"))
     && (contentSplit.endsWith('"') || contentSplit.endsWith('“') || contentSplit.endsWith('”') || contentSplit.endsWith("'")))
 }
 
-function parseConditions(conditions: string[]): conditionObj {
-  let ret: conditionObj = {};
+// string 조각들을 받아서 Condition[] 오브젝트로 변환
+function parseConditions(conditions: string[]): Condition {
+  // 지금은 직업 조건만 parse하도록 되어 있음.
+
+  let ret: Condition = {};
 
   function isValidClass(condition: string) {
     if (translateClass.map(class_ => class_.name).includes(condition)) return true;
@@ -18,7 +23,7 @@ function parseConditions(conditions: string[]): conditionObj {
   }
   // 추후의 class 외의 조건을 판단할 함수를 이곳에 추가할 수 있다.
 
-  for (let condition of conditions) {
+  conditions.forEach(condition => {
     condition = condition.toLowerCase();
     if (isValidClass(condition)) {
       const retcls = translateClass.filter(cls => cls.name === condition)[0];
@@ -27,66 +32,70 @@ function parseConditions(conditions: string[]): conditionObj {
     }
     // 추후에 class 외의 조건을 이곳에 추가할 수 있다.
     // else if (isMana(condition)){ ... }
-  }
+  })
+
   return ret;
 }
 
-function tokenizerRecursive(
+
+// 조건이 있는 경우
+// ."사제" 나자크
+// ."전사" 이름 밀쳐내기
+// .이름 "전사" 밀쳐내기
+// .이름 방패 "전사" 밀쳐내기 (X) .... 4
+// .이름 방패 밀쳐내기 "전사" (O)
+//
+// 조건이 없는 경우
+// .나자크
+// .모든 라그나로스
+export function tokenizerRecursive(
   msgContentSplit: string[],
-  status: { conditions: conditionObj, command: string }
-) {
+  status: { condition?: Condition, command?: string, args?: string[] },
+  prev: string
+): Tokens {
+  // 4번 구문 무시
+  // if (status.condition && status.command && status.args) return status;
+  // status가 꽉 차지 않았어도 분석을 마쳤다면 종료
+  if (msgContentSplit.length === 0) return status;
+
   let ret = [];
   // guaranteed to have non-null @msgContentSplit
   if (isCondition(msgContentSplit[0])) {
-    if (!status.conditions) {
+    if (!status.condition) {
       let rawConditions = msgContentSplit[0].slice(1, msgContentSplit[0].length - 1);
-      const conditions = parseConditions(rawConditions.split(/ +|\t+/));
-      return tokenizerRecursive(msgContentSplit.slice(1), { conditions: conditions, command: status.command });
+      const condition = parseConditions(rawConditions.split(/ +|\t+/));
+      return tokenizerRecursive(msgContentSplit.slice(1), { ...status, condition: condition }, 'condition');
     } else {
       throw Error("MultipleConditions")
     }
   } else {
     if (!status.command) {
-      return tokenizerRecursive(msgContentSplit.slice(1), { conditions: status.conditions, command: msgContentSplit[0] })
+      // 존재하는 command인지?
+      if (!client.commands.has(msgContentSplit[0])) {
+        // 명령어 없음(카드 이름만 있음)
+        if (prev != 'arg' && status.args && status.args.length > 0) throw Error("WrongUsage") // arg가 흩뿌려져 있는 경우.
+        return tokenizerRecursive(msgContentSplit.slice(1),
+          { ...status, command: "", args: status.args ? [...status.args, msgContentSplit[0]] : [msgContentSplit[0]] },
+          'arg')
+      } else {
+        // 명령어 있음
+        return tokenizerRecursive(msgContentSplit.slice(1),
+          { ...status, command: msgContentSplit[0] },
+          'command')
+      }
     } else {
-      return { conditions: status.conditions, command: status.command }
+      if (prev != 'arg' && status.args && status.args.length > 0) throw Error("WrongUsage")
+      // 일반 argument 인 경우
+      return tokenizerRecursive(
+        msgContentSplit.slice(1),
+        { ...status, args: status.args ? [...status.args, msgContentSplit[0]] : [msgContentSplit[0]] },
+        'arg'
+      )
     }
   }
 }
 
-export function tokenizer(msgContent: string): { conditions?: conditionObj, command?: string, arg: string } {
-  if (!msgContent) throw Error("NoContent");
-
-  let content = msgContent.trim();
-  let rawConditions: string[];
-
-  // defaultAction
-  if (content.startsWith('..')) return { arg: content.slice(2) };
-
-  content = content.slice(1).trim();
-  const conditionRegex = /^["“”']/;
-  const conditionRegex2 = /["“”']/;
-  let quoteClosed = false, quoteClosedIndex = 0;
-  if (conditionRegex.test(content)) {
-    for (let i = 1; i < content.length; i++) {
-      if (conditionRegex2.test(content[i])) {
-        quoteClosed = true;
-        quoteClosedIndex = i;
-        break;
-      }
-    }
-    rawConditions = content.slice(1, quoteClosedIndex).split(/ +|\t+/);
-    content = content.slice(quoteClosedIndex).trim()
-  }
-  const parsedConditions = parseConditions(rawConditions);
-  let idx = / |\t/.exec(content).index;
-  const command = content.slice(0, idx);
-  content = content.slice(idx).trim();
-  idx = / |\t/.exec(content).index;
-  const arg = content.slice(/ /.exec(content).index)
-  const tokens = tokenizerRecursive(msgContentSplit, { conditions: null, command: null });
-
-  const arg = content.slice(match.index);
-
-  return { conditions: tokens.conditions, command: tokens.command, arg: arg }
+export function tokenizer(msgContent: string): Tokens {
+  const msgContentSplit = msgContent.trim().slice(1).trim().split(/\s+/);
+  return tokenizerRecursive(msgContentSplit, {}, '')
 }

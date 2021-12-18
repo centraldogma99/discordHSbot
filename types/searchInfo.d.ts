@@ -1,9 +1,9 @@
 import { Card } from "./card";
 import { cardClass } from "./cardClass";
-import { conditionObj } from "./condition"
+import Condition from "./condition"
 
 export interface searchInfo {
-  conditions?: conditionObj,
+  conditions?: Condition,
   fromDefault?: boolean,
   card?: Card
 }
