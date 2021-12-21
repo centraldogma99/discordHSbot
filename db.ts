@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema<User>({
   tag: { type: String, default: "" },
   gameMode: { type: String, default: "wild" },
   paginateStep: { type: Number, default: 3 },
-  languageMode: { type: String, default: cardLanguage },
+  languageMode: { type: String, default: "ko_KR" },
   quizConfig: {
     gameMode: { type: String, default: "standard" },
     rarity: { type: Number, default: 0 },
