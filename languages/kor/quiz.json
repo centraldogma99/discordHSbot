@@ -1,0 +1,78 @@
+[
+  {
+    "name": "QUIZ-HINT-1",
+    "string": "💡 This card has {letters} letters, the first {length} letters are {string}.(Ignore spacing)"
+  },
+  {
+    "name": "QUIZ-HINT-2",
+    "string": "💡 This card has {letters} letters, the last {length} letters are {string}.(Ignore spacing)"
+  },
+  {
+    "name": "QUIZ-HINT-3-NO-TEXT",
+    "string": "💡 This card has no text."
+  },
+  {
+    "name": "QUIZ-HINT-3",
+    "string": "💡 **Card text hint**  _{string}..._ (omission)"
+  },
+  {
+    "name": "QUIZ-HINT-4",
+    "string": "💡 This card have spacing: {string}."
+  },
+  {
+    "name": "QUIZ-PARTICIPATE-POINT",
+    "string": "💰 You received {point} points for taking quiz!"
+  },
+  {
+    "name": "QUIZ-TIP",
+    "string": "ℹ️  Type `-quit` to cancel the quiz.\nℹ️  Type `-hint` to receive a hint.\nGuess the card's name! **{timeLeft} seconds left, {chances} attempts remaining**\nUse prefix '.' while typing commands and answers. (e.g.) .soulboundashtongue\n💰 **Prize point : {prize}**"
+  },
+  {
+    "name": "QUIZ-NO-REMAINING-HINT",
+    "string": "‼️  All hints were used."
+  },
+  {
+    "name": "QUIZ-PRIZE-POINT",
+    "string": "💰 Prize point : {prize}"
+  },
+  {
+    "name": "QUIZ-INCORRECT",
+    "string": "❌  Incorrect! ${chances} attempts remaining."
+  },
+  {
+    "name": "QUIZ-CORRECT",
+    "string": "⭕️  <@!{user}> guessed it correctly!"
+  },
+  {
+    "name": "QUIZ-CORRECT-PRIZE",
+    "string": "💰 You received {prize} points for the correct guess!"
+  },
+  {
+    "name": "QUIZ-TIMEUP",
+    "string": "⏰  Time's up!"
+  },
+  {
+    "name": "QUIZ-NO-REMAINING-ATTEMPT",
+    "string": "❌  You have no attempts left."
+  },
+  {
+    "name": "QUIZ-GIVEUP",
+    "string": "❌  You gave up the quiz."
+  },
+  {
+    "name": "QUIZ-NEWQUIZ",
+    "string": "New quiz!"
+  },
+  {
+    "name": "QUIZ-ANSWER-REVEAL",
+    "string": "💡 The answer is: `{answer}`!"
+  },
+  {
+    "name": "QUIZ-STARTING-NEW",
+    "string": "☑️  Starting a new quiz..."
+  },
+  {
+    "name": "QUIZ-ERROR-STARTING",
+    "string": "An error occured while starting the quiz. Try again later!"
+  }
+]

@@ -1,11 +1,19 @@
 [
   {
+    "name": "CONFIG-CONFIGURING",
+    "string": "**{name}가 설정 중...**"
+  },
+  {
+    "name": "LANGUAGE-CONFIG-TITLE",
+    "string": "**⚙️ 언어 설정(Language Config)**"
+  },
+  {
     "name": "GAMEMODE-CONFIG-TITLE",
     "string": "**⚙️ 게임모드 설정**  *`정규`로 설정시 야생 카드는 검색되지 않습니다.*"
   },
   {
-    "name": "GAMEMODE-CONFIG-RESULT",
-    "string": "{user}의 {config}가 {value}로 설정되었습니다."
+    "name": "CONFIG-RESULT",
+    "string": "☑️ {user}의 `{config}`가 {value}로 설정되었습니다."
   },
   {
     "name": "PAGE-CONFIG-TITLE",
@@ -26,6 +34,5 @@
   {
     "name": "PAGE-CONFIG-BUTTON",
     "string": "페이지 설정"
-  },
-  {}
+  }
 ]

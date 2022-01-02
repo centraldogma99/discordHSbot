@@ -1,0 +1,110 @@
+[
+  {
+    "name": "QUIZCONFIG-RESULT",
+    "string": "☑️ `{config}`is set to `{string}`."
+  },
+  {
+    "name": "QUIZCONFIG-NOINPUT",
+    "string": "？ No input received, time out!"
+  },
+  {
+    "name": "QUIZCONFIG-INVALID",
+    "string": "‼️ Invalid value."
+  },
+  {
+    "name": "WILD",
+    "string": "Wild"
+  },
+  {
+    "name": "STANDARD",
+    "string": "Standard"
+  },
+  {
+    "name": "WILD-NO-STANDARD",
+    "string": "Wild(Except standard)"
+  },
+  {
+    "name": "QUIZCONFIG-GAMEMODE-TITLE",
+    "string": "**⚙️ Quiz game mode**"
+  },
+  {
+    "name": "QUIZCONFIG-STANDARD-BASIC-ERROR",
+    "string": "❌  You can't choose `Standard` gamemode and `basic` rarity together(There is no basic cards in standard)."
+  },
+  {
+    "name": "LEGENDARY",
+    "string": "Legendary"
+  },
+  {
+    "name": "EPIC",
+    "string": "Epic"
+  },
+  {
+    "name": "RARE",
+    "string": "Rare"
+  },
+  {
+    "name": "COMMON",
+    "string": "Common"
+  },
+  {
+    "name": "BASIC",
+    "string": "Basic"
+  },
+  {
+    "name": "QUIZCONFIG-RARITY-TITLE",
+    "string": "**⚙️ Quiz card rarity**   *Press the blue button to remove the card rarity filter.*"
+  },
+  {
+    "name": "QUIZCONFIG-RARITY-REMOVED",
+    "string": "☑️ Removed card rarity filter."
+  },
+  {
+    "name": "QUIZCONFIG-DIFFICULTY-TITLE",
+    "string": "**⚙️ Quiz difficulty level**   *bigger number = harder*"
+  },
+  {
+    "name": "QUIZCONFIG-CHANCE-BUTTON",
+    "string": "Quiz chance count config"
+  },
+  {
+    "name": "QUIZCONFIG-CHANCE-TITLE",
+    "string": "**⚙️ Quiz chance count config**  Current config : `{value}`"
+  },
+  {
+    "name": "QUIZCONFIG-CHANCE-MESSAGE",
+    "string": "⚙️ Enter `chance count` value in a chat(1 ~ 9). Current config : `{value}`"
+  },
+  {
+    "name": "QUIZCONFIG-TIME-BUTTON",
+    "string": "Quiz time limit config"
+  },
+  {
+    "name": "QUIZCONFIG-TIME-TITLE",
+    "string": "**⚙️ Quiz time limit⏰ config**  Current config : `{value}`"
+  },
+  {
+    "name": "QUIZCONFIG-TIME-MESSAGE",
+    "string": "⚙️ Enter `time limit` value in a chat(1 ~ 6000). Current config : `{value}`"
+  },
+  {
+    "name": "CHANCE-COUNT",
+    "string": "Chance count"
+  },
+  {
+    "name": "TIME-LIMIT",
+    "string": "Quiz time limit"
+  },
+  {
+    "name": "GAME-MODE",
+    "string": "Quiz game mode"
+  },
+  {
+    "name": "RARITY",
+    "string": "Quiz card rarity filtering"
+  },
+  {
+    "name": "DIFFICULTY",
+    "string": "Difficulty level"
+  }
+]

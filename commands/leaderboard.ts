@@ -1,44 +1,38 @@
 import { MessageEmbed } from "discord.js";
 import mongo from "../db";
+import kor from "../languages/kor/leaderboard.json"
+import eng from "../languages/eng/leaderboard.json"
+import { loadUserConfig } from "../tools/loadUserConfig";
+import commandsKor from "../languages/kor/commands.json"
+import commandsEng from "../languages/eng/commands.json"
+import { parseLang, parseLangArr } from "../languages/parseLang"
 
 const numOfRanks = 15;
 
 async function leaderboard(message) {
+  const userConfig = await loadUserConfig(message.author);
+  const lang = userConfig.languageMode === 'ko_KR' ? parseLang(kor) : parseLang(eng);
+
   let users = await mongo.userModel.find({}).exec();
   users = users.sort((f, s) => s.stats.point - f.stats.point);
   let embed = new MessageEmbed()
     .setColor('#0099ff')
-    .setTitle(`**Innkeeper Leaderboard(EN)**`)
-    .setDescription('퀴즈를 풀거나 아래 링크에서 하트를 눌러 기여도를 획득할 수 있어요.\n배틀태그가 표시되지 않는다면 `@여관주인 !나`를 사용한 후에 다시 시도해 주세요.\n[🔗 한국 디스코드봇 리스트!](https://koreanbots.dev/bots/868188628709425162)');
+    .setTitle(lang("LEADERBOARD-TITLE"))
+    .setDescription(lang("LEADERBOARD-DESC"));
 
   let i = 0;
-  // let str1 = "";
-  // let str2 = "";
-  // let str3 = "";
-  // for(const user of users){
-  //   i++;
-  //   if(i > numOfRanks) break;
-  //   str1 += `${i}. \n`
-  //   str2 += `**${user.tag === "" ? "돌붕이" : user.tag}**  \n`
-  //   str3 += `\`${user.stats.point}\`\n`
-  // }
-  // embed = embed.addFields(
-  //   {name: '순위', value: str1, inline: true},
-  //   {name: '태그', value: str2, inline: true},
-  //   {name: '기여도', value: str3, inline: true},
-  // )
   let str = "";
   for (const user of users) {
     i++;
-    str += `${i}. **${user.tag === "" ? "돌붕이" : user.tag}** \`${user.stats.point}\`\n`
-    if (i === 15) break;
+    str += `${i}. **${user.tag === "" ? lang("LEADERBOARD-UNKNOWN-BATTLETAG") : user.tag}** \`${user.stats.point}\`\n`
+    if (i === numOfRanks) break;
   }
   embed = embed.addFields({ name: '\u200B', value: str });
   await message.channel.send({ embeds: [embed] });
 }
 
 module.exports = {
-  name: ['leaderboard', 'scoreboard', 'rank', 'ranking'],
+  name: [...parseLangArr(commandsKor)("LEADERBOARD"), ...parseLangArr(commandsEng)("LEADERBOARD")],
   description: 'leaderboard',
   execute: leaderboard
 }

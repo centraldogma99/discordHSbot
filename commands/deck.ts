@@ -1,36 +1,44 @@
 import { BlizzardToken } from "../tools/BlizzardToken";
 import { Paginator } from "../tools/Paginator";
-import { safeAxiosGet } from "../tools/helpers/safeAxiosGet";
+import safeAxios from "../tools/helpers/safeAxiosGet";
 import CONSTANTS from "../constants";
 import { loadUserConfig } from "../tools/loadUserConfig";
 import { Message, MessageEmbed } from "discord.js";
 import { requestScheduler as RequestScheduler } from "../tools/helpers/RequestScheduler";
 import { uniqueArray } from "../tools/helpers/uniqueArray";
 import { Card } from "../types/card";
+import { ApiResDeckCode } from "../types/ApiRes";
+import loadLang from "../languages/loadLang";
+import commandsKor from "../languages/kor/commands.json"
+import commandsEng from "../languages/eng/commands.json"
+import { parseLangArr } from "../languages/parseLang"
+
+const axios = safeAxios();
 
 async function deck(message: Message, args: string) {
-  const cardLanguage = process.env.CARD_LANGUAGE;
+  const userConfig = await loadUserConfig(message.author);
+  const lang = loadLang(userConfig.languageMode)
+
   if (!args) {
-    await message.channel.send("❌ Please enter a keyword to search.")
+    await message.channel.send(lang("ERROR-NO-KEYWORD"))
     return;
   }
   let code = args.split('\n').filter(line => line != '').filter(line => !line.startsWith('#'))[0];
-  const userConfig = await loadUserConfig(message.author);
-  const searchingMessage = await message.channel.send("🔍 Searching...")
+
+  const searchingMessage = await message.channel.send(lang("SEARCHING"))
 
   const blizzardToken = await BlizzardToken.getToken();
-  let deckInfoPromise = () => safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/deck`,
+  let deckInfoPromise = () => axios.get<ApiResDeckCode>(
+    `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/deck`,
     {
       params: {
-        locale: cardLanguage,
+        locale: userConfig.languageMode,
         code: code,
         access_token: blizzardToken
       }
     })
     .then(res => res.data)
-    .catch(e => {
-      throw e;
-    })
+
   let deckInfo;
   try {
     deckInfo = await RequestScheduler.getRes(RequestScheduler.addReq(deckInfoPromise));
@@ -38,14 +46,16 @@ async function deck(message: Message, args: string) {
   } catch (e) {
     console.log(e.response.status);
     if (e.response.status === 400)
-      message.channel.send("‼️ Invalid deck code.");
+      message.channel.send(lang("ERROR-INVALID-DECKCODE"));
     else
       throw e;
     return;
   }
+
   let cards: Card[] = deckInfo.cards.sort((a: Card, b: Card) => a.manaCost - b.manaCost);
   let names = cards.map(card => card.name)
-  let costsAndRarities = Object.fromEntries(cards.map(card => [card.name, { cost: card.manaCost, isLegendary: card.rarityId == 5 ? '⭐' : '' }]))
+  let costsAndRarities = Object.fromEntries(cards.map(card =>
+    [card.name, { cost: card.manaCost, isLegendary: card.rarityId == 5 ? '⭐' : '' }]))
   let obj = {};
   for (const name of names) {
     if (!obj[name]) obj[name] = 1;
@@ -54,10 +64,10 @@ async function deck(message: Message, args: string) {
   const str = Object.keys(obj).map(
     k => `${obj[k]} x (${costsAndRarities[k].cost}) ${k} ${costsAndRarities[k].isLegendary}`
   ).join('\n')
-  // await message.channel.send(`**${deckInfo.class.name} 덱**`);
+
   const embed = new MessageEmbed()
     .setColor('#0099ff')
-    .setTitle(`**${deckInfo.class.name} 덱**`)
+    .setTitle(lang("DECKLIST-TITLE").replace("{class}", deckInfo.class.name))
     .setDescription(str)
     .setThumbnail(deckInfo.hero.image)
   await message.channel.send({ embeds: [embed] });
@@ -88,7 +98,7 @@ async function deck(message: Message, args: string) {
 }
 
 module.exports = {
-  name: ["deck", "decklist"],
+  name: [...parseLangArr(commandsKor)("DECK"), ...parseLangArr(commandsEng)("DECK")],
   description: "decklist",
   execute: deck
 };

@@ -1,7 +1,10 @@
 import mongo from '../db';
 import CONSTANTS from '../constants';
 import { uniqueArray } from './helpers/uniqueArray';
-import { safeAxiosGet } from './helpers/safeAxiosGet';
+import safeAxios from './helpers/safeAxiosGet';
+import ApiRes from '../types/ApiRes';
+
+const axios = safeAxios();
 
 export function postDownload() {
   // after download ended
@@ -22,7 +25,8 @@ export async function downloadDB(blizzardToken: number | string) {
   let promises = [];
   let cards;
   let doc = [];
-  const wildCardCount = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+  const wildCardCount = await axios.get<ApiRes>(
+    `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
     {
       params: {
         locale: cardLanguage,
@@ -32,9 +36,10 @@ export async function downloadDB(blizzardToken: number | string) {
       }
     })
     .then(res => res.data.cardCount)
-    .catch(console.log)
+
   for (let i = 1; i <= Math.ceil(wildCardCount / pageSize); i++) {
-    promises[i - 1] = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+    promises[i - 1] = await axios.get<ApiRes>(
+      `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
           locale: cardLanguage,
@@ -78,7 +83,8 @@ export async function downloadDB(blizzardToken: number | string) {
   }
 
   promises = []
-  const stdCardCount = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+  const stdCardCount = await axios.get<ApiRes>(
+    `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
     {
       params: {
         locale: cardLanguage,
@@ -89,10 +95,10 @@ export async function downloadDB(blizzardToken: number | string) {
       }
     })
     .then(res => res.data.cardCount)
-    .catch(console.log)
 
   for (let i = 1; i <= Math.ceil(stdCardCount / pageSize); i++) {
-    promises[i - 1] = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+    promises[i - 1] = await axios.get<ApiRes>(
+      `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
           locale: cardLanguage,
@@ -144,7 +150,8 @@ export async function downloadDB(blizzardToken: number | string) {
   }
 
   promises = []
-  const battlegroundsCardCount = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+  const battlegroundsCardCount = await axios.get<ApiRes>(
+    `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
     {
       params: {
         locale: cardLanguage,
@@ -155,9 +162,10 @@ export async function downloadDB(blizzardToken: number | string) {
       }
     })
     .then(res => res.data.cardCount)
-    .catch(console.log)
+
   for (let i = 1; i <= Math.ceil(battlegroundsCardCount / pageSize); i++) {
-    promises[i - 1] = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+    promises[i - 1] = await axios.get<ApiRes>(
+      `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
           locale: cardLanguage,
@@ -168,31 +176,31 @@ export async function downloadDB(blizzardToken: number | string) {
         }
       })
       .then(res => res.data.cards)
-      .catch(console.log)
-  }
-  cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
-  doc = cards.map(card => {
-    return {
-      alias: card.name.replace(/\s/g, '').toLowerCase(),
-      name: card.name,
-      image: card.image,
-      imageGold: card.imageGold,
-      childIds: card.childIds,
-      rarityId: card.rarityId,
-      tier: card.battlegrounds ? (card.battlegrounds.tier ?? "hero") : null,
-      classId: card.classId,
-      text: card.text,
-      health: card.health,
-      attack: card.attack,
-      minionTypeId: card.minionTypeId
+
+    cards = (await Promise.all(promises)).reduce((first, second) => first.concat(second));
+    doc = cards.map(card => {
+      return {
+        alias: card.name.replace(/\s/g, '').toLowerCase(),
+        name: card.name,
+        image: card.image,
+        imageGold: card.imageGold,
+        childIds: card.childIds,
+        rarityId: card.rarityId,
+        tier: card.battlegrounds ? (card.battlegrounds.tier ?? "hero") : null,
+        classId: card.classId,
+        text: card.text,
+        health: card.health,
+        attack: card.attack,
+        minionTypeId: card.minionTypeId
+      }
+    })
+    doc = uniqueArray(doc, "alias");
+    try {
+      await mongo.battlegroundsCardModel.insertMany(doc)
+    } catch (e) {
+      console.log(e);
     }
-  })
-  doc = uniqueArray(doc, "alias");
-  try {
-    await mongo.battlegroundsCardModel.insertMany(doc)
-  } catch (e) {
-    console.log(e);
+    // mongo.cardAliasModel.find().then(console.log)
+    // mongo.cardAliasStandardModel.find().then(console.log)
   }
-  // mongo.cardAliasModel.find().then(console.log)
-  // mongo.cardAliasStandardModel.find().then(console.log)
 }

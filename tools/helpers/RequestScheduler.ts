@@ -1,6 +1,6 @@
-class RequestScheduler<T> {
-  queue: { key: number, value: (() => Promise<T[]>) | (() => Promise<T>) }[];
-  resQueue: { key: number, value: T | T[] }[];
+class RequestScheduler {
+  queue: { key: number, value: (() => Promise<any[]>) | (() => Promise<any>) }[];
+  resQueue: { key: number, value: any | any[] }[];
   queueId = 0;
   recentReqsInHour = 0;
   recentReqsInSec = 0;
@@ -18,14 +18,14 @@ class RequestScheduler<T> {
     // 100 requests per second
     // 36,000 requests per hour
     // error => return Error object
-    let f = () => {
+    const f = () => {
       const v = this.queue.shift()
       if (v) {
         let size: number;
         if (typeof v.value === 'function') {
           size = 1;
           v.value()
-            .then((res: T | T[]) => this.resQueue.push({ key: v.key, value: res }))
+            .then(res => this.resQueue.push({ key: v.key, value: res }))
             .catch(e => {
               console.log(e);
               this.resQueue.push({ key: v.key, value: e })
@@ -56,7 +56,7 @@ class RequestScheduler<T> {
     return [`${this.recentReqsInHour} reqs/h`, `${this.recentReqsInSec} reqs/s`];
   }
 
-  addReq(reqFunc: (() => Promise<T[]>) | (() => Promise<T>)): number {
+  addReq(reqFunc: (() => Promise<any[]>) | (() => Promise<any>)): number {
     if (!Array.isArray(reqFunc) && typeof reqFunc != 'function') return null;
     this.queue.push({ key: this.queueId, value: reqFunc });
     if (this.queueId < 1000000) {
@@ -67,7 +67,7 @@ class RequestScheduler<T> {
     }
   }
 
-  getRes(queueId: number): Promise<T | T[]> {
+  getRes(queueId: number): Promise<any | any[]> {
     // @queueId는 null일 수 있음
     if (queueId === null) return null;
     return new Promise(resolve => {
@@ -82,5 +82,5 @@ class RequestScheduler<T> {
   }
 }
 
-const requestScheduler = new RequestScheduler<string>(10);
+const requestScheduler = new RequestScheduler(10);
 export { requestScheduler }

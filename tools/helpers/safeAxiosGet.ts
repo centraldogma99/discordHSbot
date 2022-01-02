@@ -2,9 +2,7 @@
   Promise retry design pattern
   https://stackoverflow.com/questions/38213668/promise-retry-design-patterns/38225011
 */
-// FIXME legacy code
-
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 // 주어진 시간 이후에 주어진 이유로 reject하는 promise를 만들어 준다.
 function rejectDelay(reason: string) {
@@ -14,13 +12,30 @@ function rejectDelay(reason: string) {
   })
 }
 
-export function safeAxiosGet(address: string, params: { params: {} }): Promise<any> {
-  const attempt = axios.get(address, params);
-  const maxTrial = 5;
-  let p = Promise.reject();
+const safeAxios = (trial?: number) => {
+  return {
+    get: <T>(...rest: Parameters<typeof axios.get>): Promise<AxiosResponse<T>> => {
+      const attempt = axios.get<T>(...rest);
+      const maxTrial = trial ?? 5;
+      let p = Promise.reject();
 
-  for (let i = 0; i < maxTrial; i++) {
-    (p as Promise<unknown>) = p.catch(() => attempt).catch(rejectDelay);
+      for (let i = 0; i < maxTrial; i++) {
+        (p as Promise<unknown>) = p.catch(() => attempt).catch(rejectDelay);
+      }
+      return p;
+    },
+
+    post: <T>(...rest: Parameters<typeof axios.post>): Promise<AxiosResponse<T>> => {
+      const attempt = axios.post<T>(...rest);
+      const maxTrial = trial ?? 5;
+      let p = Promise.reject();
+
+      for (let i = 0; i < maxTrial; i++) {
+        (p as Promise<unknown>) = p.catch(() => attempt).catch(rejectDelay);
+      }
+      return p;
+    }
   }
-  return p;
 }
+
+export default safeAxios;

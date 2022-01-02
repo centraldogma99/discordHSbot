@@ -1,38 +1,78 @@
-import { Message } from "discord.js";
+import { Message, MessageEmbed, MessageButton, MessageActionRow } from "discord.js";
+import commandsKor from "../languages/kor/commands.json"
+import commandsEng from "../languages/eng/commands.json"
+import { parseLangArr } from "../languages/parseLang"
+import { loadUserConfig } from "../tools/loadUserConfig";
+import korSet from "../languages/kor/howto.json"
+import engSet from "../languages/eng/howto.json"
 
-function howto(message: Message) {
-  const str =
-    'ℹ️ Innkeeper is a discord bot that provides card search and quiz function.\n\
-Developer : Osol2#7777\n\
-\n\
-🔍 **You can use commands after our prefix .(dot)**\n\
-\n\
-🔍 Search commands\n\
-`.[keyword]`              Search a card with a name that most matches with the keyword.\n\
-`name [keyword]`     Search all cards that have [keyword] in its **name**.\n\
-`token [keyword]`     Search token cards of a card that matches [keyword].\n\
-`all [keyword]`     Search all cards [검색어]가 들어간 모든 카드를 검색합니다(카드 텍스트 포함).\n\
-`deck [deck code]`       Search card list of [deck code].\n\
-\n\
-⏳ Quiz commands\n\
-`quiz`                Take quiz(with card image).\n\
-`quizconfig`          Config pool(e.g. standard/wild, legendary/epic/rare)/difficulty of cards in quiz.\n\
-\n\
-⚙️ Personal config commands\n\
-`me`                Check my contribution points.\n\
-`config`                Confirm and change my configs(game mode/page).\n\
-`ranking`                Check contribution point leaderboard.\n\
-\n\
-💡 You can add **class** condition right after prefix, like below.\n\
-**ex)** `."priest" all battlecry`    `."전사" 갈라크론드`\n\
-\n\
-💡 `@여관주인`과 `!<명령어>` 사이에는 대부분 자동으로 띄어쓰기가 들어가지만 오류가 날 경우 확인해주시면 좋습니다.\n\
-**ex)** `@여관주인!관련 이세라` (❌)    `@여관주인 !관련 이세라` (⭕️)'
-  message.channel.send(str);
+
+
+async function howto(message: Message) {
+  const userConfig = await loadUserConfig(message.author)
+  const lang = userConfig.languageMode === 'ko_KR' ? korSet : engSet;
+  let currentPage = 0;
+
+  const embeds = lang.pages.map(page =>
+    new MessageEmbed()
+      .setColor('#0099ff')
+      .setTitle(lang.title)
+      .setDescription(page.desc)
+      .addFields(page.fields)
+  )
+
+  const showMessages = async () => {
+    let moveButtons = [
+      new MessageButton()
+        .setCustomId('prev')
+        .setLabel('이전')
+        .setStyle('SECONDARY'),
+      new MessageButton()
+        .setCustomId('next')
+        .setLabel(`다음 (${currentPage + 1}/${lang.pages.length})`)
+        .setStyle('PRIMARY')
+    ]
+
+    if (lang.pages.length - currentPage - 1 === 0) {
+      moveButtons[1].setDisabled(true);
+    } else {
+      moveButtons[1].setDisabled(false);
+    }
+    if (lang.pages.length - currentPage - 1 === 4) {
+      moveButtons[0].setDisabled(true);
+    } else {
+      moveButtons[0].setDisabled(false);
+    }
+
+    const p = await message.channel.send({
+      embeds: [embeds[currentPage]],
+      components: [new MessageActionRow().addComponents(moveButtons)]
+    });
+    try {
+      const i = await p.awaitMessageComponent({
+        componentType: 'BUTTON',
+        time: 30000
+      })
+      if ((i.component as MessageButton).customId === 'prev') {
+        p.delete();
+        currentPage--;
+        showMessages();
+      } else {
+        p.delete();
+        currentPage++;
+        showMessages();
+      }
+    } catch (e) {
+      p.delete()
+      return;
+    }
+  }
+
+  showMessages();
 }
 
 module.exports = {
-  name: ['help', 'howto', 'commands', '?'],
+  name: [...parseLangArr(commandsKor)("HOWTO"), ...parseLangArr(commandsEng)("HOWTO")],
   description: 'howto',
   execute: howto
 }

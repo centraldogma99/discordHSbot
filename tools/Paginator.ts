@@ -9,7 +9,9 @@ export class Paginator {
   paginateStep: number;
   // @cursor 최근에 출력된 페이지의 첫 번째 항목의 인덱스
   cursor: number;
-  promises: ({ value: (() => Promise<imageAddr>)[], isPromise: true } | { value: (() => Promise<imageAddr[]>)[], isPromise: true } | { value: imageAddr[], isPromise: false });
+  promises: ({ value: (() => Promise<imageAddr>)[], isPromise: true }
+    | { value: (() => Promise<imageAddr[]>)[], isPromise: true }
+    | { value: imageAddr[], isPromise: false });
   // @images promise가 resolve된 후 반환된 image들이 저장된다.
   images: imageAddr[];
   lengthEnabled: boolean;

@@ -25,7 +25,7 @@
   },
   {
     "name": "DECKLIST-TITLE",
-    "string": "{class} 덱"
+    "string": "**{class} 덱**"
   },
   {
     "name": "SEARCH-TOKENS",

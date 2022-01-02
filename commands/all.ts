@@ -8,26 +8,36 @@ import { uniqueArray } from '../tools/helpers/uniqueArray';
 import { range } from '../tools/helpers/range';
 import CONSTANTS from '../constants';
 import { BlizzardToken } from "../tools/BlizzardToken";
-import { safeAxiosGet } from "../tools/helpers/safeAxiosGet";
+import safeAxios from "../tools/helpers/safeAxiosGet";
 import { Message } from "discord.js";
 import { Card } from "../types/card";
 import { searchInfo } from "../types/searchInfo"
+import ApiRes from "../types/ApiRes"
+import loadLang from "../languages/loadLang";
+import commandsKor from "../languages/kor/commands.json"
+import commandsEng from "../languages/eng/commands.json"
+import { parseLangArr } from "../languages/parseLang"
+import { AxiosResponse } from "axios";
+
+const axios = safeAxios();
 
 async function all(message: Message, args: string, info: searchInfo) {
-  const cardLanguage = process.env.CARD_LANGUAGE;
+  const userConfig = await loadUserConfig(message.author);
+  const lang = loadLang(userConfig.languageMode)
+
   if (!args) {
-    await message.channel.send("❌ Please enter a keyword to search.")
+    await message.channel.send(lang("ERROR-NO-KEYWORD"))
     return;
   }
 
   const blizzardToken = await BlizzardToken.getToken();
-  const userConfig = await loadUserConfig(message.author);
 
   function axiosShort(page: number) {
-    return () => safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+    return () => axios.get<ApiRes>(
+      `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
-          locale: cardLanguage,
+          locale: userConfig.languageMode,
           textFilter: encodeURI(args),
           gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
           tier: info?.conditions?.tier ?? null,
@@ -41,19 +51,19 @@ async function all(message: Message, args: string, info: searchInfo) {
       .then(res => res.data.cards)
       .then(cards => uniqueArray(cards, "name"))
       .then((cards: Card[]) => cards.map(card => card.image))
-      .catch(e => { throw e })
   }
 
-  const searchingMessage = await message.channel.send("🔍 Searching...")
+  const searchingMessage = await message.channel.send(lang("SEARCHING"))
   await message.channel.sendTyping().catch(console.log);
 
   let cardCount: number;
-  let temp;
+  let temp: AxiosResponse<ApiRes>;
   try {
-    temp = await safeAxiosGet(`https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
+    temp = await axios.get<ApiRes>(
+      `https://${CONSTANTS.apiRequestRegion}.api.blizzard.com/hearthstone/cards`,
       {
         params: {
-          locale: cardLanguage,
+          locale: userConfig.languageMode,
           textFilter: encodeURI(args),
           gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
           tier: info?.conditions?.tier ?? null,
@@ -67,16 +77,16 @@ async function all(message: Message, args: string, info: searchInfo) {
       .catch(e => { throw e })
   } catch (e) {
     console.log(e);
-    message.channel.send("‼️ An error occurred while starting the quiz. Try again later!");
+    message.channel.send(lang("ERROR-RETRIEVE-API"));
     return;
   }
 
   cardCount = temp.data.cardCount;
   if (cardCount == 0) {
-    message.channel.send("‼️ No results found! Make sure there are no spaces between letters.");
+    message.channel.send(lang("ERROR-NO-RESULT"));
     return;
   }
-  let firstCards = uniqueArray(temp.data.cards as Card[], "name");
+  let firstCards = uniqueArray(temp.data.cards, "name");
 
   let promises: (() => Promise<string[]>)[];
   if (Math.ceil(cardCount / CONSTANTS.pageSize) > 1) {
@@ -113,7 +123,7 @@ async function all(message: Message, args: string, info: searchInfo) {
 }
 
 module.exports = {
-  name: ['all', 'every'],
+  name: [...parseLangArr(commandsKor)("ALL"), ...parseLangArr(commandsEng)("ALL")],
   description: 'all',
   execute: all
 }
