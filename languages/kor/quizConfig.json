@@ -1,110 +1,110 @@
 [
   {
     "name": "QUIZCONFIG-RESULT",
-    "string": "☑️ `{config}`is set to `{string}`."
+    "string": "☑️ `{config}`가 `{string}`로 설정되었습니다."
   },
   {
     "name": "QUIZCONFIG-NOINPUT",
-    "string": "？ No input received, time out!"
+    "string": "？ 입력이 없어 종료됩니다."
   },
   {
     "name": "QUIZCONFIG-INVALID",
-    "string": "‼️ Invalid value."
+    "string": "‼️ 유효하지 않은 값입니다."
   },
   {
     "name": "WILD",
-    "string": "Wild"
+    "string": "야생"
   },
   {
     "name": "STANDARD",
-    "string": "Standard"
+    "string": "정규"
   },
   {
     "name": "WILD-NO-STANDARD",
-    "string": "Wild(Except standard)"
+    "string": "야생(정규 제외)"
   },
   {
     "name": "QUIZCONFIG-GAMEMODE-TITLE",
-    "string": "**⚙️ Quiz game mode**"
+    "string": "**⚙️ 퀴즈 게임 모드**"
   },
   {
     "name": "QUIZCONFIG-STANDARD-BASIC-ERROR",
-    "string": "❌  You can't choose `Standard` gamemode and `basic` rarity together(There is no basic cards in standard)."
+    "string": "❌  `정규 `게임모드와 `기본` 등급을 함께 선택할 수 없습니다(정규에는 기본 카드가 없습니다)."
   },
   {
     "name": "LEGENDARY",
-    "string": "Legendary"
+    "string": "전설"
   },
   {
     "name": "EPIC",
-    "string": "Epic"
+    "string": "특급"
   },
   {
     "name": "RARE",
-    "string": "Rare"
+    "string": "희귀"
   },
   {
     "name": "COMMON",
-    "string": "Common"
+    "string": "일반"
   },
   {
     "name": "BASIC",
-    "string": "Basic"
+    "string": "기본"
   },
   {
     "name": "QUIZCONFIG-RARITY-TITLE",
-    "string": "**⚙️ Quiz card rarity**   *Press the blue button to remove the card rarity filter.*"
+    "string": "**⚙️ 퀴즈 카드 희귀도**   *카드 희귀도 필터를 설정하려면 아래 버튼을 눌러주세요.*"
   },
   {
     "name": "QUIZCONFIG-RARITY-REMOVED",
-    "string": "☑️ Removed card rarity filter."
+    "string": "☑️ 카드 희귀도 필터를 제거했습니다."
   },
   {
     "name": "QUIZCONFIG-DIFFICULTY-TITLE",
-    "string": "**⚙️ Quiz difficulty level**   *bigger number = harder*"
+    "string": "**⚙️ 퀴즈 난이도**   *숫자가 클 수록 어렵습니다.*"
   },
   {
     "name": "QUIZCONFIG-CHANCE-BUTTON",
-    "string": "Quiz chance count config"
+    "string": "퀴즈 기회 횟수 설정"
   },
   {
     "name": "QUIZCONFIG-CHANCE-TITLE",
-    "string": "**⚙️ Quiz chance count config**  Current config : `{value}`"
+    "string": "**⚙️ 퀴즈 기회 횟수**  현재 설정 : `{value}`"
   },
   {
     "name": "QUIZCONFIG-CHANCE-MESSAGE",
-    "string": "⚙️ Enter `chance count` value in a chat(1 ~ 9). Current config : `{value}`"
+    "string": "⚙️ 설정할 `기회 횟수` 값을 채팅으로 입력 해 주세요(1 ~ 9). 현재 설정 : `{value}`"
   },
   {
     "name": "QUIZCONFIG-TIME-BUTTON",
-    "string": "Quiz time limit config"
+    "string": "퀴즈 시간 제한 설정"
   },
   {
     "name": "QUIZCONFIG-TIME-TITLE",
-    "string": "**⚙️ Quiz time limit⏰ config**  Current config : `{value}`"
+    "string": "**⚙️ 퀴즈 시간 제한⏰**  현재 설정 : `{value}`"
   },
   {
     "name": "QUIZCONFIG-TIME-MESSAGE",
-    "string": "⚙️ Enter `time limit` value in a chat(1 ~ 6000). Current config : `{value}`"
+    "string": "⚙️ 설정할 `시간 제한` 값을 채팅으로 입력 해 주세요(1 ~ 6000). 현재 설정 : `{value}`"
   },
   {
     "name": "CHANCE-COUNT",
-    "string": "Chance count"
+    "string": "기회 횟수"
   },
   {
     "name": "TIME-LIMIT",
-    "string": "Quiz time limit"
+    "string": "퀴즈 시간 제한"
   },
   {
     "name": "GAME-MODE",
-    "string": "Quiz game mode"
+    "string": "퀴즈 게임 모드"
   },
   {
     "name": "RARITY",
-    "string": "Quiz card rarity filtering"
+    "string": "퀴즈 카드 희귀도 필터"
   },
   {
     "name": "DIFFICULTY",
-    "string": "Difficulty level"
+    "string": "난이도"
   }
 ]

@@ -86,7 +86,7 @@ async function all(message: Message, args: string, info: searchInfo) {
     message.channel.send(lang("ERROR-NO-RESULT"));
     return;
   }
-  let firstCards = uniqueArray(temp.data.cards, "name");
+  const firstCards = uniqueArray(temp.data.cards, "name");
 
   let promises: (() => Promise<string[]>)[];
   if (Math.ceil(cardCount / CONSTANTS.pageSize) > 1) {

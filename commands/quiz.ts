@@ -1,5 +1,5 @@
 import { loadUserConfig } from "../tools/loadUserConfig";
-import mongo from "../db";
+import { stdCardModel, stdCardModelEng, allCardModel, allCardModelEng, onlyWildCardModel, onlyWildCardModelEng } from "../db";
 import { generateQuiz } from "../tools/generateQuiz";
 import { Message, MessageActionRow, MessageButton } from 'discord.js';
 import { buildSpacing } from "../tools/helpers/buildSpacing";
@@ -87,11 +87,20 @@ async function quiz(message: Message) {
 
   let db;
   if (userConfig.quizConfig.gameMode == 'standard') {
-    db = mongo.cardAliasStandardModel;
+    if (userConfig.languageMode == 'ko_KR')
+      db = stdCardModel;
+    else if (userConfig.languageMode == 'en_US')
+      db = stdCardModelEng;
   } else if (userConfig.quizConfig.gameMode == 'wild') {
-    db = mongo.cardAliasModel;
+    if (userConfig.languageMode == 'ko_KR')
+      db = allCardModel;
+    else if (userConfig.languageMode == 'en_US')
+      db = allCardModelEng;
   } else if (userConfig.quizConfig.gameMode == 'realwild') {
-    db = mongo.cardRealWildModel;
+    if (userConfig.languageMode == 'ko_KR')
+      db = onlyWildCardModel;
+    else if (userConfig.languageMode == 'en_US')
+      db = onlyWildCardModelEng;
   }
 
   let targetCard: Card;
@@ -130,14 +139,14 @@ async function quiz(message: Message) {
   messageCollector.on('collect', async m => {
     if (!m.content.startsWith('.')) return;
     const content = m.content.slice(quizPrefix.length).toLowerCase();
-    if (content == 'quit') {
+    if (content === 'quit' || content === '종료') {
       messageCollector.stop("userAbort");
       return;
     }
     if (answerChecker(content)) {
       messageCollector.stop("answered");
       return;
-    } else if (content == 'hint') {
+    } else if (content === 'hint' || content === '힌트') {
       if (hintUsed.reduce((f, s) => f && s)) {
         message.channel.send(lang("QUIZ-NO-REMAINING-HINT"));
         return;

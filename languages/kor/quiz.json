@@ -1,78 +1,78 @@
 [
   {
     "name": "QUIZ-HINT-1",
-    "string": "💡 This card has {letters} letters, the first {length} letters are {string}.(Ignore spacing)"
+    "string": "💡 이 카드는 {letters}글자이며, 처음 {length}글자는 {string} 입니다(띄어쓰기 무시)."
   },
   {
     "name": "QUIZ-HINT-2",
-    "string": "💡 This card has {letters} letters, the last {length} letters are {string}.(Ignore spacing)"
+    "string": "💡이 카드는 {letters}글자이며, 마지막 {length}글자는 {string} 입니다(띄어쓰기 무시)."
   },
   {
     "name": "QUIZ-HINT-3-NO-TEXT",
-    "string": "💡 This card has no text."
+    "string": "💡 이 카드는 카드 텍스트가 없습니다."
   },
   {
     "name": "QUIZ-HINT-3",
-    "string": "💡 **Card text hint**  _{string}..._ (omission)"
+    "string": "💡 **카드 텍스트 힌트**  _{string}..._ (후략)"
   },
   {
     "name": "QUIZ-HINT-4",
-    "string": "💡 This card have spacing: {string}."
+    "string": "💡 이 카드의 띄어쓰기는 {string} 입니다."
   },
   {
     "name": "QUIZ-PARTICIPATE-POINT",
-    "string": "💰 You received {point} points for taking quiz!"
+    "string": "💰 퀴즈에 참여하여 {point}포인트를 획득했습니다."
   },
   {
     "name": "QUIZ-TIP",
-    "string": "ℹ️  Type `-quit` to cancel the quiz.\nℹ️  Type `-hint` to receive a hint.\nGuess the card's name! **{timeLeft} seconds left, {chances} attempts remaining**\nUse prefix '.' while typing commands and answers. (e.g.) .soulboundashtongue\n💰 **Prize point : {prize}**"
+    "string": "ℹ️  `.힌트`를 입력하여 힌트를 얻을 수 있습니다.\nℹ️  `.종료`를 입력하면 퀴즈가 종료됩니다.\n카드 이름을 맞춰보세요! **시간 제한 : {timeLeft}초, 기회: {chances}번**\n정답을 외치거나 명령어를 사용할 때는 앞에 점('.')을 사용해 주세요. (예시) .영혼이결속된잿빛혓바닥\n💰 **보상 포인트 : {prize}**"
   },
   {
     "name": "QUIZ-NO-REMAINING-HINT",
-    "string": "‼️  All hints were used."
+    "string": "‼️  모든 힌트를 사용했습니다."
   },
   {
     "name": "QUIZ-PRIZE-POINT",
-    "string": "💰 Prize point : {prize}"
+    "string": "💰 보상 포인트 : {prize}"
   },
   {
     "name": "QUIZ-INCORRECT",
-    "string": "❌  Incorrect! ${chances} attempts remaining."
+    "string": "❌  틀렸습니다! 기회가 ${chances}번 남았습니다."
   },
   {
     "name": "QUIZ-CORRECT",
-    "string": "⭕️  <@!{user}> guessed it correctly!"
+    "string": "⭕️  <@!{user}>가 정답을 맞췄습니다!"
   },
   {
     "name": "QUIZ-CORRECT-PRIZE",
-    "string": "💰 You received {prize} points for the correct guess!"
+    "string": "💰 정답을 맞춰서 보상으로 {prize}포인트를 획득했습니다!"
   },
   {
     "name": "QUIZ-TIMEUP",
-    "string": "⏰  Time's up!"
+    "string": "⏰  제한 시간 종료!"
   },
   {
     "name": "QUIZ-NO-REMAINING-ATTEMPT",
-    "string": "❌  You have no attempts left."
+    "string": "❌  기회를 모두 사용했습니다."
   },
   {
     "name": "QUIZ-GIVEUP",
-    "string": "❌  You gave up the quiz."
+    "string": "❌  퀴즈를 중단했습니다."
   },
   {
     "name": "QUIZ-NEWQUIZ",
-    "string": "New quiz!"
+    "string": "새로운 퀴즈!"
   },
   {
     "name": "QUIZ-ANSWER-REVEAL",
-    "string": "💡 The answer is: `{answer}`!"
+    "string": "💡 정답은 `{answer}` 입니다!"
   },
   {
     "name": "QUIZ-STARTING-NEW",
-    "string": "☑️  Starting a new quiz..."
+    "string": "☑️  새로운 퀴즈를 가져오는 중..."
   },
   {
     "name": "QUIZ-ERROR-STARTING",
-    "string": "An error occured while starting the quiz. Try again later!"
+    "string": "퀴즈를 시작하던 중 오류가 발생했습니다. 잠시 후에 다시 시도해 주세요!"
   }
 ]

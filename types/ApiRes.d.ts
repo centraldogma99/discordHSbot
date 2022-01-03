@@ -1,10 +1,13 @@
 import { Card } from "./card"
 
-export default interface ApiRes {
-  cards: Card[],
+export interface ApiResParent {
   cardCount: number,
   pageCount: number,
-  page: number
+  page: number,
+}
+
+export default interface ApiRes extends ApiResParent {
+  cards: Card[]
 }
 
 export interface ApiResDeckCode {

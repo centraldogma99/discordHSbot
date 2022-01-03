@@ -22,8 +22,9 @@ function callBackBuilder(args: string, class_?: cardClass) {
 export async function getMostMatchingCard(
   args: string,
   gameMode: gameMode,
-  class_: cardClass
+  class_: cardClass,
+  locale: string,
 ) {
-  const res = await cardNameInfer(args, gameMode);
+  const res = await cardNameInfer(args, gameMode, locale);
   return callBackBuilder(args, class_)(res);
 }

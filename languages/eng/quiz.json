@@ -25,7 +25,7 @@
   },
   {
     "name": "QUIZ-TIP",
-    "string": "ℹ️  Type `-quit` to cancel the quiz.\nℹ️  Type `-hint` to receive a hint.\nGuess the card's name! **{timeLeft} seconds left, {chances} attempts remaining**\nUse prefix '.' while typing commands and answers. (e.g.) .soulboundashtongue\n💰 **Prize point : {prize}**"
+    "string": "ℹ️  Type `.hint` to get a hint.\nℹ️  Type `.quit` to cancel the quiz.\nGuess the card's name! **{timeLeft} seconds left, {chances} attempts remaining**\nUse the prefix '.' when using commands and answers. (e.g.) .soulboundashtongue\n💰 **Prize point : {prize}**"
   },
   {
     "name": "QUIZ-NO-REMAINING-HINT",
@@ -57,7 +57,7 @@
   },
   {
     "name": "QUIZ-GIVEUP",
-    "string": "❌  You gave up the quiz."
+    "string": "❌  You aborted the quiz."
   },
   {
     "name": "QUIZ-NEWQUIZ",

@@ -28,7 +28,10 @@ async function childs(message: Message, args: string, info: searchInfo) {
     searchingMessage = await message.channel.send(lang("SEARCHING"));
     await message.channel.sendTyping().catch(console.log);
 
-    resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.conditions?.class_);
+    resCard = await getMostMatchingCard(args,
+      userConfig.gameMode,
+      info?.conditions?.class_,
+      userConfig.languageMode);
     if (!resCard) {
       message.channel.send(lang("ERROR-NO-RESULT"));
       return;

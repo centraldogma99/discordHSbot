@@ -1,38 +1,38 @@
 [
   {
     "name": "ERROR-NO-KEYWORD",
-    "string": "❌ 검색할 단어를 입력해 주세요."
+    "string": "❌ Enter a keyword."
   },
   {
     "name": "SEARCHING",
-    "string": "🔍 검색 중..."
+    "string": "🔍 Searching..."
   },
   {
     "name": "ERROR-NO-RESULT",
-    "string": "‼️ 검색 결과가 없습니다."
+    "string": "‼️ No search result."
   },
   {
     "name": "ERROR-NO-RELATED",
-    "string": "‼️ 검색한 카드의 토큰 카드가 없습니다."
+    "string": "‼️ No token cards found for keyword."
   },
   {
     "name": "ERROR-RETRIEVE-API",
-    "string": "‼️ 카드 정보를 가져오는 도중 오류가 발생했습니다. 문제가 계속되면 개발자에게 제보해 주세요."
+    "string": "‼️ Error occured while fetchiing card info. If same problem continues, please report to developer."
   },
   {
     "name": "ERROR-INVALID-DECKCODE",
-    "string": "‼️ 잘못된 덱 코드입니다."
+    "string": "‼️ Invalid deck code."
   },
   {
     "name": "DECKLIST-TITLE",
-    "string": "{class} 덱"
+    "string": "{class} deck"
   },
   {
     "name": "SEARCH-TOKENS",
-    "string": "토큰(연관) 카드 검색"
+    "string": "Search token(related) card"
   },
   {
     "name": "SEARCHING-TOKENS",
-    "string": "☑️  토큰 카드 검색 중..."
+    "string": "☑️  Searching token cards..."
   }
 ]

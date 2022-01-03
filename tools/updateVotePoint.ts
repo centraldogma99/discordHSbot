@@ -1,5 +1,5 @@
 import { checkUserVote } from "./koreanbot/checkUserVote";
-import mongo from "../db";
+import { userModel } from "../db";
 import { giveUserPoint } from "./giveUserPoint";
 
 async function checkAndGivePoint(userId: number) {
@@ -19,7 +19,7 @@ async function checkAndGivePoint(userId: number) {
 }
 
 export async function updateVotePoint() {
-  const users = await mongo.userModel.find({}).exec();
+  const users = await userModel.find({}).exec();
   for (const user of users) {
     checkAndGivePoint(user.id);
     setInterval(() => { checkAndGivePoint(user.id) }, 60000 * 5)

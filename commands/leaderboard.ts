@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import mongo from "../db";
+import { userModel } from "../db";
 import kor from "../languages/kor/leaderboard.json"
 import eng from "../languages/eng/leaderboard.json"
 import { loadUserConfig } from "../tools/loadUserConfig";
@@ -13,7 +13,7 @@ async function leaderboard(message) {
   const userConfig = await loadUserConfig(message.author);
   const lang = userConfig.languageMode === 'ko_KR' ? parseLang(kor) : parseLang(eng);
 
-  let users = await mongo.userModel.find({}).exec();
+  let users = await userModel.find({}).exec();
   users = users.sort((f, s) => s.stats.point - f.stats.point);
   let embed = new MessageEmbed()
     .setColor('#0099ff')

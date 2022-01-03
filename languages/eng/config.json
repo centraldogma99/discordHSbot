@@ -1,38 +1,62 @@
 [
   {
     "name": "CONFIG-CONFIGURING",
-    "string": "**{name}가 설정 중...**"
+    "string": "**{name} is configuring...**"
   },
   {
     "name": "LANGUAGE-CONFIG-TITLE",
-    "string": "**⚙️ 언어 설정(Language Config)**"
+    "string": "**⚙️ Language config(언어 설정)**"
   },
   {
     "name": "GAMEMODE-CONFIG-TITLE",
-    "string": "**⚙️ 게임모드 설정**  *`정규`로 설정시 야생 카드는 검색되지 않습니다.*"
+    "string": "**⚙️ Gamemode config**"
   },
   {
     "name": "CONFIG-RESULT",
-    "string": "☑️ {user}의 `{config}`가 {value}로 설정되었습니다."
+    "string": "☑️ {user}'s `{config}`is set to {value}."
   },
   {
     "name": "PAGE-CONFIG-TITLE",
-    "string": "**⚙️ 페이지 설정**  *한 페이지에 표시될 카드의 수를 설정합니다 (1 ~ 9). *\n현재 설정 : `${value}`"
+    "string": "**⚙️ Page config**  *Config number of cards displayed per page(1 ~ 9). *\nCurrent config : `${value}`"
   },
   {
     "name": "PAGE-CONFIG-MESSAGE",
-    "string": "⚙️ `페이지` 값을 채팅으로 입력해 주세요 (1 ~ 9). 현재 설정 : `${value}`"
+    "string": "⚙️ Enter `page` value in chat(1 ~ 9). Current config : `${value}`"
   },
   {
     "name": "ERROR-TIMEOUT",
-    "string": "? 입력이 없어 취소되었습니다."
+    "string": "? Config cancelled due to no input."
   },
   {
     "name": "ERROR-INVALID",
-    "string": "‼️ 잘못된 값입니다."
+    "string": "‼️ Invalid value."
   },
   {
     "name": "PAGE-CONFIG-BUTTON",
-    "string": "페이지 설정"
+    "string": "Page config"
+  },
+  {
+    "name": "GAMEMODE",
+    "string": "Gamemode"
+  },
+  {
+    "name": "LANGUAGE",
+    "string": "Language"
+  },
+  {
+    "name": "PAGE",
+    "string": "Page"
+  },
+  {
+    "name": "WILD",
+    "string": "Wild"
+  },
+  {
+    "name": "STANDARD",
+    "string": "Standard"
+  },
+  {
+    "name": "BATTLEGROUNDS",
+    "string": "Battlegrounds"
   }
 ]

@@ -1,4 +1,4 @@
-"use strict";
+// FIXME: not type safe
 export function uniqueArray(array: any[], element?: string): any[] {
   let seen = {};
   if (!element) {

@@ -2,86 +2,77 @@
   {
     "name": "ALL",
     "strings": [
-      "모든"
+      "all"
     ]
   },
   {
     "name": "CHILD",
     "strings": [
-      "관련",
-      "토큰"
+      "child",
+      "token"
     ]
   },
   {
     "name": "CONFIGURE",
     "strings": [
-      "설정"
+      "config",
+      "configure"
     ]
   },
   {
     "name": "DECK",
     "strings": [
-      "덱",
-      "덱리스트",
-      "덱리"
+      "deck",
+      "decklist"
     ]
   },
   {
     "name": "HOWTO",
     "strings": [
-      "사용법",
-      "도움말",
-      "도움",
+      "howto",
+      "help",
       "?",
-      "명령어"
+      "command",
+      "tutorial"
     ]
   },
   {
     "name": "LEADERBOARD",
     "strings": [
-      "리더보드",
-      "점수표",
-      "순위",
-      "순위표",
-      "랭킹"
+      "leaderboard",
+      "scoreboard",
+      "ranking"
     ]
   },
   {
     "name": "ME",
     "strings": [
-      "나",
-      "내정보",
-      "마이페이지",
-      "기여도",
-      "포인트"
+      "me",
+      "mypage",
+      "point"
     ]
   },
   {
     "name": "NAME",
     "strings": [
-      "이름",
-      "카드명"
+      "name"
     ]
   },
   {
     "name": "QUIZ",
     "strings": [
-      "퀴즈",
-      "문제"
+      "quiz"
     ]
   },
   {
     "name": "QUIZCONFIG",
     "strings": [
-      "퀴즈설정"
+      "quizconfig",
+      "quizconf"
     ]
   },
   {
     "name": "QUIZCHOSUNG",
-    "strings": [
-      "초성퀴즈",
-      "초성문제",
-      "초성"
-    ]
+    "strings": []
   }
 ]

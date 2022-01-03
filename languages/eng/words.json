@@ -1,14 +1,14 @@
 [
   {
     "name": "WILD",
-    "string": "야생"
+    "string": "Wild"
   },
   {
     "name": "STANDARD",
-    "string": "정규"
+    "string": "Standard"
   },
   {
     "name": "BATTLEGROUNDS",
-    "string": "전장"
+    "string": "Battlegrounds"
   }
 ]

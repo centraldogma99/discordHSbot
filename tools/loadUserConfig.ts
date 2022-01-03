@@ -5,16 +5,16 @@
 
 
 import { User } from "discord.js";
-import mongo from "../db";
+import { userModel } from "../db";
 
 export async function loadUserConfig(user: User) {
-  let userInDb = await mongo.userModel.findOne({ id: user.id }).exec();
+  let userInDb = await userModel.findOne({ id: user.id });
   if (!userInDb) {
-    await mongo.userModel.insertMany([{
+    await userModel.insertMany([{
       id: user.id,
       tag: user.tag
     }])
-    return mongo.userModel.findOne({ id: user.id }).exec();
+    return userModel.findOne({ id: user.id }).exec();
   } else {
     // 유저 태그가 변경된 경우
     if (userInDb.tag != user.tag || userInDb.tag === undefined) {

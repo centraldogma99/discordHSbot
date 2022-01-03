@@ -1,5 +1,5 @@
 import { MessageActionRow, MessageButton, User } from 'discord.js';
-import mongo from "../db";
+import { userModel } from "../db";
 import { loadUserConfig } from '../tools/loadUserConfig';
 import kor from "../languages/kor/quizConfig.json"
 import eng from "../languages/eng/quizConfig.json"
@@ -10,7 +10,7 @@ import { parseLang, parseLangArr } from "../languages/parseLang"
 // FIXME duplicate code
 async function addQuizConfig(messageAuthor: User, fieldName: string, value) {
   // @value should be typechecked before given as parameter
-  let query = mongo.userModel.findOne({ id: messageAuthor.id });
+  let query = userModel.findOne({ id: messageAuthor.id });
   try {
     const user = await query.exec();
     if (!user.quizConfig.gameMode
@@ -22,7 +22,7 @@ async function addQuizConfig(messageAuthor: User, fieldName: string, value) {
       return query.updateOne({ $set: { [`quizConfig.${fieldName}`]: value } }).exec();
     }
   } catch (e) {
-    return await mongo.userModel.insertMany([{
+    return await userModel.insertMany([{
       id: messageAuthor.id,
       tag: messageAuthor.tag,
       quizConfig: { [fieldName]: value }
@@ -209,7 +209,7 @@ async function quizConfig(message) {
       return;
     } else {
       // It's guaranteed there is user config data, don't have to call addQuizConfig()
-      await mongo.userModel.updateOne(
+      await userModel.updateOne(
         { id: message.author.id },
         { $set: { "quizConfig.rarity": 0 } }
       )

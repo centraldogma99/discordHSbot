@@ -1,5 +1,5 @@
 import { Message, MessageActionRow, MessageActionRowComponent, MessageButton, User } from 'discord.js';
-import mongo from '../db';
+import { userModel } from '../db';
 import { loadUserConfig } from '../tools/loadUserConfig';
 import configKor from "../languages/kor/config.json"
 import configEng from "../languages/eng/config.json"
@@ -8,12 +8,12 @@ import commandsEng from "../languages/eng/commands.json"
 import { parseLang, parseLangArr } from "../languages/parseLang"
 
 async function addConfig(messageAuthor: User, fieldName: string, value: any) {
-  let query = mongo.userModel.findOne({ id: messageAuthor.id });
+  let query = userModel.findOne({ id: messageAuthor.id });
   try {
     const user = await query.exec();
     return user.updateOne({ [fieldName]: value }).exec();
   } catch (e) {
-    return await mongo.userModel.insertMany([{
+    return await userModel.insertMany([{
       id: messageAuthor.id,
       tag: messageAuthor.tag,
       [fieldName]: value

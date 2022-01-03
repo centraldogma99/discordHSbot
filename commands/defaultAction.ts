@@ -14,7 +14,11 @@ async function defaultAction(message: Message, args: string, info: searchInfo) {
   let searchingMessage = await message.channel.send(lang("SEARCHING"))
   await message.channel.sendTyping().catch(console.log);
 
-  const resCard = await getMostMatchingCard(args, userConfig.gameMode, info?.conditions?.class_);
+  const resCard = await getMostMatchingCard(args,
+    userConfig.gameMode,
+    info?.conditions?.class_,
+    userConfig.languageMode);
+
   if (!resCard) {
     message.channel.send(lang("ERROR-NO-RESULT"));
     return;
@@ -22,7 +26,8 @@ async function defaultAction(message: Message, args: string, info: searchInfo) {
 
   const targetImage = resCard.image;
 
-  let msgObj: { files: string[], components?: MessageActionRow[] } = { files: [targetImage] }
+  let msgObj: { files: string[], components?: MessageActionRow[] } =
+    { files: [targetImage] }
   searchingMessage.delete().catch(console.log);
 
   if (resCard.childIds.length > 0) {
@@ -34,7 +39,9 @@ async function defaultAction(message: Message, args: string, info: searchInfo) {
       .addComponents(btn)
     msgObj.components = [row];
     const msg = await message.channel.send(msgObj);
-    const buttonCollector = msg.createMessageComponentCollector({ componentType: 'BUTTON', time: 20000, max: 1 });
+    const buttonCollector = msg.createMessageComponentCollector({
+      componentType: 'BUTTON', time: 20000, max: 1
+    });
     buttonCollector.on('collect', async i => {
       await i.update({ content: lang("SEARCHING-TOKENS"), components: [] })
       await childs.execute(message, args, { fromDefault: true, card: resCard });

@@ -22,7 +22,7 @@ async function name(message: Message, args: string, info: searchInfo) {
   let searchingMessage = await message.channel.send(lang("SEARCHING"))
   await message.channel.sendTyping().catch(console.log);
 
-  let resCards = await cardNameInfer(args, userConfig.gameMode);
+  let resCards = await cardNameInfer(args, userConfig.gameMode, userConfig.languageMode);
 
   if (class_ && resCards) resCards = resCards.filter(card => card.classId === class_.id)
   if (!resCards || resCards.length <= 0) {

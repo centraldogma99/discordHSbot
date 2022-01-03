@@ -1,20 +1,22 @@
-export interface Card {
+export interface CardParent {
   alias: string,
   name: string,
   image: string,
   imageGold?: string,
   childIds?: number[],
   rarityId: number,
+  classId: number,
+  text: string,
+  health: number,
+  attack: number,
+  minionTypeId: number
+}
+
+export interface Card extends CardParent {
   manaCost: number,
   cardSetId: number,
-  classId: number,
   cardTypeId: number,
-  health?: number,
-  attack?: number,
   durability?: number,
-  text: string,
-  minionTypeId?: number,
   spellSchoolId?: number,
   multiClassIds: number[]
 }
-

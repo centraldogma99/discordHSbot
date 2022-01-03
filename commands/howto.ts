@@ -6,8 +6,6 @@ import { loadUserConfig } from "../tools/loadUserConfig";
 import korSet from "../languages/kor/howto.json"
 import engSet from "../languages/eng/howto.json"
 
-
-
 async function howto(message: Message) {
   const userConfig = await loadUserConfig(message.author)
   const lang = userConfig.languageMode === 'ko_KR' ? korSet : engSet;
