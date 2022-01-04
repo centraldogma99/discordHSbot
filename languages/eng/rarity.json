@@ -1,27 +1,27 @@
 [
   {
     "name": "common",
-    "nameKor": "일반",
+    "string": "일반",
     "id": 1
   },
   {
     "name": "basic",
-    "nameKor": "기본",
+    "string": "기본",
     "id": 2
   },
   {
     "name": "rare",
-    "nameKor": "희귀",
+    "string": "희귀",
     "id": 3
   },
   {
     "name": "epic",
-    "nameKor": "특급",
+    "string": "특급",
     "id": 4
   },
   {
     "name": "legendary",
-    "nameKor": "전설",
+    "string": "전설",
     "id": 5
   }
 ]

@@ -17,11 +17,11 @@
   },
   {
     "name": "PAGE-CONFIG-TITLE",
-    "string": "**⚙️ 페이지 설정**  *한 페이지에 표시될 카드의 수를 설정합니다 (1 ~ 9). *\n현재 설정 : `${value}`"
+    "string": "**⚙️ 페이지 설정**  *한 페이지에 표시될 카드의 수를 설정합니다 (1 ~ 9).*\n현재 설정 : `{value}`"
   },
   {
     "name": "PAGE-CONFIG-MESSAGE",
-    "string": "⚙️ `페이지` 값을 채팅으로 입력해 주세요 (1 ~ 9). 현재 설정 : `${value}`"
+    "string": "⚙️ `페이지` 값을 채팅으로 입력해 주세요 (1 ~ 9). 현재 설정 : `{value}`"
   },
   {
     "name": "ERROR-TIMEOUT",

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "common",
+    "string": "일반",
+    "id": 1
+  },
+  {
+    "name": "basic",
+    "string": "기본",
+    "id": 2
+  },
+  {
+    "name": "rare",
+    "string": "희귀",
+    "id": 3
+  },
+  {
+    "name": "epic",
+    "string": "특급",
+    "id": 4
+  },
+  {
+    "name": "legendary",
+    "string": "전설",
+    "id": 5
+  }
+]

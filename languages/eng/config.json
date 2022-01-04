@@ -17,11 +17,11 @@
   },
   {
     "name": "PAGE-CONFIG-TITLE",
-    "string": "**⚙️ Page config**  *Config number of cards displayed per page(1 ~ 9). *\nCurrent config : `${value}`"
+    "string": "**⚙️ Page config**  *Config number of cards displayed per page(1 ~ 9).*\nCurrent config : `{value}`"
   },
   {
     "name": "PAGE-CONFIG-MESSAGE",
-    "string": "⚙️ Enter `page` value in chat(1 ~ 9). Current config : `${value}`"
+    "string": "⚙️ Enter `page` value in chat(1 ~ 9). Current config : `{value}`"
   },
   {
     "name": "ERROR-TIMEOUT",

@@ -1,15 +1,15 @@
 import { Message } from "discord.js";
 import { Card } from "../types/card";
 import { generateQuiz } from "./generateQuiz";
-import rarity from "../tools/jsons/rarity.json";
-import cardSet from "../tools/jsons/cardset.json";
-import class_ from "../tools/jsons/class.json";
-import minionType from "../tools/jsons/minionType.json";
-import spellSchool from "../tools/jsons/spellSchool.json";
-import cardType from "../tools/jsons/cardType.json";
+import rarity from "../languages/kor/rarity.json";
+import cardSet from "../languages/kor/cardset.json";
+import class_ from "../languages/kor/class.json";
+import minionType from "../languages/kor/minionType.json";
+import spellSchool from "../languages/kor/spellSchool.json";
+import cardType from "../languages/kor/cardType.json";
 
 function translateToKor(json: any[], id: number | string) {
-  return json.filter((e) => e.id === id)[0]?.nameKor;
+  return json.filter((e) => e.id === id)[0]?.string;
 }
 
 function getRandomInt(max: number) {

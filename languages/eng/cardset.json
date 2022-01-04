@@ -1,0 +1,132 @@
+[
+  {
+    "name": "legacy",
+    "string": "Legacy",
+    "id": 1635
+  },
+  {
+    "name": "legacy",
+    "string": "Legacy",
+    "id": 3
+  },
+  {
+    "name": "legacy",
+    "string": "Legacy",
+    "id": 4
+  },
+  {
+    "name": "core",
+    "string": "Core",
+    "id": 1637
+  },
+  {
+    "name": "united-in-stormwind",
+    "string": "United in Stormwind",
+    "id": 1578
+  },
+  {
+    "name": "forged-in-the-barrens",
+    "string": "Forged in the Barrens",
+    "id": 1525
+  },
+  {
+    "name": "madness-at-the-darkmoon-faire",
+    "string": "Madness at the Darkmoon Faire",
+    "id": 1466
+  },
+  {
+    "name": "scholomance-academy",
+    "string": "Scholomance Academy",
+    "id": 1443
+  },
+  {
+    "name": "ashes-of-outland",
+    "string": "Ashes of Outland",
+    "id": 1414
+  },
+  {
+    "name": "decent-of-dragons",
+    "string": "Decent of Dragons",
+    "id": 1347
+  },
+  {
+    "name": "saviors-of-uldum",
+    "string": "Saviors of Uldum",
+    "id": 1158
+  },
+  {
+    "name": "rise-of-shadows",
+    "string": "Rise of Shadows",
+    "id": 1130
+  },
+  {
+    "name": "the-witchwood",
+    "string": "The Witchwood",
+    "id": 1125
+  },
+  {
+    "name": "the-boomsday-project",
+    "string": "The Boomsday Project",
+    "id": 1127
+  },
+  {
+    "name": "rastakhans-rumble",
+    "string": "Rastakhans Rumble",
+    "id": 1129
+  },
+  {
+    "name": "journey-to-ungoro",
+    "string": "Journey to Ungoro",
+    "id": 27
+  },
+  {
+    "name": "knights-of-the-frozen-throne",
+    "string": "Knights of the Frozen Throne",
+    "id": 1001
+  },
+  {
+    "name": "kobolds-and-catacombs",
+    "string": "Kobolds and Catacombs",
+    "id": 1004
+  },
+  {
+    "name": "whispers-of-the-old-gods",
+    "string": "Whispers of the Old Gods",
+    "id": 21
+  },
+  {
+    "name": "one-night-in-karazhan",
+    "string": "One night in Karazhan",
+    "id": 23
+  },
+  {
+    "name": "mean-streets-of-gadgetzan",
+    "string": "Mean streets of Gadgetzan",
+    "id": 25
+  },
+  {
+    "name": "goblins-vs-gnomes",
+    "string": "Goblins vs Gnomes",
+    "id": 13
+  },
+  {
+    "name": "the-grand-tournament",
+    "string": "The Grand Tournament",
+    "id": 15
+  },
+  {
+    "name": "league-of-explorers",
+    "string": "League of Explorers",
+    "id": 20
+  },
+  {
+    "name": "blackrock-mountain",
+    "string": "Blackrock Mountain",
+    "id": 14
+  },
+  {
+    "name": "curse-of-naxxramas",
+    "string": "Curse of Naxxramas",
+    "id": 12
+  }
+]

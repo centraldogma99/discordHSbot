@@ -1,27 +1,27 @@
 [
   {
     "name": "hero",
-    "nameKor": "Hero card",
+    "string": "Hero card",
     "id": 3
   },
   {
     "name": "spell",
-    "nameKor": "Spell",
+    "string": "Spell",
     "id": 5
   },
   {
     "name": "minion",
-    "nameKor": "Minion",
+    "string": "Minion",
     "id": 4
   },
   {
     "name": "weapon",
-    "nameKor": "Weapon",
+    "string": "Weapon",
     "id": 7
   },
   {
     "name": "hero-ability",
-    "nameKor": "Hero ability",
+    "string": "Hero ability",
     "id": 10
   }
 ]

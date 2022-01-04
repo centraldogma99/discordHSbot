@@ -1,11 +1,11 @@
 [
   {
     "name": "QUIZ-HINT-1",
-    "string": "💡 This card has {letters} letters, the first {firstLength} letters are {string}.(Ignore spacing)"
+    "string": "💡 This card has {letters} letters, the first {length} letters are {string}.(Ignore spacing)"
   },
   {
     "name": "QUIZ-HINT-2",
-    "string": "💡 This card has {letters} letters, the last {firstLength} letters are {string}.(Ignore spacing)"
+    "string": "💡 This card has {letters} letters, the last {length} letters are {string}.(Ignore spacing)"
   },
   {
     "name": "QUIZ-HINT-3-NO-TEXT",
@@ -25,7 +25,7 @@
   },
   {
     "name": "QUIZ-TIP",
-    "string": "ℹ️  Type `.hint` to get a hint.\nℹ️  Type `.quit` to cancel the quiz.\nGuess the card's name! **{timeLeft} seconds left, {chances} attempts remaining**\nUse the prefix '.' when using commands and answers. (e.g.) .soulboundashtongue\n💰 **Prize point : {prize}**"
+    "string": "ℹ️  Type `-hint` to get a hint.\nℹ️  Type `-quit` to cancel the quiz.\nGuess the card's name! **{timeLeft} seconds left, {chances} attempts remaining**\nUse the prefix '-' when using commands and answers. (e.g.) -soulboundashtongue\n💰 **Prize point : {prize}**"
   },
   {
     "name": "QUIZ-NO-REMAINING-HINT",

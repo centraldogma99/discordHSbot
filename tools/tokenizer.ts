@@ -1,5 +1,5 @@
 import Condition from '../types/condition';
-import translateClass from './jsons/class.json';
+import translateClass from '../languages/kor/class.json';
 import client from '../app';
 import Tokens from "../types/Tokens"
 
@@ -14,11 +14,10 @@ function isCondition(contentSplit: string) {
 // string 조각들을 받아서 Condition[] 오브젝트로 변환
 function parseConditions(conditions: string[]): Condition {
   // 지금은 직업 조건만 parse하도록 되어 있음.
-
   let ret: Condition = {};
 
   function isValidClass(condition: string) {
-    if (translateClass.map(class_ => class_.name).includes(condition)) return true;
+    if (translateClass.map(c => c.name).includes(condition)) return true;
     else return false;
   }
   // 추후의 class 외의 조건을 판단할 함수를 이곳에 추가할 수 있다.

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "hero",
+    "string": "영웅",
+    "id": 3
+  },
+  {
+    "name": "spell",
+    "string": "주문",
+    "id": 5
+  },
+  {
+    "name": "minion",
+    "string": "하수인",
+    "id": 4
+  },
+  {
+    "name": "weapon",
+    "string": "무기",
+    "id": 7
+  },
+  {
+    "name": "hero-ability",
+    "string": "영웅 능력",
+    "id": 10
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "murloc",
+    "string": "멀록",
+    "id": 14
+  },
+  {
+    "name": "mech",
+    "string": "기계",
+    "id": 17
+  },
+  {
+    "name": "elemental",
+    "string": "정령",
+    "id": 18
+  },
+  {
+    "name": "dragon",
+    "string": "용족",
+    "id": 24
+  },
+  {
+    "name": "pirate",
+    "string": "해적",
+    "id": 23
+  },
+  {
+    "name": "demon",
+    "string": "악마",
+    "id": 15
+  },
+  {
+    "name": "beast",
+    "string": "야수",
+    "id": 20
+  },
+  {
+    "name": "totem",
+    "string": "토템",
+    "id": 21
+  },
+  {
+    "name": "quillboar",
+    "string": "가시멧돼지",
+    "id": 43
+  },
+  {
+    "name": "all",
+    "string": "모든",
+    "id": 26
+  }
+]

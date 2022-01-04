@@ -35,11 +35,7 @@ async function configure(message: Message) {
       new MessageButton()
         .setCustomId('wild')
         .setLabel(lang("WILD"))
-        .setStyle('SECONDARY'),
-      new MessageButton()
-        .setCustomId('battlegrounds')
-        .setLabel(lang("BATTLEGROUNDS"))
-        .setStyle('SECONDARY'),
+        .setStyle('SECONDARY')
     ];
     for (const button of gameModeButtons) {
       if (button.customId == userConfig.gameMode) {
@@ -92,7 +88,7 @@ async function configure(message: Message) {
         break;
       }
     }
-    await message.channel.send(lang("CONFIG-CONFIGURING").replace("{name}", message.author.tag));
+
     let mainMsg = await message.channel.send({
       content: lang('LANGUAGE-CONFIG-TITLE'),
       components: [new MessageActionRow().addComponents(languageButtons)]

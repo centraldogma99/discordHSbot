@@ -137,7 +137,7 @@ async function quiz(message: Message) {
   })
 
   messageCollector.on('collect', async m => {
-    if (!m.content.startsWith('.')) return;
+    if (!m.content.startsWith('-')) return;
     const content = m.content.slice(quizPrefix.length).toLowerCase();
     if (content === 'quit' || content === '종료') {
       messageCollector.stop("userAbort");

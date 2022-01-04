@@ -10,19 +10,18 @@ import { parseLang, parseLangArr } from "../languages/parseLang"
 // FIXME duplicate code
 async function addQuizConfig(messageAuthor: User, fieldName: string, value) {
   // @value should be typechecked before given as parameter
-  let query = userModel.findOne({ id: messageAuthor.id });
   try {
-    const user = await query.exec();
+    const user = await userModel.findOne({ id: messageAuthor.id });
     if (!user.quizConfig.gameMode
       && !user.quizConfig.rarity
       && !user.quizConfig.difficulty
       && !user.quizConfig.chances) {
-      return query.updateOne({ quizConfig: { [fieldName]: value } }).exec();
+      return user.updateOne({ quizConfig: { [fieldName]: value } });
     } else {
-      return query.updateOne({ $set: { [`quizConfig.${fieldName}`]: value } }).exec();
+      return user.updateOne({ $set: { [`quizConfig.${fieldName}`]: value } });
     }
   } catch (e) {
-    return await userModel.insertMany([{
+    return userModel.insertMany([{
       id: messageAuthor.id,
       tag: messageAuthor.tag,
       quizConfig: { [fieldName]: value }
@@ -312,7 +311,7 @@ async function quizConfig(message) {
     .setLabel(lang("QUIZCONFIG-TIME-BUTTON"))
   const row5 = new MessageActionRow().addComponents(timeMenuButton);
   let timeMsg = await message.channel.send({
-    content: lang("QUIZCONFIG-CHANCE-TITLE")
+    content: lang("QUIZCONFIG-TIME-TITLE")
       .replace("{value}", userConfig.quizConfig.time.toString()),
     components: [row5]
   });
@@ -322,7 +321,7 @@ async function quizConfig(message) {
   timeMsgCollector.on('collect', async (i) => {
     if (i.user.id != message.author.id) return;
     await i.update({
-      content: lang("QUIZCONFIG-CHANCE-MESSAGE")
+      content: lang("QUIZCONFIG-TIME-MESSAGE")
         .replace("{value}", userConfig.quizConfig.time.toString() ?? "30(default)"),
       components: []
     })
