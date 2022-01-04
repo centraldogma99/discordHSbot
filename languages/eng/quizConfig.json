@@ -1,7 +1,7 @@
 [
   {
     "name": "QUIZCONFIG-RESULT",
-    "string": "☑️ `{config}`is set to `{string}`."
+    "string": "☑️ `{config}` is set to `{string}`."
   },
   {
     "name": "QUIZCONFIG-NOINPUT",

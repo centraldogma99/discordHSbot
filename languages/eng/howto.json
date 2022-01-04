@@ -1,5 +1,7 @@
 {
   "title": "HELP",
+  "prev": "Prev",
+  "next": "Next ({string}) ({current}/{total})",
   "pages": [
     {
       "desc": "All commands should start with .(comma)!\n **ex)** `.all deathwing`",

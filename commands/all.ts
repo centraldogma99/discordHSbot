@@ -40,7 +40,7 @@ async function all(message: Message, args: string, info: searchInfo) {
           locale: userConfig.languageMode,
           textFilter: encodeURI(args),
           gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
-          tier: info?.conditions?.tier ?? null,
+          tier: info?.conditions?.tier,
           class: info?.conditions?.class_?.name,
           set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
           pageSize: CONSTANTS.pageSize,
@@ -66,7 +66,7 @@ async function all(message: Message, args: string, info: searchInfo) {
           locale: userConfig.languageMode,
           textFilter: encodeURI(args),
           gameMode: userConfig.gameMode == 'battlegrounds' ? 'battlegrounds' : 'constructed',
-          tier: info?.conditions?.tier ?? null,
+          tier: info?.conditions?.tier,
           class: info?.conditions?.class_?.name,
           set: userConfig.gameMode == 'battlegrounds' ? null : userConfig.gameMode,
           pageSize: CONSTANTS.pageSize,
@@ -90,15 +90,14 @@ async function all(message: Message, args: string, info: searchInfo) {
 
   let promises: (() => Promise<string[]>)[];
   if (Math.ceil(cardCount / CONSTANTS.pageSize) > 1) {
-    promises = range(Math.ceil(cardCount / CONSTANTS.pageSize), 2).map(i =>
-      axiosShort(i)
-    )
+    promises = range(Math.ceil(cardCount / CONSTANTS.pageSize), 2)
+      .map(i => axiosShort(i))
     promises = [() => Promise.resolve(firstCards.map(card => card.image)), ...promises]
   } else {
     promises = [() => Promise.resolve(firstCards.map(card => card.image))]
   }
 
-  const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, CONSTANTS.pageSize, true, cardCount)
+  const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, userConfig.languageMode, CONSTANTS.pageSize, true, cardCount)
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "PAGI-INTERNAL-ERROR",
+    "string": "‼️ 서버 오류로 인해 결과를 출력할 수 없습니다. 잠시 후 다시 시도해 보세요.\n문제가 지속되면 개발자에게 알려주세요!"
+  },
+  {
+    "name": "PAGI-PREV",
+    "string": "이전"
+  },
+  {
+    "name": "PAGI-NEXT",
+    "string": "다음"
+  },
+  {
+    "name": "PAGI-RESULT-DESC-1",
+    "string": "🔍 총 {number}개의 결과: {current}/{total}"
+  },
+  {
+    "name": "PAGI-RESULT-DESC-2",
+    "string": "🔍 {page} 페이지"
+  },
+  {
+    "name": "PAGI-FETCHING-NEXT",
+    "string": "☑️ 다음 페이지를 가져오는 중..."
+  }
+]

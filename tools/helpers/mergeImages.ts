@@ -24,15 +24,14 @@ export async function mergeImages(imageURLs: imageAddr[], cardsPerLine = 3): Pro
       .catch(e => console.log(e));
 
     let composite = files.reduce((input, overlay) =>
-      input.then(
-        data =>
-          sharp(data)
-            .extend({
-              right: 375,
-              background: { r: 255, g: 255, b: 255, alpha: 0 }
-            })
-            .composite([{ input: overlay, gravity: 'east' }])
-            .toBuffer()
+      input.then(data =>
+        sharp(data)
+          .extend({
+            right: 375,
+            background: { r: 255, g: 255, b: 255, alpha: 0 }
+          })
+          .composite([{ input: overlay, gravity: 'east' }])
+          .toBuffer()
       )
       , base);
     return composite;
@@ -48,7 +47,6 @@ export async function mergeImages(imageURLs: imageAddr[], cardsPerLine = 3): Pro
       })
       .composite([{ input: secondline, gravity: 'southwest' }])
       .toBuffer()
-
     return res;
   }
 }

@@ -75,7 +75,7 @@ async function deck(message: Message, args: string) {
   await message.channel.sendTyping().catch(console.log);
   // remove redundant cards
   cards = uniqueArray(cards, 'name');
-  const pagi = new Paginator(message, { value: cards.map((card: Card) => card.image), isPromise: false }, userConfig.paginateStep)  // #FIXME maybe
+  const pagi = new Paginator(message, { value: cards.map((card: Card) => card.image), isPromise: false }, userConfig.paginateStep, userConfig.languageMode)  // #FIXME maybe
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 

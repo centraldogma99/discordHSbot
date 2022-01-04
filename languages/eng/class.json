@@ -2,79 +2,71 @@
     {
         "name": "priest",
         "string": [
-            "사제",
-            "좆제"
+            "priest"
         ],
         "id": 6
     },
     {
         "name": "warrior",
         "string": [
-            "전사"
+            "warrior"
         ],
         "id": 10
     },
     {
         "name": "rogue",
         "string": [
-            "도적",
-            "돚거"
+            "rogue"
         ],
         "id": 7
     },
     {
         "name": "warlock",
         "string": [
-            "흑마법사",
-            "흑마"
+            "warlock"
         ],
         "id": 9
     },
     {
         "name": "demonhunter",
         "string": [
-            "악마사냥꾼",
-            "악사"
+            "demonhunter",
+            "dh"
         ],
         "id": 14
     },
     {
         "name": "druid",
         "string": [
-            "드루이드",
-            "드루"
+            "druid"
         ],
         "id": 2
     },
     {
         "name": "mage",
         "string": [
-            "마법사",
-            "법사"
+            "mage"
         ],
         "id": 4
     },
     {
         "name": "paladin",
         "string": [
-            "성기사",
-            "기사"
+            "paladin"
         ],
         "id": 5
     },
     {
         "name": "shaman",
         "string": [
-            "주술사",
-            "술사"
+            "shaman"
         ],
         "id": 8
     },
     {
         "name": "hunter",
         "string": [
-            "사냥꾼",
-            "냥꾼"
+            "hunter"
         ],
         "id": 3
     }

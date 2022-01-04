@@ -1,0 +1,26 @@
+[
+  {
+    "name": "PAGI-INTERNAL-ERROR",
+    "string": "‼️ Internal error.\nIf same error continues, please report to developer!"
+  },
+  {
+    "name": "PAGI-PREV",
+    "string": "Prev"
+  },
+  {
+    "name": "PAGI-NEXT",
+    "string": "Next"
+  },
+  {
+    "name": "PAGI-RESULT-DESC-1",
+    "string": "🔍 Total {number} results: {current}/{total}"
+  },
+  {
+    "name": "PAGI-RESULT-DESC-2",
+    "string": "🔍 {page} page"
+  },
+  {
+    "name": "PAGI-FETCHING-NEXT",
+    "string": "☑️ Retrieving next page..."
+  }
+]

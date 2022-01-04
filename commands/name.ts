@@ -30,7 +30,7 @@ async function name(message: Message, args: string, info: searchInfo) {
     return;
   }
 
-  const pagi = new Paginator(message, { value: resCards.map(card => card.image), isPromise: false }, userConfig.paginateStep);
+  const pagi = new Paginator(message, { value: resCards.map(card => card.image), isPromise: false }, userConfig.paginateStep, userConfig.languageMode);
   let msgs = await pagi.next();
   searchingMessage.delete().catch(console.log);
 

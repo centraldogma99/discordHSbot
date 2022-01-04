@@ -1,11 +1,11 @@
 [
   {
     "name": "QUIZ-HINT-1",
-    "string": "💡 이 카드는 {letters}글자이며, 처음 {length}글자는 {string} 입니다(띄어쓰기 무시)."
+    "string": "💡 이 카드는 `{letters}`글자이며, 처음 {length}글자는 `{string}` 입니다(띄어쓰기 무시)."
   },
   {
     "name": "QUIZ-HINT-2",
-    "string": "💡이 카드는 {letters}글자이며, 마지막 {length}글자는 {string} 입니다(띄어쓰기 무시)."
+    "string": "💡이 카드는 `{letters}`글자이며, 마지막 {length}글자는 `{string}` 입니다(띄어쓰기 무시)."
   },
   {
     "name": "QUIZ-HINT-3-NO-TEXT",
@@ -17,7 +17,7 @@
   },
   {
     "name": "QUIZ-HINT-4",
-    "string": "💡 이 카드의 띄어쓰기는 {string} 입니다."
+    "string": "💡 이 카드의 띄어쓰기는 `{string}` 입니다."
   },
   {
     "name": "QUIZ-PARTICIPATE-POINT",
@@ -37,7 +37,7 @@
   },
   {
     "name": "QUIZ-INCORRECT",
-    "string": "❌  틀렸습니다! 기회가 ${chances}번 남았습니다."
+    "string": "❌  틀렸습니다! 기회가 {chances}번 남았습니다."
   },
   {
     "name": "QUIZ-CORRECT",

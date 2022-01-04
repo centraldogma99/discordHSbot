@@ -1,0 +1,18 @@
+[
+  {
+    "name": "APP-DOING-QUIZ",
+    "string": "❌  누군가 이 채널에서 퀴즈를 실행 중입니다."
+  },
+  {
+    "name": "APP-INVALID-CLASS",
+    "string": "‼️ 잘못된 직업 조건입니다."
+  },
+  {
+    "name": "APP-WRONG-USAGE",
+    "string": "‼️ 잘못된 명령어입니다. `.명령어`에서 사용법을 확인해 보세요."
+  },
+  {
+    "name": "APP-INTERNAL-ERROR",
+    "string": "‼️ 서버 내부 에러! 개발자에게 오류 리포트를 보냈습니다."
+  }
+]

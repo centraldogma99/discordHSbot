@@ -1,11 +1,11 @@
 [
   {
     "name": "QUIZ-HINT-1",
-    "string": "💡 This card has {letters} letters, the first {length} letters are {string}.(Ignore spacing)"
+    "string": "💡 This card has `{letters}` letters, the first `{length}` letters are `{string}`.(Ignore spacing)"
   },
   {
     "name": "QUIZ-HINT-2",
-    "string": "💡 This card has {letters} letters, the last {length} letters are {string}.(Ignore spacing)"
+    "string": "💡 This card has `{letters}` letters, the last `{length}` letters are `{string}`.(Ignore spacing)"
   },
   {
     "name": "QUIZ-HINT-3-NO-TEXT",
@@ -13,15 +13,15 @@
   },
   {
     "name": "QUIZ-HINT-3",
-    "string": "💡 **Card text hint**  _{string}_ (omission)"
+    "string": "💡 **Card text hint**  _{string}..._ (omission)"
   },
   {
     "name": "QUIZ-HINT-4",
-    "string": "💡 This card have spacing: {string}."
+    "string": "💡 This card have spacing: `{string}`."
   },
   {
     "name": "QUIZ-PARTICIPATE-POINT",
-    "string": "💰 You received {point} points for taking quiz!"
+    "string": "💰 You received `{point}` points for taking quiz!"
   },
   {
     "name": "QUIZ-TIP",
@@ -37,11 +37,11 @@
   },
   {
     "name": "QUIZ-INCORRECT",
-    "string": "❌  Incorrect! ${chances} attempts remaining."
+    "string": "❌  Incorrect! {chances} attempts remaining."
   },
   {
     "name": "QUIZ-CORRECT",
-    "string": "⭕️  {user} guessed it correctly!"
+    "string": "⭕️  <@!{user}> guessed it correctly!"
   },
   {
     "name": "QUIZ-CORRECT-PRIZE",

@@ -14,6 +14,10 @@ import { permissionChecker } from "./tools/permissionChecker";
 import { requestScheduler as RequestScheduler } from "./tools/helpers/RequestScheduler";
 import { updateVotePoint } from "./tools/updateVotePoint";
 import Tokens from "./types/Tokens";
+import kor from "./languages/kor/app.json"
+import eng from "./languages/eng/app.json"
+import parseLang from "./languages/parseLang"
+import { loadUserConfig } from "./tools/loadUserConfig";
 
 require("dotenv").config()
 
@@ -60,12 +64,17 @@ client.on("ready", () => {
 })
 
 client.on("messageCreate", async (message: Message) => {
+  const userConfig = await loadUserConfig(message.author);
+  const lang = userConfig.languageMode === 'ko_KR' ?
+    parseLang(kor) :
+    parseLang(eng)
+
   if (message.author.bot) return;
   if (message.type === 'REPLY') return;
   if (!message.content.startsWith(prefix)) return;
 
   if ((message.channel as any).doingQuiz) {
-    message.channel.send("❌  Someone is doing quiz in this channel.");
+    message.channel.send(lang("APP-DOING-QUIZ"));
     return;
   }
 
@@ -80,13 +89,13 @@ client.on("messageCreate", async (message: Message) => {
 
   let tokens: Tokens;
   try {
-    tokens = tokenizer(message.content);
+    tokens = tokenizer(message.content, userConfig.languageMode);
   } catch (e) {
     if (e.message === "WrongClass") {
-      message.channel.send("‼️ Invalid class.");
+      message.channel.send(lang("APP-INVALID-CLASS"));
       return;
     } else if (e.message === 'WrongUsage') {
-      message.channel.send("‼️ Wrong Usage. See .help");
+      message.channel.send(lang("APP-WRONG-USAGE"));
       return;
     } else {
       console.log(e);
@@ -109,7 +118,7 @@ client.on("messageCreate", async (message: Message) => {
     }
   } catch (err) {
     console.log(err);
-    message.channel.send("‼️ Internal error! Sent an error report to the developer.");
+    message.channel.send(lang("APP-INTERNAL-ERROR"));
     client.users.cache.get(masterId).send("서버 내부 오류 발생");
     client.users.cache.get(masterId).send(err.stack);
   }

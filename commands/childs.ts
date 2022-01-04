@@ -62,7 +62,7 @@ async function childs(message: Message, args: string, info: searchInfo) {
       }
     )
       .then(res => res.data.image));
-  const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, 1)
+  const pagi = new Paginator(message, { value: promises, isPromise: true }, userConfig.paginateStep, userConfig.languageMode, 1)
   let msgs = await pagi.next();
   searchingMessage?.delete().catch(console.log);
 

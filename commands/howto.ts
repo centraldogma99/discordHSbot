@@ -23,11 +23,15 @@ async function howto(message: Message) {
     let moveButtons = [
       new MessageButton()
         .setCustomId('prev')
-        .setLabel('이전')
+        .setLabel(lang.prev)
         .setStyle('SECONDARY'),
       new MessageButton()
         .setCustomId('next')
-        .setLabel(`다음 (${currentPage + 1}/${lang.pages.length})`)
+        .setLabel(lang.next
+          .replace("{string}", lang.pages[currentPage + 1]?.desc ?? "END")
+          .replace("{current}", (currentPage + 1).toString())
+          .replace("{total}", lang.pages.length.toString())
+        )
         .setStyle('PRIMARY')
     ]
 

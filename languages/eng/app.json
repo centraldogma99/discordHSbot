@@ -1,0 +1,18 @@
+[
+  {
+    "name": "APP-DOING-QUIZ",
+    "string": "❌  Someone is doing quiz in this channel."
+  },
+  {
+    "name": "APP-INVALID-CLASS",
+    "string": "‼️ Invalid class."
+  },
+  {
+    "name": "APP-WRONG-USAGE",
+    "string": "‼️ Wrong Usage. See .help"
+  },
+  {
+    "name": "APP-INTERNAL-ERROR",
+    "string": "‼️ Internal error! Sent an error report to the developer."
+  }
+]

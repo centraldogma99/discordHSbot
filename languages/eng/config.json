@@ -13,7 +13,7 @@
   },
   {
     "name": "CONFIG-RESULT",
-    "string": "☑️ {user}'s `{config}`is set to {value}."
+    "string": "☑️ {user}'s `{config}` is set to {value}."
   },
   {
     "name": "PAGE-CONFIG-TITLE",

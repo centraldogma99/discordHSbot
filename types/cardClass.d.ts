@@ -1,5 +1,5 @@
 export interface cardClass {
   name: string,
-  nameKor?: string[],
+  string?: string[],
   id: number
 }

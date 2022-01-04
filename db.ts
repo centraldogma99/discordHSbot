@@ -3,8 +3,6 @@ import { Card } from './types/card';
 import { battlegroundsCard } from './types/battlegroundsCard'
 import mongoose from 'mongoose';
 
-const cardLanguage = process.env.CARD_LANGUAGE;
-
 const userSchema = new mongoose.Schema<User>({
   id: { type: Number, required: true },
   tag: { type: String, default: "" },
@@ -78,7 +76,7 @@ export const onlyWildCardModelEng = mongoose.model('onlyWildCardsEng', cardAlias
 export const battlegroundsCardModelEng = mongoose.model('battlegroundsCards', battlegroundCardSchema);
 
 const connectDB = () => {
-  mongoose.connect('mongodb://localhost:27017/test');
+  mongoose.connect('mongodb://localhost:27017/discordhsbot2');
   // mongoose.set('useFindAndModify', false);
   const db = mongoose.connection;
   db.on('error', console.error.bind(console, 'connection error: '));

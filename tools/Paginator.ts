@@ -3,6 +3,9 @@ import { mergeImages } from '../tools/helpers/mergeImages';
 import { Message, MessageButton, MessageActionRow } from "discord.js";
 import { requestScheduler as RequestScheduler } from '../tools/helpers/RequestScheduler';
 type imageAddr = string;
+import kor from "../languages/kor/paginator.json"
+import eng from "../languages/eng/paginator.json"
+import parseLang from "../languages/parseLang";
 
 export class Paginator {
   message: Message;
@@ -19,14 +22,18 @@ export class Paginator {
   prevMessage: Message;
   promiseResSize: number;
   nextPagePromise: Promise<(imageAddr | imageAddr[] | Error)[]>;
+  lang: (name: string) => string;
 
   constructor(
     message: Message,
-    promises: ({ value: (() => Promise<imageAddr>)[], isPromise: true } | { value: (() => Promise<imageAddr[]>)[], isPromise: true } | { value: imageAddr[], isPromise: false }),
+    promises: ({ value: (() => Promise<imageAddr>)[], isPromise: true }
+      | { value: (() => Promise<imageAddr[]>)[], isPromise: true }
+      | { value: imageAddr[], isPromise: false }),
     paginateStep: number,
+    languageMode: string,
     promiseResSize?: number,
     lengthEnabled: boolean = false,
-    length?: number
+    length?: number,
   ) {
     /*
       @promises T를 반환하는 promise들이 lazy eval을 위해 wrapper 함수로 감싸져 있다.
@@ -60,6 +67,7 @@ export class Paginator {
     this.lengthEnabled = lengthEnabled;
     this.numberOfCards = length;
     this.promiseResSize = promiseResSize;
+    this.lang = languageMode === 'ko_KR' ? parseLang(kor) : parseLang(eng);
   }
 
   prev() {
@@ -109,7 +117,7 @@ export class Paginator {
           }
         } catch (e) {
           console.log(e);
-          this.message.channel.send("‼️ 서버 오류로 인해 결과를 출력할 수 없습니다. 잠시 후 다시 시도해 보세요.\n문제가 지속되면 개발자에게 알려주세요!");
+          this.message.channel.send(this.lang("PAGI-INTERNAL-ERROR"));
           return;
         }
 
@@ -151,11 +159,11 @@ export class Paginator {
       let moveButtons = [
         new MessageButton()
           .setCustomId('prev')
-          .setLabel('이전')
+          .setLabel(this.lang("PAGI-PREV"))
           .setStyle('SECONDARY'),
         new MessageButton()
           .setCustomId('next')
-          .setLabel('다음')
+          .setLabel(this.lang("PAGI-NEXT"))
           .setStyle('PRIMARY')
       ]
 
@@ -169,15 +177,22 @@ export class Paginator {
       }
 
       const infoStr = this.lengthEnabled ?
-        `🔍 총 ${this.numberOfCards}개의 결과 : ${this.cursor / this.paginateStep + 1}/${Math.ceil(this.numberOfCards / this.paginateStep)}` :
-        `🔍 ${this.cursor / this.paginateStep + 1} 페이지`
+        this.lang("PAGI-RESULT-DESC-1")
+          .replace("{number}", this.numberOfCards.toString())
+          .replace("{current}", (this.cursor / this.paginateStep + 1).toString())
+          .replace("{total}", Math.ceil(this.numberOfCards / this.paginateStep).toString()) :
+        this.lang("PAGI-RESULT-DESC-2")
+          .replace("{page}", (this.cursor / this.paginateStep + 1).toString())
 
       let infoMessage = await this.message.channel.send({
         content: infoStr,
         components: [new MessageActionRow().addComponents(moveButtons)]
       })
       let infoPromise = infoMessage.awaitMessageComponent({ componentType: 'BUTTON', time: waitingTime })
-        .then(i => [i.update({ content: "☑️ 다음 페이지를 가져오는 중...", components: [] }), (i.component as MessageButton).customId])
+        .then(i => [i.update({
+          content: this.lang("PAGI-FETCHING-NEXT"),
+          components: []
+        }), (i.component as MessageButton).customId])
         .catch(() => [undefined, "timeout"])
 
       return {
