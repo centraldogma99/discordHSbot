@@ -7,11 +7,11 @@
       "desc": "All commands should start with .(comma)!\n **ex)** `.all deathwing`",
       "fields": [
         {
-          "name": "`[CardName]`",
+          "name": "`.[CardName]`",
           "value": "Search a card image that most matches with 'card name'.\n **ex)** `.thalnos` ➔ Bloodmage Thalnos"
         },
         {
-          "name": "`quiz`",
+          "name": "`.quiz`",
           "value": "Guess a card name with a piece of card image!"
         }
       ]
@@ -20,19 +20,19 @@
       "desc": "Search commands",
       "fields": [
         {
-          "name": "`name [CardName]`",
+          "name": "`.name [CardName]`",
           "value": "Search **all** cards with their name including '[CardName]'\n **ex)** `.name ragnaros`"
         },
         {
-          "name": "`token [CardName]`",
+          "name": "`.token [CardName]`",
           "value": "Search token cards.\n **ex)** `.token leeroy` ➔ 1/1 whelp"
         },
         {
-          "name": "`all [keyword]`",
+          "name": "`.all [keyword]`",
           "value": "Search **all** cards that includes [keyword].\nCard texts are also included for searching, not only card name.\n **ex)** `.all battlecry`"
         },
         {
-          "name": "`deck [DeckCode]`",
+          "name": "`.deck [DeckCode]`",
           "value": "Lists cards in [DeckCode]."
         },
         {
@@ -45,11 +45,11 @@
       "desc": "Quiz commands",
       "fields": [
         {
-          "name": "`quiz`",
+          "name": "`.quiz`",
           "value": "Guess a card name with a piece of card image!"
         },
         {
-          "name": "`quizconfig`",
+          "name": "`.quizconfig`",
           "value": "Config a card pool that appears in quiz.\n(e.g. standard/wild, card rarity-legendary/rare/...)"
         }
       ]
@@ -58,15 +58,15 @@
       "desc": "Personal commands",
       "fields": [
         {
-          "name": "`me`",
+          "name": "`.me`",
           "value": "See my contribution point."
         },
         {
-          "name": "`config`",
+          "name": "`.config`",
           "value": "Config search result's card displayed per page, standard/wild, language."
         },
         {
-          "name": "`ranking`",
+          "name": "`.ranking`",
           "value": "See contribution point leaderboard."
         }
       ]
