@@ -139,14 +139,14 @@ export class Paginator {
         this.promises.value = [];
       }
     }
-    let targetImages = this.images.slice(this.cursor, this.cursor + this.paginateStep);
+    const targetImages = this.images.slice(this.cursor, this.cursor + this.paginateStep);
     return this.showMessages(targetImages);
   }
 
   async showMessages(targetImages: imageAddr[]) {
-    let isLongResult = this.numberOfCards ?
+    const isLongResult = this.numberOfCards ?
       this.numberOfCards > this.paginateStep :
-      (this.images.length > this.paginateStep) || this.promises.value.length > 0
+      (this.images.length > this.paginateStep) || this.nextPagePromise
 
     const mergeImage = await mergeImages(targetImages, this.paginateStep % 3 == 0 ? 3 : 2);
 
@@ -172,7 +172,7 @@ export class Paginator {
         moveButtons[0].setDisabled(true);
       }
       // 오른쪽 감정표현
-      if (this.cursor + this.paginateStep >= this.images.length && this.promises.value.length <= 0) {
+      if (this.cursor + this.paginateStep > this.images.length && !this.nextPagePromise) {
         moveButtons[1].setDisabled(true);
       }
 

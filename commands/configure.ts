@@ -8,7 +8,7 @@ import commandsEng from "../languages/eng/commands.json"
 import { parseLang, parseLangArr } from "../languages/parseLang"
 
 async function addConfig(messageAuthor: User, fieldName: string, value: any) {
-  let query = userModel.findOne({ id: messageAuthor.id });
+  const query = userModel.findOne({ id: messageAuthor.id });
   try {
     const user = await query.exec();
     return user.updateOne({ [fieldName]: value }).exec();
@@ -27,7 +27,7 @@ async function configure(message: Message) {
 
   // 게임모드 설정 시작
   const f1 = async () => {
-    let gameModeButtons = [
+    const gameModeButtons = [
       new MessageButton()
         .setCustomId('standard')
         .setLabel(lang("STANDARD"))
@@ -51,7 +51,7 @@ async function configure(message: Message) {
       content: lang('GAMEMODE-CONFIG-TITLE'),
       components: [new MessageActionRow().addComponents(gameModeButtons)]
     });
-    let gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
+    const gameModeMsgCollector = gameModeMsg.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
     gameModeMsgCollector.on('collect', async i => {
       if (i.user.id != message.author.id) return;
       await addConfig(message.author, "gameMode", (i.component as MessageActionRowComponent).customId);
@@ -89,7 +89,7 @@ async function configure(message: Message) {
       }
     }
 
-    let mainMsg = await message.channel.send({
+    const mainMsg = await message.channel.send({
       content: lang('LANGUAGE-CONFIG-TITLE'),
       components: [new MessageActionRow().addComponents(languageButtons)]
     });
@@ -162,7 +162,7 @@ async function configure(message: Message) {
       .setLabel(lang("PAGE-CONFIG-BUTTON"))
     const row2 = new MessageActionRow().addComponents(pageMenuButton);
 
-    let pageMsg = await message.channel.send({
+    const pageMsg = await message.channel.send({
       content: lang("PAGE-CONFIG-TITLE").replace("{value}", userConfig.paginateStep.toString()),
       components: [row2]
     });

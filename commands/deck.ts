@@ -53,10 +53,10 @@ async function deck(message: Message, args: string) {
   }
 
   let cards: Card[] = deckInfo.cards.sort((a: Card, b: Card) => a.manaCost - b.manaCost);
-  let names = cards.map(card => card.name)
-  let costsAndRarities = Object.fromEntries(cards.map(card =>
+  const names = cards.map(card => card.name)
+  const costsAndRarities = Object.fromEntries(cards.map(card =>
     [card.name, { cost: card.manaCost, isLegendary: card.rarityId == 5 ? '⭐' : '' }]))
-  let obj = {};
+  const obj = {};
   for (const name of names) {
     if (!obj[name]) obj[name] = 1;
     else obj[name] += 1;

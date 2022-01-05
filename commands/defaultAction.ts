@@ -11,7 +11,7 @@ async function defaultAction(message: Message, args: string, info: searchInfo) {
   const userConfig = await loadUserConfig(message.author);
   const lang = userConfig.languageMode === 'ko_KR' ? parseLang(stringsKor) : parseLang(stringsEng);
 
-  let searchingMessage = await message.channel.send(lang("SEARCHING"))
+  const searchingMessage = await message.channel.send(lang("SEARCHING"))
   await message.channel.sendTyping().catch(console.log);
 
   const resCard = await getMostMatchingCard(args,
@@ -26,7 +26,7 @@ async function defaultAction(message: Message, args: string, info: searchInfo) {
 
   const targetImage = resCard.image;
 
-  let msgObj: { files: string[], components?: MessageActionRow[] } =
+  const msgObj: { files: string[], components?: MessageActionRow[] } =
     { files: [targetImage] }
   searchingMessage.delete().catch(console.log);
 
