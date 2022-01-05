@@ -6,7 +6,7 @@ const koreanBotToken = process.env.KOREANBOT_SECRET;
 export async function checkUserVote(userId: number | string) {
   // userID is guaranteed to exist
   const user = userModel.findOne({ id: userId })
-  let data = await axios.get(`https://koreanbots.dev/api/v2/bots/868188628709425162/vote`,
+  const data = await axios.get(`https://koreanbots.dev/api/v2/bots/868188628709425162/vote`,
     {
       params: {
         "userID": userId
@@ -16,7 +16,6 @@ export async function checkUserVote(userId: number | string) {
       }
     })
     .then(res => res.data.data)
-    .catch(e => { throw e })
 
   const targetUser = await user.select('gotPointFromVoteRecently').exec();
   if (data.voted && !targetUser.gotPointFromVoteRecently) {

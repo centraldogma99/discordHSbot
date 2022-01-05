@@ -1,7 +1,7 @@
 [
   {
     "name": "ME-TITLE",
-    "string": "**<@!{name}> 의 정보**"
+    "string": "**{name} 의 정보**"
   },
   {
     "name": "ME-DESC",

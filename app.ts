@@ -57,7 +57,7 @@ client.on("ready", () => {
   });
   logChannel = client.guilds.cache.get(logServerId).channels.cache.get(logChannelId);
   logger = new Logger(logChannel);
-  if (!argv.includes('--ts-node') && !argv.includes('--develop')) {
+  if (!argv.includes('--ts-node') && !argv.includes('--develop') && !argv.includes('--no-koreanbot')) {
     updateKoreanBot(client.guilds.cache.size)()
     setInterval(updateKoreanBot(client.guilds.cache.size), 120000);
   }
