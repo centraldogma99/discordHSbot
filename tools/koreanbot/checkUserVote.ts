@@ -16,6 +16,7 @@ export async function checkUserVote(userId: number | string) {
       }
     })
     .then(res => res.data.data)
+    .catch(() => { return { data: { voted: false } } })
 
   const targetUser = await user.select('gotPointFromVoteRecently').exec();
   if (data.voted && !targetUser.gotPointFromVoteRecently) {
